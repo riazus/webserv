@@ -61,6 +61,6 @@ class Kernel
         struct sockaddr_in _servaddr;
 
         void CloseSockets();
-        std::string getPath(std::string buffer);
+        std::string getResponse(std::string buffer);
 
 };

@@ -89,8 +89,6 @@ void Kernel::ListenConnections()
 	
 	//std::string openFile = Kernel::getPath(buffer);
 
-
-
 	std::cout << buffer << std::endl;
 	write(new_socket, hello.c_str(), hello.length());
 	std::cout << "---------------Hello message sent---------------------" << std::endl;
@@ -107,9 +105,14 @@ void Kernel::CloseSockets()
     //close(_epollFd);
 }
 
-//Parsing http request and return ready path to open file
-std::string Kernel::getPath(std::string buffer)
+//Parsing http request and return ready string to send response
+std::string Kernel::getResponse(std::string buffer)
 {
 	//TODO: Matvey
+	/*
+    1.. Need validate path from buffer
+	2. Validate any cases of denied access(cannot open file, permission, etc.)
+	And many many more... :)
+	*/
     return std::string("index.html");
 }
