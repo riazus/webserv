@@ -8,7 +8,11 @@ RM			=	rm -rf
 
 SRCS		=	srcs/main.cpp \
 				srcs/Kernel/Engine.cpp \
-				srcs/Kernel/Kernel.cpp
+				srcs/Kernel/Kernel.cpp \
+				srcs/Parser/Config.cpp \
+				srcs/Parser/Server.cpp \
+				srcs/Parser/Location.cpp
+
 
 OBJS		=	$(SRCS:%.cpp=%.o)
 DEPS		=	$(SRCS:%.cpp=%.d)
