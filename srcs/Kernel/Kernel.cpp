@@ -72,7 +72,7 @@ int Kernel::CreateSocket()
 void Kernel::ListenConnections()
 {
 	int new_socket;
-	std::string hello = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!";
+	//std::string hello = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 142\n\n<html>\n<body>\n<center>\n<h1>Hi! This is webserv written by Riyaz and Matvey, enjoy!</h1>\n<center>\n</body>\n</html>";
 	int addlen = sizeof(_servaddr);
 
 	std::cout << "++++++++++++++++Waiting for new connections+++++++++++++++++++++" << std::endl;
@@ -87,10 +87,10 @@ void Kernel::ListenConnections()
 	char buffer[BUFFER_SIZE] = {0};
 	read(new_socket, buffer, BUFFER_SIZE);
 	
-	//std::string openFile = Kernel::getPath(buffer);
+	std::string readyResponse = Kernel::getResponse(buffer);
 
 	std::cout << buffer << std::endl;
-	write(new_socket, hello.c_str(), hello.length());
+	write(new_socket, readyResponse.c_str(), readyResponse.length());
 	std::cout << "---------------Hello message sent---------------------" << std::endl;
 	close(new_socket);
 }
@@ -114,5 +114,9 @@ std::string Kernel::getResponse(std::string buffer)
 	2. Validate any cases of denied access(cannot open file, permission, etc.)
 	And many many more... :)
 	*/
-    return std::string("index.html");
+	std::string body;
+	//body = "<b>Pick your favorite color</b><br>\n<form method="POST" action="http://www.whizkidtech.redprince.net/cgi-bin/c">\n<input type="RADIO" name="color" value="red"> Red<br>\n<input type="RADIO" name="color" value="green"> Green<br>\n<input type="RADIO" checked name="color" value="blue"> Blue<br>\n<input type="RADIO" name="color" value="cyan"> Cyan<br>\n<input type="RADIO" name="color" value="magenta"> Magenta<br>\n<input type="RADIO" name="color" value="yellow"> Yellow<br>\n<br><b>On the scale 1 - 3, how favorite is it?</b><br><br>\n<select name="scale" size=1>\n<option>1\n<option selected>2\n<option>3\n</select>\n<br>\n<input type="HIDDEN" name="favorite color" size="32">\n<input type="Submit" value="I'm learning" name="Attentive student">\n<input type="Submit" value="Give me a break!" name="Overachiever">\n<input type="Reset" name="Reset">\n</form>";
+	body = "<html>\n<body>\n<center>\n<h1>Hi! This is webserv written by Riyaz and Matvey, enjoy!</h1>\n<center>\n</body>\n</html>";
+	//body = "<!DOCTYPE html>\n<html>\n<title>404 Not Found</title>\n<body>\n<div>\n<H1>404 Not Found</H1>\n</div>\n</body>\n</html>";
+    return std::string("HTTP/1.1 404 \nContent-Type: text/html\nContent-Length: 142\n\n" + body);
 }
