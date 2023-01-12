@@ -163,6 +163,16 @@ void Kernel::Run()
 				{
 					throw std::logic_error("Error: accept() failed");
 				}
+
+				if (fcntl(new_socket, F_SETFL, O_NONBLOCK) < 0)
+				{
+					throw std::logic_error("Error: fcntl() failed");
+				}
+
+				this->_event.data.fd = new_socket;
+				this->_event.events = EPOLLIN;
+				epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, new_socket, &this->_event);
+
 				now = time(0);
 				char buffer[BUFFER_SIZE] = {0};
 				read(new_socket, buffer, BUFFER_SIZE);
@@ -172,8 +182,12 @@ void Kernel::Run()
 				//std::cout << buffer << std::endl;
 				write(new_socket, readyResponse.c_str(), readyResponse.length());
 				now = time(0);
-				std::cout << "Server send response to browser " << (char *)ctime(&now) << std::endl; 
-				close(new_socket);
+				std::cout << "Server send response to browser " << (char *)ctime(&now) << std::endl;
+			}
+			else if (this->_eventsArray[i].events & EPOLLOUT)
+			{
+				//TODO:
+				std::cout << "Not implemented poll out" << std::endl;
 			}
 		}
 
@@ -183,6 +197,8 @@ void Kernel::Run()
 			sleep(1);
 		}
 	}
+	this->CloseSockets();
+	std::cout << "Shutting down server..." << std::endl;
 }
 
 void Kernel::CloseSockets()
