@@ -128,6 +128,7 @@ void Kernel::Run()
 	std::string wait[] = {".   ", "..  ", "... ", "....", "   .", "  ..", " ...", "...."};
 	int frames = 0;
 	int nfds = 0;
+	time_t now;
 	std::string	request;
 	//this->CreateSocket();
 
@@ -157,28 +158,25 @@ void Kernel::Run()
 				int new_socket;
 				int addlen = sizeof(_servaddr);
 
-				std::cout << "++++++++++++++++Waiting for new connections+++++++++++++++++++++" << std::endl;
-				std::cout << "_socketFd = " << _socketFd << std::endl;
 				new_socket = accept(_socketFd, (struct sockaddr *)&_servaddr, (socklen_t*)&addlen);
 				if (new_socket < 0)
 				{
-					perror("In accept");
-					exit(EXIT_FAILURE);
 					throw std::logic_error("Error: accept() failed");
 				}
+				now = time(0);
 				char buffer[BUFFER_SIZE] = {0};
 				read(new_socket, buffer, BUFFER_SIZE);
-				
+				std::cout << "Server accepted new connection " << (char *)ctime(&now) << std::endl;
 				std::string readyResponse = Kernel::getResponse(buffer);
 
 				//std::cout << buffer << std::endl;
 				write(new_socket, readyResponse.c_str(), readyResponse.length());
-				std::cout << "---------------Hello message sent---------------------" << std::endl;
+				now = time(0);
+				std::cout << "Server send response to browser " << (char *)ctime(&now) << std::endl; 
 				close(new_socket);
 			}
 		}
 
-		std::cout << "nfds count = " << nfds << std::endl;
 		if (nfds == 0)
 		{
 			std::cout << "\r" << wait[(frames++ % 8)] << " Waiting for new connections " << std::flush;
