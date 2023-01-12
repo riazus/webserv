@@ -18,12 +18,39 @@ Kernel::~Kernel()
 {
 }
 
-//Returns prepared socket's fd for accept connection
+void Kernel::LoadKernel()
+{
+	this->CreateEpoll();
+	this->CreateSocket();
+	this->InitEpoll();
+}
+
+
+
+void Kernel::CreateEpoll()
+{
+	this->_epollFd = epoll_create1(0);
+	if (this->_epollFd == -1)
+	{
+		throw std::logic_error("Error: epoll_create1() couldn't init");
+	}
+}
+
+void Kernel::InitEpoll()
+{
+	std::memset((struct epoll_event *)&this->_event, 0, sizeof(this->_event));
+	//TODO: NEED IN CYCLE! 
+	this->_event.data.fd = this->_socketFd;
+	this->_event.events = EPOLLIN;
+	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, this->_socketFd, &this->_event);
+}
+
+// Returns prepared socket's fd for accept connection
 int Kernel::CreateSocket()
 {
 	const int opt = 1;
 
-	if ((_socketFd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+	if ((this->_socketFd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
 		CloseSockets();
 		throw std::logic_error("Error: socket() failed");
@@ -95,8 +122,74 @@ void Kernel::ListenConnections()
 	close(new_socket);
 }
 
+void Kernel::Run()
+{
+	//std::string wait[] = {"⠋", "⠙", "⠸", "⠴", "⠦", "⠇"};
+	std::string wait[] = {".   ", "..  ", "... ", "....", "   .", "  ..", " ...", "...."};
+	int frames = 0;
+	int nfds = 0;
+	std::string	request;
+	//this->CreateSocket();
+
+    this->LoadKernel();
+	while(true)
+	{
+		errno = 0;
+		nfds = epoll_wait(this->_epollFd, this->_eventsArray, MAX_EV, APP_TIMEOUT);
+		if (errno == EINVAL || errno == EFAULT || errno == EBADFD)
+		{
+			throw std::logic_error("Error: epoll_wait() failed");
+		}
+		else if (errno == EINTR)
+		{
+			break;
+		}
+
+		//TODO: Main logic ->
+		for (int i = 0; i < nfds; i++)
+		{
+			if (this->_eventsArray[i].events & EPOLLERR || this->_eventsArray[i].events & EPOLLHUP)
+			{
+				throw std::logic_error("There is a bad event in events array");
+			}
+			else if (this->_eventsArray[i].events & EPOLLIN)
+			{
+				int new_socket;
+				int addlen = sizeof(_servaddr);
+
+				std::cout << "++++++++++++++++Waiting for new connections+++++++++++++++++++++" << std::endl;
+				std::cout << "_socketFd = " << _socketFd << std::endl;
+				new_socket = accept(_socketFd, (struct sockaddr *)&_servaddr, (socklen_t*)&addlen);
+				if (new_socket < 0)
+				{
+					perror("In accept");
+					exit(EXIT_FAILURE);
+					throw std::logic_error("Error: accept() failed");
+				}
+				char buffer[BUFFER_SIZE] = {0};
+				read(new_socket, buffer, BUFFER_SIZE);
+				
+				std::string readyResponse = Kernel::getResponse(buffer);
+
+				//std::cout << buffer << std::endl;
+				write(new_socket, readyResponse.c_str(), readyResponse.length());
+				std::cout << "---------------Hello message sent---------------------" << std::endl;
+				close(new_socket);
+			}
+		}
+
+		std::cout << "nfds count = " << nfds << std::endl;
+		if (nfds == 0)
+		{
+			std::cout << "\r" << wait[(frames++ % 8)] << " Waiting for new connections " << std::flush;
+			sleep(1);
+		}
+	}
+}
+
 void Kernel::CloseSockets()
 {
+	//TODO:
     /*for(intVector::iterator it = _socketFd.begin(); it != _socketFd.end(); it++)
     {
         close(*it);
@@ -118,5 +211,5 @@ std::string Kernel::getResponse(std::string buffer)
 	//body = "<b>Pick your favorite color</b><br>\n<form method="POST" action="http://www.whizkidtech.redprince.net/cgi-bin/c">\n<input type="RADIO" name="color" value="red"> Red<br>\n<input type="RADIO" name="color" value="green"> Green<br>\n<input type="RADIO" checked name="color" value="blue"> Blue<br>\n<input type="RADIO" name="color" value="cyan"> Cyan<br>\n<input type="RADIO" name="color" value="magenta"> Magenta<br>\n<input type="RADIO" name="color" value="yellow"> Yellow<br>\n<br><b>On the scale 1 - 3, how favorite is it?</b><br><br>\n<select name="scale" size=1>\n<option>1\n<option selected>2\n<option>3\n</select>\n<br>\n<input type="HIDDEN" name="favorite color" size="32">\n<input type="Submit" value="I'm learning" name="Attentive student">\n<input type="Submit" value="Give me a break!" name="Overachiever">\n<input type="Reset" name="Reset">\n</form>";
 	body = "<html>\n<body>\n<center>\n<h1>Hi! This is webserv written by Riyaz and Matvey, enjoy!</h1>\n<center>\n</body>\n</html>";
 	//body = "<!DOCTYPE html>\n<html>\n<title>404 Not Found</title>\n<body>\n<div>\n<H1>404 Not Found</H1>\n</div>\n</body>\n</html>";
-    return std::string("HTTP/1.1 404 \nContent-Type: text/html\nContent-Length: 142\n\n" + body);
+    return std::string("HTTP/1.1 200 OK \nContent-Type: text/html\nContent-Length: 142\n\n" + body);
 }

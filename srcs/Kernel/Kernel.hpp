@@ -39,6 +39,7 @@
 # define MAX_EV 4096
 # define MAX_CLIENTS 1000
 # define CLIENT_TIMEOUT 10
+# define APP_TIMEOUT 200
 // For more comfort
 # define stringVector	std::vector<std::string>
 # define intVector      std::vector<int>
@@ -51,16 +52,25 @@ class Kernel
         Kernel &operator=(Kernel &copy);
         ~Kernel();
 
-        int     CreateSocket();
-        void    ListenConnections();
+        void    Run();
 
     private :
         //intVector   _socketFd;
-        int         _epollFd;
         int         _socketFd;
         struct sockaddr_in _servaddr;
 
-        void CloseSockets();
+        //epoll vars
+        int         _epollFd;
+        struct epoll_event _event;
+        struct epoll_event _eventsArray[MAX_EV];
+
+
+        void    LoadKernel();
+        void    CreateEpoll();
+        void    InitEpoll();
+        int     CreateSocket();
+        void    ListenConnections();
+        void    CloseSockets();
         std::string getResponse(std::string buffer);
 
 };
