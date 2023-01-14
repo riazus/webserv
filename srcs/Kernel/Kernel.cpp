@@ -96,41 +96,11 @@ int Kernel::CreateSocket()
 	return 0;
 }
 
-void Kernel::ListenConnections()
-{
-	int new_socket;
-	//std::string hello = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 142\n\n<html>\n<body>\n<center>\n<h1>Hi! This is webserv written by Riyaz and Matvey, enjoy!</h1>\n<center>\n</body>\n</html>";
-	int addlen = sizeof(_servaddr);
-
-	std::cout << "++++++++++++++++Waiting for new connections+++++++++++++++++++++" << std::endl;
-	std::cout << "_socketFd = " << _socketFd << std::endl;
-	new_socket = accept(_socketFd, (struct sockaddr *)&_servaddr, (socklen_t*)&addlen);
-	if (new_socket < 0)
-	{
-		perror("In accept");
-        exit(EXIT_FAILURE);
-		throw std::logic_error("Error: accept() failed");
-	}
-	char buffer[BUFFER_SIZE] = {0};
-	read(new_socket, buffer, BUFFER_SIZE);
-	
-	std::string readyResponse = Kernel::getResponse(buffer);
-
-	std::cout << buffer << std::endl;
-	write(new_socket, readyResponse.c_str(), readyResponse.length());
-	std::cout << "---------------Hello message sent---------------------" << std::endl;
-	close(new_socket);
-}
-
 void Kernel::Run()
 {
-	//std::string wait[] = {"⠋", "⠙", "⠸", "⠴", "⠦", "⠇"};
 	std::string wait[] = {".   ", "..  ", "... ", "....", "   .", "  ..", " ...", "...."};
 	int frames = 0;
 	int nfds = 0;
-	time_t now;
-	std::string	request;
-	//this->CreateSocket();
 
     this->LoadKernel();
 	while(true)
@@ -155,34 +125,23 @@ void Kernel::Run()
 			}
 			else if (this->_eventsArray[i].events & EPOLLIN)
 			{
-				int new_socket;
-				int addlen = sizeof(_servaddr);
+				
+				this->AcceptNewClient(this->_eventsArray[i].data.fd);
 
-				new_socket = accept(_socketFd, (struct sockaddr *)&_servaddr, (socklen_t*)&addlen);
-				if (new_socket < 0)
-				{
-					throw std::logic_error("Error: accept() failed");
-				}
+				this->ClientRead(this->_eventsArray[i].data.fd);
 
-				if (fcntl(new_socket, F_SETFL, O_NONBLOCK) < 0)
-				{
-					throw std::logic_error("Error: fcntl() failed");
-				}
 
-				this->_event.data.fd = new_socket;
-				this->_event.events = EPOLLIN;
-				epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, new_socket, &this->_event);
 
-				now = time(0);
+				/*now = time(0);
 				char buffer[BUFFER_SIZE] = {0};
-				read(new_socket, buffer, BUFFER_SIZE);
+				//read(new_socket, buffer, BUFFER_SIZE);
 				std::cout << "Server accepted new connection " << (char *)ctime(&now) << std::endl;
 				std::string readyResponse = Kernel::getResponse(buffer);
 
 				//std::cout << buffer << std::endl;
-				write(new_socket, readyResponse.c_str(), readyResponse.length());
+				//write(new_socket, readyResponse.c_str(), readyResponse.length());
 				now = time(0);
-				std::cout << "Server send response to browser " << (char *)ctime(&now) << std::endl;
+				std::cout << "Server send response to browser " << (char *)ctime(&now) << std::endl;*/
 			}
 			else if (this->_eventsArray[i].events & EPOLLOUT)
 			{
@@ -212,7 +171,95 @@ void Kernel::CloseSockets()
     //close(_epollFd);
 }
 
-//Parsing http request and return ready string to send response
+//Accept event's fd to the new client
+void Kernel::AcceptNewClient(int eventPollFd)
+{
+	int new_socket;
+	int addlen = sizeof(_servaddr);
+	Client newClient;
+
+	new_socket = accept(eventPollFd, (struct sockaddr *)&_servaddr, (socklen_t*)&addlen);
+	if (new_socket < 0 && errno != EWOULDBLOCK)
+	{
+		throw std::logic_error("Error: accept() failed");
+	}
+
+	if (fcntl(new_socket, F_SETFL, O_NONBLOCK) < 0)
+	{
+		throw std::logic_error("Error: fcntl() failed");
+	}
+
+	this->_event.data.fd = new_socket;
+	this->_event.events = EPOLLIN;
+	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, new_socket, &this->_event);
+
+	newClient.SetSocket(new_socket);
+	this->_clients[new_socket] = newClient;
+}
+
+void Kernel::ClientWrite(int eventPollFd)
+{
+
+}
+
+void Kernel::ClientRead(int eventPollFd)
+{
+	if (this->_clients[eventPollFd].hadResponse == true)
+	{
+		this->_clients[eventPollFd].hadResponse = false;
+	}
+	if (this->ReadClientRequest(eventPollFd) == false)
+	{
+		return;
+	}
+	//TODO epoll_ctl
+}
+
+bool Kernel::ReadClientRequest(int socketFd)
+{
+	char buffer[BUFFER_SIZE + 1];
+	std::string body("");
+
+	ssize_t requestLen = read(socketFd, buffer, BUFFER_SIZE);
+
+	if (requestLen == -1)
+	{
+		this->DeleteClient(socketFd);
+		throw std::logic_error("Error: read Client's request failed");
+		return false;
+	}
+	else if (requestLen == 0)
+	{
+		this->DeleteClient(socketFd);
+		return false;
+	}
+	else
+	{
+		//TODO check for len after a lot of manipulation
+		this->_clients[socketFd].request.contetnSize += requestLen;
+		//timestamp
+		this->_clients[socketFd].request.requestLine.append(buffer, requestLen);
+	}
+
+	//TODO Matvey - parse buffer content
+
+    return false;
+}
+
+bool Kernel::WriteClientRequest(int socketFd)
+{
+
+    return false;
+}
+
+void Kernel::DeleteClient(int socketFd)
+{
+	this->_clients.erase(socketFd);
+	epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, socketFd, NULL);
+	close(socketFd);
+}
+
+// Parsing http request and return ready string to send response
 std::string Kernel::getResponse(std::string buffer)
 {
 	//TODO: Matvey

@@ -1,5 +1,6 @@
 #pragma once 
 
+//SYSTEM
 # include <unistd.h>
 # include <errno.h>
 # include <fcntl.h>
@@ -34,6 +35,11 @@
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <ostream>
+
+//USER OBJECTS
+# include "../Client/Client.hpp"
+# include "../Request/Request.hpp"
+
 // SHORTCUT
 # define BUFFER_SIZE 4096
 # define MAX_EV 4096
@@ -43,6 +49,7 @@
 // For more comfort
 # define stringVector	std::vector<std::string>
 # define intVector      std::vector<int>
+# define mapClient      std::map<int,Client>
 
 class Kernel
 {
@@ -64,13 +71,22 @@ class Kernel
         struct epoll_event _event;
         struct epoll_event _eventsArray[MAX_EV];
 
+        mapClient   _clients;
 
         void    LoadKernel();
         void    CreateEpoll();
         void    InitEpoll();
         int     CreateSocket();
-        void    ListenConnections();
         void    CloseSockets();
+        void    AcceptNewClient(int eventPollFd);
+        void    ClientWrite(int eventPollFd);
+        void    ClientRead(int eventPollFd);
+
+        //Handle read/write methods
+        bool    ReadClientRequest(int socketFd);
+        bool    WriteClientRequest(int socketFd);
+        void    DeleteClient(int socketFd);
+
         std::string getResponse(std::string buffer);
 
 };
