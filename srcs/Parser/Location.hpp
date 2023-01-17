@@ -1,7 +1,7 @@
 #ifndef LOCATION_HPP
 #define LOCATION_HPP
-#include <iostream>
-#include <vector>
+
+#include "Includes.hpp"
 
 
 class Location

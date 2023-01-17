@@ -7,16 +7,16 @@ int main(int argc, char **argv)
     Config config;
     try 
 	{
-     config.getFile("./test.conf"); // path to .conf file
+     config.Parsing("./test.conf"); // path to .conf file
 	}
 	catch (std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
         return 1;
 	}
-    Engine::Validate(argc, argv);
-    Engine::Execute(argc, argv);
-    Engine::Exit();
+    // Engine::Validate(argc, argv);
+    // Engine::Execute(argc, argv);
+    // Engine::Exit();
 
     return (EXIT_SUCCESS);
 }

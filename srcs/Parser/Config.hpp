@@ -1,24 +1,26 @@
 #ifndef CONFIG_H
 # define CONFIG_H
 
-#include <fstream>
-#include <string>
-#include "Server.hpp"
-#include "Location.hpp"
+#include "Includes.hpp"
+
+class Server;
 
 class Config
 {
 	private:
 
-	std::vector<Server> servers;
+	std::vector<Server *> servers;
 	std::string configFile;
 
 	public:
 		Config(void);
 		Config(Config const & src);
 		Config &operator=(const Config &rhs);
-		void getFile(std::string filename);
-		void getServers();
+
+		std::string getFile(std::string filename);
+		void Parsing(std::string filename);
+		void getFullInfo();
+
 		~Config(void);
 	
 	class ConfigFileOpenException : public std::exception

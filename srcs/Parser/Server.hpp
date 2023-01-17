@@ -1,23 +1,25 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "./Location.hpp"
-// #include "./Config.hpp"
-#include <string.h>
+#include "Includes.hpp"
+
+class Location;
+
 
 class Server
 {
 
     private:
 
-        int braceCounter;
-        std::string name;
-        std::string buffer;
-        std::vector<std::string> listen;
-        std::string root;
-        std::string index;
-        std::vector<std::string> methods;
-        std::vector<Location> location;
+        std::string                         name;
+        std::vector<int>                    listen;
+        std::string                         root;
+        std::string                         index;
+        std::vector<std::string>            methods;
+        std::map<int, std::string>          error_page;
+        std::map<std::string, std::string>  cgi;
+        std::vector<Location>               location;
+        long long                           max_client_body_size;
 
     public:
 
@@ -25,10 +27,28 @@ class Server
         Server(const std::string name);
         Server(const Server &Server);
         Server& operator= (const Server &Server);
-        int getServerInfo(std::string configFile);
-        void setName(std::string name);
-        std::string getName();
-        std::string myGetLine(std::string *buffer);
+
+        void setServerName(std::string name);
+        void setPort(int port);
+        void setRoot(std::string root);
+        void setIndex(std::string index);
+        void setMethods(std::string methods);
+        void setLocation(Location location);
+        void setErrorPage(int num, std::string page);
+        void setCgi(std::string name, std::string path);
+        void setMaxClientBodySize(long long size);
+
+
+        std::string getServerName();
+        std::vector<int> getPort();
+        std::string getRoot();
+        std::string getIndex();
+        std::vector<std::string> getMethods();
+        std::vector<Location> getLocation();
+        std::map<int, std::string> getErrorPage();
+        std::map<std::string, std::string> getCgi();
+        long long getMaxClientBodySize();
+
         ~Server();
 
     	class ConfigFileContentException : public std::exception
