@@ -4,12 +4,6 @@ Server::Server()
 {
 }
 
-Server::Server(const std::string name)
-{
-	this->name = name;
-}
-
-
 Server::Server(const Server &server)
 {
 	*this = server;
@@ -37,7 +31,6 @@ bool isSpace(unsigned char c) {
 void Server::setServerName(std::string name)
 {
 	this->name = name;
-	std::cout << "SERV NAME SETED AS :" << this->name << std::endl;
 }
 
 std::string Server::getServerName()

@@ -24,9 +24,9 @@ class Server
     public:
 
         Server();
-        Server(const std::string name);
         Server(const Server &Server);
         Server& operator= (const Server &Server);
+
 
         void setServerName(std::string name);
         void setPort(int port);
@@ -38,7 +38,6 @@ class Server
         void setCgi(std::string name, std::string path);
         void setMaxClientBodySize(long long size);
 
-
         std::string getServerName();
         std::vector<int> getPort();
         std::string getRoot();
@@ -49,14 +48,8 @@ class Server
         std::map<std::string, std::string> getCgi();
         long long getMaxClientBodySize();
 
+
         ~Server();
-
-    	class ConfigFileContentException : public std::exception
-	{
-	    public:
-
-		    virtual const char* what() const throw();
-	};
 };
 
 #endif

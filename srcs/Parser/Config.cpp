@@ -53,20 +53,30 @@ void Config::Parsing(std::string filename)
 
 void Config::getFullInfo()
 {
+	std::cout << "--------------------CONFIG FILE INFO--------------------" << std::endl;
 	for (int i=0; i < servers.size(); i++)
 	{
+		std::cout << "===================Server " << i << "===================" << std::endl << std::endl;
 		std::cout << "server_name:	" << servers[i]->getServerName() << std::endl;
-		std::cout << "port:	";
-		for (int i=0; i < servers[i]->getPort().size(); i++)
-			std::cout << servers[i]->getPort()[i] << ", ";
-		std::cout << std::endl;
+		std::cout << "port:	" << servers[i]->getPort()[0] << std::endl;
 		std::cout << "root:	" << servers[i]->getRoot() << std::endl;
 		std::cout << "index:	" << servers[i]->getIndex() << std::endl;
-		std::cout << "methods:	";
-		for (int i=0; i < servers[i]->getMethods().size(); i++)
-			std::cout << servers[i]->getMethods()[i] << ", ";
-		std::cout << std::endl;
-		// std::cout << "cgi:	" << servers[i]->getCgi() << std::endl;
+		std::map<std::string, std::string> map_tmp = servers[i]->getCgi();
+		std::map<std::string, std::string>::iterator it(map_tmp.begin());
+		std::map<std::string, std::string>::iterator end(map_tmp.end());
+		while (it != end)
+		{
+			std::cout << "cgi:	" << it->first <<  " | " << it->second << std::endl;
+			it++;
+		}
+		std::map<int, std::string> map_tmp2 = servers[i]->getErrorPage();
+		std::map<int, std::string>::iterator it2(map_tmp2.begin());
+		std::map<int, std::string>::iterator end2(map_tmp2.end());
+		while (it2 != end2)
+		{
+			std::cout << "error_pages:	" << it2->first <<  " | " << it2->second << std::endl;
+			it2++;
+		}
 		std::cout << "max_client_body_size:	" << servers[i]->getMaxClientBodySize() << std::endl;
 	}
 }
