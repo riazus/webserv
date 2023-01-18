@@ -1,7 +1,7 @@
 #ifndef REQUEST_H
 # define REQUEST_H
 
-# include <iostream>
+# include "../headers.hpp"
 
 class Request
 {
@@ -13,6 +13,8 @@ class Request
 		
 		int	contetnSize;
 		std::string requestLine;
+		bool		bodyReady;
+		bool		headerReady;
 
 	private:
 		

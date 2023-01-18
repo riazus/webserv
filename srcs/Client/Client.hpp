@@ -1,7 +1,7 @@
 #ifndef CLIENT_H
 # define CLIENT_H
 
-# include "../Kernel/Kernel.hpp"
+# include "../Request/Request.hpp"
 
 class Client
 {

@@ -129,24 +129,11 @@ void Kernel::Run()
 				this->AcceptNewClient(this->_eventsArray[i].data.fd);
 
 				this->ClientRead(this->_eventsArray[i].data.fd);
-
-
-
-				/*now = time(0);
-				char buffer[BUFFER_SIZE] = {0};
-				//read(new_socket, buffer, BUFFER_SIZE);
-				std::cout << "Server accepted new connection " << (char *)ctime(&now) << std::endl;
-				std::string readyResponse = Kernel::getResponse(buffer);
-
-				//std::cout << buffer << std::endl;
-				//write(new_socket, readyResponse.c_str(), readyResponse.length());
-				now = time(0);
-				std::cout << "Server send response to browser " << (char *)ctime(&now) << std::endl;*/
 			}
 			else if (this->_eventsArray[i].events & EPOLLOUT)
 			{
 				//TODO:
-				std::cout << "Not implemented poll out" << std::endl;
+				this->ClientWrite(this->_eventsArray[i].data.fd);
 			}
 		}
 
@@ -199,7 +186,16 @@ void Kernel::AcceptNewClient(int eventPollFd)
 
 void Kernel::ClientWrite(int eventPollFd)
 {
+	throw std::logic_error("Non implemented ClientWrite");
+	
+	std::string response;
 
+	std::cout << "CLIENT WRITE TO SERVER" << std::endl;
+	std::cout << _clients[eventPollFd].request.requestLine << std::endl;
+
+	//this->getRightsServer(this->_clients[eventPollFd]);
+
+	//response = this->_clients[eventPollFd].
 }
 
 void Kernel::ClientRead(int eventPollFd)
@@ -212,37 +208,60 @@ void Kernel::ClientRead(int eventPollFd)
 	{
 		return;
 	}
-	//TODO epoll_ctl
+	if (this->_clients[eventPollFd].request.bodyReady == true)
+	{
+		this->_event.events = EPOLLOUT;
+		this->_event.data.fd = eventPollFd;
+		epoll_ctl(this->_epollFd, EPOLL_CTL_MOD, eventPollFd, &this->_event);
+	}
 }
 
-bool Kernel::ReadClientRequest(int socketFd)
+bool Kernel::ReadClientRequest(int clientSocket)
 {
 	char buffer[BUFFER_SIZE + 1];
 	std::string body("");
 
-	ssize_t requestLen = read(socketFd, buffer, BUFFER_SIZE);
+	ssize_t requestLen = read(clientSocket, buffer, BUFFER_SIZE);
 
+	std::cout << buffer << std::endl;
+	std::cout << "LOL" << std::endl;
 	if (requestLen == -1)
 	{
-		this->DeleteClient(socketFd);
-		throw std::logic_error("Error: read Client's request failed");
+		this->DeleteClient(clientSocket);
+		//throw std::logic_error("Error: read Client's request failed");
 		return false;
 	}
 	else if (requestLen == 0)
 	{
-		this->DeleteClient(socketFd);
+		this->DeleteClient(clientSocket);
 		return false;
 	}
 	else
 	{
 		//TODO check for len after a lot of manipulation
-		this->_clients[socketFd].request.contetnSize += requestLen;
+		this->_clients[clientSocket].request.contetnSize += requestLen;
 		//timestamp
-		this->_clients[socketFd].request.requestLine.append(buffer, requestLen);
+		this->_clients[clientSocket].request.requestLine.append(buffer, requestLen);
 	}
 
 	//TODO Matvey - parse buffer content
+	if (this->_clients[clientSocket].request.requestLine.find("\r\n\r\n") != std::string::npos
+		&& this->_clients[clientSocket].request.headerReady == false)
+	{
+		//this->_parser.parseHeader(this->_clients[clientSocket].request) ???
+		this->_clients[clientSocket].request.headerReady = true;
 
+	}
+	if (this->_clients[clientSocket].request.headerReady == true)
+	{
+		body = this->_clients[clientSocket].request.requestLine.substr(this->_clients[clientSocket].request.requestLine.find("\r\n\r\n") + 4);
+		std::string header = this->_clients[clientSocket].request.requestLine.substr(0, this->_clients[clientSocket].request.requestLine.find("\r\n\r\n") + 4);
+
+		std::cout << body << std::endl;
+		std::cout << header << std::endl;
+	}
+
+	//Afterwork need change
     return false;
 }
 
