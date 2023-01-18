@@ -25,6 +25,9 @@ class Kernel
         struct epoll_event _event;
         struct epoll_event _eventsArray[MAX_EV];
 
+        // Now we use only ONE server:
+        int         _serverFd;
+        
         mapClient   _clients;
 
         void    LoadKernel();
@@ -33,6 +36,7 @@ class Kernel
         int     CreateSocket();
         void    CloseSockets();
         void    AcceptNewClient(int eventPollFd);
+        bool    fdIsServer(int eventPollFd);
         void    ClientWrite(int eventPollFd);
         void    ClientRead(int eventPollFd);
 
