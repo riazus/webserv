@@ -25,16 +25,6 @@ std::string Location::getPath()
 	return (this->path);
 }
 
-void Location::setName(std::string name)
-{
-	this->name = name;
-}
-
-std::string Location::getName()
-{
-	return (this->name);
-}
-
 void Location::setRoot(std::string root)
 {
 	this->root = root;
@@ -55,12 +45,12 @@ std::string Location::getIndex()
 	return (this->index);
 }
 
-void Location::setAutoindex(std::string autoindex)
+void Location::setAutoindex(int autoindex)
 {
 	this->autoindex = autoindex;
 }
 
-std::string Location::getAutoindex()
+int Location::getAutoindex()
 {
 	return (this->autoindex);
 }
@@ -70,9 +60,9 @@ void Location::setMethods(std::string method)
 	this->methods.push_back(method);
 }
 
-std::vector<std::string> getMethods()
+std::vector<std::string> Location::getMethods()
 {
-	return (this->methods)
+	return (this->methods);
 }
 
 

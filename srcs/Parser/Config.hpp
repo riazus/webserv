@@ -4,6 +4,7 @@
 #include "Includes.hpp"
 
 class Server;
+class Location;
 
 class Config
 {

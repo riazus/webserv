@@ -118,68 +118,6 @@ long long Server::getMaxClientBodySize()
 	return (this->max_client_body_size);
 }
 
-
-// void Server::keyCheck(std::string key, std::string line)
-// {
-// 	const std::string instructions[] = {
-// 		"server_name",
-// 		"listen",
-// 		"root",
-// 		"index",
-// 		"allow_methods",
-// 		"location",
-// 		"}",
-// 		""
-// 	};
-
-// 	if (key == instructions[0])
-// 	{
-// 		setServerName(key);
-// 	}
-// 	if (key == instructions[1])
-// 	{
-// 		setListen(key);
-// 	}
-// }
-
-// int Server::getServerInfo(std::string configFile)
-// {
-// 	std::string line, key;
-// 	this->buffer = configFile;
-// 	int size;
-
-// 	this->braceCounter = 1;
-// 	size = buffer.find("\n") + 1;
-// 	line = buffer.substr(0, size);
-// 	buffer.erase(0, size);
-// 	if (line != "server {\n")
-// 		throw Server::ConfigFileContentException();
-// 	line = " ";
-// 	while (line.size() > 0)
-// 	{
-// 		size = buffer.find("\n") + 1;
-// 		line = buffer.substr(0, size);
-// 		key = line;
-// 		key.erase(std::remove_if(key.begin(), key.end(), isSpace), key.end());
-// 		if (key.size() > 2)
-// 		{
-// 			key.erase(key.find(" "), key.size() - key.find(" "));
-// 			keyCheck(key, line);
-// 		}
-// 		buffer.erase(0, size);
-// 		// std::cout << "LINE = '" << line << "'";
-// 		std::cout << "KEY = '" << key << "'" << std::endl;
-
-// 	}
-// 	return 0;
-// }
-
-
-const char* Server::ConfigFileContentException::what() const throw()
-{
-	return "ConfigFileContentException : Invalid configuration file content!";
-}
-
 Server::~Server()
 {
 }
