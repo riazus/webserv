@@ -242,8 +242,6 @@ void Kernel::CreateEpoll()
 
 void Kernel::LoadKernel()
 {
-	//in this line i should get servers config
-
 	this->CreateEpoll();
 	this->CreateSocket();
 	this->InitEpoll();

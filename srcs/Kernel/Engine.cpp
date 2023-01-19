@@ -36,20 +36,6 @@ void Engine::Execute(int argc, char **argv)
         //parser->Parse();
 
         Kernel *kernel = new Kernel();
-        /*std::string wait[] = {"⠋", "⠙", "⠸", "⠴", "⠦", "⠇"};
-        int timeout = 200;
-        int nfds = 0;
-        std::string	request;
-        kernel->CreateSocket();
-
-        //kernel->init();        
-        while(true)
-        {
-            errno = 0;
-
-            kernel->_nfds = epoll_wait(kernel->);
-            kernel->ListenConnections();
-        }*/
         kernel->Run();
 
     }

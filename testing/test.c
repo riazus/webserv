@@ -51,7 +51,7 @@ int main(int argc, char const *argv[])
         
         char buffer[30000] = {0};
         valread = read( new_socket , buffer, 30000);
-        char **path = strtok(buffer[0], );
+        //char **path = strtok(buffer[0], ;
         printf("%s\n",buffer );
         write(new_socket , hello , strlen(hello));
         printf("------------------Hello message sent-------------------");
