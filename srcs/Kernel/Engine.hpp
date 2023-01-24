@@ -1,5 +1,7 @@
-#include <iostream>
-#include "Kernel.hpp"
+#ifndef ENGINE_H
+# define ENGINE_H
+
+#include "../Kernel/Kernel.hpp"
 
 class Engine
 {
@@ -13,3 +15,4 @@ class Engine
         static void Execute(int argc, char **argv);
         static void Exit();
 };
+#endif

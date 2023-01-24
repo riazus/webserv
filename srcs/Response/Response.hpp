@@ -1,7 +1,7 @@
 #ifndef RESPONSE_H
 # define RESPONSE_H
 
-# include <iostream>
+# include "../Request/Request.hpp"
 
 class Response
 {

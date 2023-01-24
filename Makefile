@@ -12,8 +12,8 @@ SRCS		=	srcs/main.cpp \
 				srcs/Request/Request.cpp \
 				srcs/Response/Response.cpp \
 				srcs/Client/Client.cpp \
-				srcs/Parser/Config.cpp \
-				srcs/Parser/Server.cpp \
+				srcs/Config/Config.cpp \
+				srcs/Server/Server.cpp \
 				srcs/Parser/Location.cpp \
 				srcs/Parser/Utils.cpp \
 				srcs/Parser/Parsing.cpp

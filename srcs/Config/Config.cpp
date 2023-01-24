@@ -48,7 +48,7 @@ void Config::Parsing(std::string filename)
 		}
 		line_count++;
 	}
-	getFullInfo();
+	//getFullInfo();
 }
 
 void Config::getFullInfo()

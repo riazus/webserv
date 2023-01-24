@@ -1,10 +1,8 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "Includes.hpp"
-
-class Location;
-
+#include "../includes.hpp"
+#include "../Parser/Location.hpp"
 
 class Server
 {

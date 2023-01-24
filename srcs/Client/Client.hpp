@@ -1,7 +1,10 @@
 #ifndef CLIENT_H
 # define CLIENT_H
 
+# include "../includes.hpp"
 # include "../Request/Request.hpp"
+# include "../Config/Config.hpp"
+# include "../Response/Response.hpp"
 
 class Client
 {
@@ -13,12 +16,11 @@ class Client
 
 		void	SetSocket(int socket);	
 		bool	hadResponse;
-		Request	request;
+		Request request;
 
 	private:
 		int	_socket;
 
 };
-
 
 #endif

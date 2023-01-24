@@ -1,4 +1,5 @@
-#pragma once
+#ifndef INCLUDES_HPP
+# define INCLUDES_HPP
 
 //SYSTEM
 # include <unistd.h>
@@ -47,3 +48,17 @@
 # define stringVector	std::vector<std::string>
 # define intVector      std::vector<int>
 # define mapClient      std::map<int,Client>
+
+#include <fstream>
+#include <string>
+#include <algorithm>
+#include <iostream>
+#include <vector>
+#include <map>
+#include <stdlib.h>
+
+
+# define CHARTOSKIP "; \t"
+
+
+#endif

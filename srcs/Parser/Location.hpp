@@ -1,12 +1,11 @@
 #ifndef LOCATION_HPP
 #define LOCATION_HPP
 
-#include "Includes.hpp"
+#include "../includes.hpp"
 
 
 class Location
 {
-
     private:
 
         std::string path;    	class ConfigFileContentException : public std::exception
