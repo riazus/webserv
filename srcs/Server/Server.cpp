@@ -20,14 +20,6 @@ bool isSpace(unsigned char c) {
 		c == '\t' || c == '\v' || c == '\f');
 }
 
-        /*std::string name;
-        std::string buffer;
-        std::vector<int> listen;
-        std::string root;
-        std::string index;
-        std::vector<std::string> methods;
-        std::vector<Location> location;*/
-
 void Server::setServerName(std::string name)
 {
 	this->name = name;

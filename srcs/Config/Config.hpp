@@ -19,6 +19,7 @@ class Config
 		std::string getFile(std::string filename);
 		void Parsing(std::string filename);
 		void getFullInfo();
+		serverVector getServers();
 
 		~Config(void);
 	

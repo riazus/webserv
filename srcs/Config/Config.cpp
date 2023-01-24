@@ -92,6 +92,11 @@ void Config::getFullInfo()
 	}
 }
 
+serverVector Config::getServers()
+{
+    return this->servers;
+}
+
 const char* Config::ConfigFileOpenException::what() const throw()
 {
 	return "ConfigFileOpenException : File open error!";

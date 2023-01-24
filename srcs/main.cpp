@@ -4,17 +4,6 @@
 
 int main(int argc, char **argv)
 {
-    //just example
-    Config config;
-    try 
-	{
-     config.Parsing("./test.conf"); // path to .conf file
-	}
-	catch (std::exception& e)
-	{
-		std::cout << e.what() << std::endl;
-        return 1;
-	}
     // Engine::Validate(argc, argv);
     Engine::Execute(argc, argv);
     // Engine::Exit();

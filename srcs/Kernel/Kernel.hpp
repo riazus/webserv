@@ -14,6 +14,7 @@ class Kernel
         ~Kernel();
 
         void    Run();
+        void    SetConfig(Config *config);
 
     private :
         //intVector   _socketFd;
@@ -25,10 +26,12 @@ class Kernel
         struct epoll_event  _event;
         struct epoll_event  _eventsArray[MAX_EV];
 
-        // Now we use only ONE server:
         intVector   _serverFd;
+        serverVector _servers;
         
         mapClient   _clients;
+
+        Config      *_config;
 
 
         void    LoadKernel();

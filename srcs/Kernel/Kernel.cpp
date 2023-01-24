@@ -167,17 +167,21 @@ void Kernel::AcceptNewClient(int eventPollFd)
 
 bool Kernel::fdIsServer(int eventPollFd)
 {
-
+	for (intVector::iterator it = _serverFd.begin(); it != _serverFd.end(); it++)
+		if (*it == eventPollFd)
+			return true;
     return false;
 }
 
 void Kernel::InitEpoll()
 {
 	std::memset((struct epoll_event *)&this->_event, 0, sizeof(this->_event));
-	//TODO: NEED IN CYCLE! 
-	this->_event.data.fd = this->_socketFd;
-	this->_event.events = EPOLLIN;
-	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, this->_socketFd, &this->_event);
+	for (intVector::iterator it = _serverFd.begin(); it != _serverFd.end(); it++)
+	{
+		this->_event.data.fd = *it;
+		this->_event.events = EPOLLIN;
+		epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, *it, &this->_event);
+	}
 }
 
 // Returns prepared socket's fd for accept connection
@@ -242,6 +246,8 @@ void Kernel::CreateEpoll()
 
 void Kernel::LoadKernel()
 {
+	this->_servers = _config->getServers();
+
 	this->CreateEpoll();
 	this->CreateSocket();
 	this->InitEpoll();
@@ -276,10 +282,12 @@ void Kernel::Run()
 			}
 			else if (this->_eventsArray[i].events & EPOLLIN && this->fdIsServer(this->_eventsArray[i].data.fd))
 			{
+				std::cout << "Accept new client..." << std::endl;
 				this->AcceptNewClient(this->_eventsArray[i].data.fd);
 			}
 			else if (this->_eventsArray[i].events & EPOLLIN)
 			{
+				std::cout << "Start read client's request..." << std::endl;
 				this->ClientRead(this->_eventsArray[i].data.fd);
 			}
 			else if (this->_eventsArray[i].events & EPOLLOUT)
@@ -297,4 +305,9 @@ void Kernel::Run()
 	}
 	this->CloseSockets();
 	std::cout << "Shutting down server..." << std::endl;
+}
+
+void Kernel::SetConfig(Config *config)
+{
+	this->_config = config;
 }
