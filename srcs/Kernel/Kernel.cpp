@@ -213,7 +213,7 @@ int Kernel::CreateSocket(Server *server)
 	//NB! Need to FIX
 	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	std::cout << "BIND NEW PORT: " << server->getPort() << std::endl;
-	servaddr.sin_port = server->getPort();
+	servaddr.sin_port = htons(server->getPort());
 
 	std::memset(servaddr.sin_zero, '\0', sizeof(servaddr.sin_zero));
 
@@ -243,6 +243,7 @@ void Kernel::InitSocket()
 {
 	for(serverVector::iterator it = this->_servers.begin(); it != this->_servers.end(); it++)
 	{
+		std::cout << "CREATE SOCKET ITERATOR" << *it << std::endl; 
 		this->_serverFds.push_back(this->CreateSocket(*it));
 	}
 	for(intVector::iterator it = this->_serverFds.begin(); it != this->_serverFds.end(); it++)
