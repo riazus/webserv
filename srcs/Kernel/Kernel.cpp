@@ -188,13 +188,15 @@ int Kernel::CreateSocket(Server *server)
 	const int opt = 1;
 	int listen_fd;
 	struct sockaddr_in servaddr;
-
+	std::cout << "SOCKET()" << std::endl;
+	sleep(2);
 	if ((listen_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
 		CloseSockets();
 		throw std::logic_error("Error: socket() failed");
 	}
-	
+	std::cout << "SETSOCKOPT()" << std::endl;
+	sleep(2);
 	if (setsockopt(listen_fd, SOL_SOCKET, SO_REUSEPORT | SO_REUSEADDR, &opt, sizeof(opt)))
 	{
 		CloseSockets();
@@ -209,7 +211,7 @@ int Kernel::CreateSocket(Server *server)
 
 	servaddr.sin_family = AF_INET;
 	//NB! Need to FIX
-	servaddr.sin_addr.s_addr = INADDR_ANY;
+	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	std::cout << "BIND NEW PORT: " << server->getPort() << std::endl;
 	servaddr.sin_port = server->getPort();
 
@@ -220,13 +222,15 @@ int Kernel::CreateSocket(Server *server)
 		CloseSockets();
 		throw std::logic_error("Error: inet_addr: Invalid IP");
 	}
-
+	std::cout << "BIND()" << std::endl;
+	sleep(2);
 	if (bind(listen_fd, (struct sockaddr*) &servaddr, sizeof(servaddr)) < 0)
 	{
 		CloseSockets();
 		throw std::logic_error("Error: bind() failed");
 	}
-
+	std::cout << "LISTEN()" << std::endl;
+	sleep(2);
 	if (listen(listen_fd, MAX_CLIENTS) < 0)
 	{
 		CloseSockets();
@@ -276,9 +280,9 @@ void Kernel::Run()
 	while(true)
 	{
 		errno = 0;
-		std::cout << "EPOLL FD: " << this->_epollFd << std::endl;
+		//std::cout << "EPOLL FD: " << this->_epollFd << std::endl;
 		nfds = epoll_wait(this->_epollFd, this->_eventsArray, MAX_EV, APP_TIMEOUT);
-		std::cout << "NFDS COUNT: " << nfds << std::endl;
+		//std::cout << "NFDS COUNT: " << nfds << std::endl;
 		if (errno == EINVAL || errno == EFAULT || errno == EBADFD)
 		{
 			throw std::logic_error("Error: epoll_wait() failed");
