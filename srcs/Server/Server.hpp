@@ -10,7 +10,8 @@ class Server
     private:
 
         std::string                         name;
-        std::vector<int>                    listen;
+        int                                 port;
+        struct in_addr	                    host;
         std::string                         root;
         std::string                         index;
         std::vector<std::string>            methods;
@@ -37,7 +38,7 @@ class Server
         void setMaxClientBodySize(long long size);
 
         std::string getServerName();
-        std::vector<int> getPort();
+        int getPort();
         std::string getRoot();
         std::string getIndex();
         std::vector<std::string> getMethods();

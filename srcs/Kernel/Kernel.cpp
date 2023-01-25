@@ -21,12 +21,11 @@ Kernel::~Kernel()
 void Kernel::CloseSockets()
 {
 	//TODO:
-    /*for(intVector::iterator it = _socketFd.begin(); it != _socketFd.end(); it++)
+    for(intVector::iterator it = _serverFds.begin(); it != _serverFds.end(); it++)
     {
         close(*it);
-    }*/
-	close(_socketFd);
-    //close(_epollFd);
+    }
+    close(_epollFd);
 }
 
 void Kernel::DeleteClient(int socketFd)
@@ -143,10 +142,9 @@ void Kernel::ClientRead(int eventPollFd)
 void Kernel::AcceptNewClient(int eventPollFd)
 {
 	int new_socket;
-	int addlen = sizeof(_servaddr);
 	Client newClient;
 
-	new_socket = accept(eventPollFd, (struct sockaddr *)&_servaddr, (socklen_t*)&addlen);
+	new_socket = accept(eventPollFd, NULL, NULL);
 	if (new_socket < 0 && errno != EWOULDBLOCK)
 	{
 		throw std::logic_error("Error: accept() failed");
@@ -167,7 +165,7 @@ void Kernel::AcceptNewClient(int eventPollFd)
 
 bool Kernel::fdIsServer(int eventPollFd)
 {
-	for (intVector::iterator it = _serverFd.begin(); it != _serverFd.end(); it++)
+	for (intVector::iterator it = _serverFds.begin(); it != _serverFds.end(); it++)
 		if (*it == eventPollFd)
 			return true;
     return false;
@@ -176,7 +174,7 @@ bool Kernel::fdIsServer(int eventPollFd)
 void Kernel::InitEpoll()
 {
 	std::memset((struct epoll_event *)&this->_event, 0, sizeof(this->_event));
-	for (intVector::iterator it = _serverFd.begin(); it != _serverFd.end(); it++)
+	for (intVector::iterator it = _serverFds.begin(); it != _serverFds.end(); it++)
 	{
 		this->_event.data.fd = *it;
 		this->_event.events = EPOLLIN;
@@ -185,54 +183,68 @@ void Kernel::InitEpoll()
 }
 
 // Returns prepared socket's fd for accept connection
-int Kernel::CreateSocket()
+int Kernel::CreateSocket(Server *server)
 {
 	const int opt = 1;
+	int listen_fd;
+	struct sockaddr_in servaddr;
 
-	if ((this->_socketFd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+	if ((listen_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
 		CloseSockets();
 		throw std::logic_error("Error: socket() failed");
 	}
 	
-	if (setsockopt(_socketFd, SOL_SOCKET, SO_REUSEPORT | SO_REUSEADDR, &opt, sizeof(opt)))
+	if (setsockopt(listen_fd, SOL_SOCKET, SO_REUSEPORT | SO_REUSEADDR, &opt, sizeof(opt)))
 	{
 		CloseSockets();
 		throw std::logic_error("Error: setsockopt() failed");
 	}
 
-	/*if (fcntl(_socketFd, F_SETFL, O_NONBLOCK) < 0)
+	/*if (fcntl(listen_fd, F_SETFL, O_NONBLOCK) < 0)
 	{
 		CloseSockets();
 		throw std::logic_error("Error: fcntl() failed");
 	}*/
 
-	_servaddr.sin_family = AF_INET;
+	servaddr.sin_family = AF_INET;
 	//NB! Need to FIX
-	_servaddr.sin_addr.s_addr = INADDR_ANY;
-	_servaddr.sin_port = htons(8080);
+	servaddr.sin_addr.s_addr = INADDR_ANY;
+	std::cout << "BIND NEW PORT: " << server->getPort() << std::endl;
+	servaddr.sin_port = server->getPort();
 
-	std::memset(_servaddr.sin_zero, '\0', sizeof(_servaddr.sin_zero));
+	std::memset(servaddr.sin_zero, '\0', sizeof(servaddr.sin_zero));
 
-	if (_servaddr.sin_addr.s_addr == static_cast<in_addr_t>(-1))
+	if (servaddr.sin_addr.s_addr == static_cast<in_addr_t>(-1))
 	{
 		CloseSockets();
 		throw std::logic_error("Error: inet_addr: Invalid IP");
 	}
 
-	if (bind(_socketFd, (struct sockaddr*) &_servaddr, sizeof(_servaddr)) < 0)
+	if (bind(listen_fd, (struct sockaddr*) &servaddr, sizeof(servaddr)) < 0)
 	{
 		CloseSockets();
 		throw std::logic_error("Error: bind() failed");
 	}
 
-	if (listen(_socketFd, MAX_CLIENTS) < 0)
+	if (listen(listen_fd, MAX_CLIENTS) < 0)
 	{
 		CloseSockets();
 		throw std::logic_error("Error: listen() failed");
 	}
-	//return listen_fd;
-	return 0;
+	return listen_fd;
+}
+
+void Kernel::InitSocket()
+{
+	for(serverVector::iterator it = this->_servers.begin(); it != this->_servers.end(); it++)
+	{
+		this->_serverFds.push_back(this->CreateSocket(*it));
+	}
+	for(intVector::iterator it = this->_serverFds.begin(); it != this->_serverFds.end(); it++)
+	{
+		std::cout << "init server socket: " << *it << std::endl; 
+	}
 }
 
 void Kernel::CreateEpoll()
@@ -246,10 +258,10 @@ void Kernel::CreateEpoll()
 
 void Kernel::LoadKernel()
 {
-	this->_servers = _config->getServers();
-
+	this->_servers = this->_config->getServers();
+	
 	this->CreateEpoll();
-	this->CreateSocket();
+	this->InitSocket();
 	this->InitEpoll();
 }
 
@@ -259,11 +271,14 @@ void Kernel::Run()
 	int frames = 0;
 	int nfds = 0;
 
+	std::cout << "Servers initialization..." << std::endl;
     this->LoadKernel();
 	while(true)
 	{
 		errno = 0;
+		std::cout << "EPOLL FD: " << this->_epollFd << std::endl;
 		nfds = epoll_wait(this->_epollFd, this->_eventsArray, MAX_EV, APP_TIMEOUT);
+		std::cout << "NFDS COUNT: " << nfds << std::endl;
 		if (errno == EINVAL || errno == EFAULT || errno == EBADFD)
 		{
 			throw std::logic_error("Error: epoll_wait() failed");
@@ -276,7 +291,8 @@ void Kernel::Run()
 		//TODO: Main logic ->
 		for (int i = 0; i < nfds; i++)
 		{
-			if (this->_eventsArray[i].events & EPOLLERR || this->_eventsArray[i].events & EPOLLHUP)
+			std::cout << "Start handling..." << std::endl;
+			if (this->_eventsArray[i].events & EPOLLERR ||  this->_eventsArray[i].events & EPOLLHUP)
 			{
 				throw std::logic_error("There is a bad event in events array");
 			}

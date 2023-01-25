@@ -32,12 +32,12 @@ std::string Server::getServerName()
 
 void Server::setPort(int port)
 {
-	this->listen.push_back(port);
+	this->port = port;
 }
 
-std::vector<int> Server::getPort()
+int Server::getPort()
 {
-	return (this->listen);
+	return (this->port);
 }
 
 void Server::setRoot(std::string root)

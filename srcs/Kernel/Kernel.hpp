@@ -17,16 +17,12 @@ class Kernel
         void    SetConfig(Config *config);
 
     private :
-        //intVector   _socketFd;
-        int                 _socketFd;
-        struct sockaddr_in  _servaddr;
-
         //epoll vars
         int                 _epollFd;
         struct epoll_event  _event;
         struct epoll_event  _eventsArray[MAX_EV];
 
-        intVector   _serverFd;
+        intVector   _serverFds;
         serverVector _servers;
         
         mapClient   _clients;
@@ -37,7 +33,8 @@ class Kernel
         void    LoadKernel();
         void    CreateEpoll();
         void    InitEpoll();
-        int     CreateSocket();
+        void    InitSocket();
+        int     CreateSocket(Server *server);
         void    CloseSockets();
         void    AcceptNewClient(int eventPollFd);
         bool    fdIsServer(int eventPollFd);
