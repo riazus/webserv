@@ -46,7 +46,7 @@ class Kernel
         bool    WriteClientRequest(int socketFd);
         void    DeleteClient(int socketFd);
 
-        std::string getResponse(std::string buffer);
+        std::string getResponse();
 
 };
 
