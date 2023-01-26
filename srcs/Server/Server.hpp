@@ -12,6 +12,7 @@ class Server
         std::string                         name;
         int                                 port;
         struct in_addr	                    host;
+        std::string                         hostName;
         std::string                         root;
         std::string                         index;
         std::vector<std::string>            methods;
@@ -36,6 +37,8 @@ class Server
         void setErrorPage(int num, std::string page);
         void setCgi(std::string name, std::string path);
         void setMaxClientBodySize(long long size);
+        void setHostAddr(in_addr_t addr);
+        void setHostName(std::string name);
 
         std::string getServerName();
         int getPort();

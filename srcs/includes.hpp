@@ -49,6 +49,7 @@
 # define intVector      std::vector<int>
 # define serverVector   std::vector<Server *>
 # define mapClient      std::map<int,Client>
+# define mapString      std::map<std::string, std::string>
 
 #include <fstream>
 #include <string>

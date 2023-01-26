@@ -1,9 +1,10 @@
 #ifndef KERNEL_H
 # define KERNEL_H
 
+# include "../includes.hpp"
+# include "../Server/Server.hpp"
 # include "../Client/Client.hpp"
-# include "../Request/Request.hpp"
-# include "../Response/Response.hpp"
+# include "../Parser/ParseMsg.hpp"
 
 class Kernel
 {
@@ -28,7 +29,7 @@ class Kernel
         mapClient   _clients;
 
         Config      *_config;
-
+        ParseMsg    *_parserMsg;
 
         void    LoadKernel();
         void    CreateEpoll();

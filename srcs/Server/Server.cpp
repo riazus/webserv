@@ -105,6 +105,16 @@ void Server::setMaxClientBodySize(long long size)
 	this->max_client_body_size = size;
 }
 
+void Server::setHostAddr(in_addr_t addr)
+{
+	this->host.s_addr = addr;
+}
+
+void Server::setHostName(std::string name)
+{
+	this->hostName = name;
+}
+
 long long Server::getMaxClientBodySize()
 {
 	return (this->max_client_body_size);

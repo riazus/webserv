@@ -16,7 +16,9 @@ SRCS		=	srcs/main.cpp \
 				srcs/Server/Server.cpp \
 				srcs/Parser/Location.cpp \
 				srcs/Parser/Utils.cpp \
-				srcs/Parser/Parsing.cpp
+				srcs/Parser/Parsing.cpp \
+				srcs/Parser/ParseRequest.cpp \
+				srcs/Parser/ParseResponse.cpp
 
 OBJS		=	$(SRCS:%.cpp=%.o)
 DEPS		=	$(SRCS:%.cpp=%.d)

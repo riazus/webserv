@@ -84,7 +84,7 @@ bool Kernel::ReadClientRequest(int clientSocket)
 		//throw std::logic_error("Error: read Client's request failed");
 		return false;
 	}
-	else if (requestLen == 0)
+	else if (requestLen == 0) //Closing connection request from clients
 	{
 		this->DeleteClient(clientSocket);
 		return false;
@@ -92,28 +92,36 @@ bool Kernel::ReadClientRequest(int clientSocket)
 	else
 	{
 		//TODO check for len after a lot of manipulation
-		this->_clients[clientSocket].request.contetnSize += requestLen;
-		//timestamp
+		this->_clients[clientSocket].request.bodySize += requestLen;
+		if (this->_clients[clientSocket].request.requestLine.empty())
+			gettimeofday(&this->_clients[clientSocket].lastRequest, NULL);
 		this->_clients[clientSocket].request.requestLine.append(buffer, requestLen);
 	}
 
-	//TODO Matvey - parse buffer content
 	if (this->_clients[clientSocket].request.requestLine.find("\r\n\r\n") != std::string::npos
 		&& this->_clients[clientSocket].request.headerReady == false)
 	{
-		//this->_parser.parseHeader(this->_clients[clientSocket].request) ???
+		this->_parserMsg->ParseHeader(this->_clients[clientSocket].request);
 		this->_clients[clientSocket].request.headerReady = true;
-
+		if (std::atoi(this->_clients[clientSocket].request.getHeader("Content-Lenght").c_str()) == 0)
+		{
+			this->_clients[clientSocket].request.bodyReady = true;
+			return true;
+		}
 	}
 	if (this->_clients[clientSocket].request.headerReady == true)
 	{
 		body = this->_clients[clientSocket].request.requestLine.substr(this->_clients[clientSocket].request.requestLine.find("\r\n\r\n") + 4);
 		std::string header = this->_clients[clientSocket].request.requestLine.substr(0, this->_clients[clientSocket].request.requestLine.find("\r\n\r\n") + 4);
-		std::cout << header << std::endl;
+		if ((this->_clients[clientSocket].request.contentSize - header.size()) == (unsigned long)std::atol(_clients[clientSocket].request.getHeader("Content-Length").c_str()))
+		{
+			std::cout << "CONTENT SIZE = " << this->_clients[clientSocket].request.contentSize - header.size() << " CONTENT LENGTH " << std::atoi(_clients[clientSocket].request.getHeader("Content-Length").c_str()) << '\n';
+			this->_parserMsg->ParseBody(_clients[clientSocket].request);
+			_clients[clientSocket].request.bodyReady = true;
+		}
 	}
 
-	//Afterwork need change
-    return false;
+    return true;
 }
 
 void Kernel::ClientRead(int eventPollFd)
@@ -240,6 +248,7 @@ void Kernel::CreateEpoll()
 void Kernel::LoadKernel()
 {
 	this->_servers = this->_config->getServers();
+	this->_parserMsg = new ParseMsg();
 	
 	this->CreateEpoll();
 	this->InitSocket();

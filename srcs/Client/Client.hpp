@@ -17,6 +17,7 @@ class Client
 		void	SetSocket(int socket);	
 		bool	hadResponse;
 		Request request;
+		timeval	lastRequest;
 
 	private:
 		int	_socket;

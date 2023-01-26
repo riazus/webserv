@@ -2,6 +2,7 @@
 # define REQUEST_H
 
 # include "../includes.hpp"
+# include "../Server/Server.hpp"
 
 class Request
 {
@@ -11,12 +12,42 @@ class Request
 		Request &operator=(const Request &rhs);
 		~Request(void);
 		
-		int	contetnSize;
-		std::string requestLine;
-		bool		bodyReady;
-		bool		headerReady;
+		void			ResetHeaders();
+		
+		int				bodySize;
+		int				contentSize;
+		std::string 	requestLine;
+		bool			bodyReady;
+		bool			headerReady;
+		stringVector	header;
+
+		//GETTERS
+		int				getCode() const;
+		std::string 	getHeader(std::string header);
+		std::string		getMethod() const;
+		mapString		getHeaders() const;
+
+		//SETTERS
+		void			setCode(int code);
+		void			setBody(std::string body);
+		void			setMethod(std::string method);
+		void			setPath(std::string path);
+		void			setVersion(std::string version);
+		void			setHeader(std::string token, std::string value);
+		void 			setEnvForCgi(std::string token, std::string value);
+		void			setNetwork(std::string ip);
 
 	private:
+		int				_code;
+		mapString		_headers;
+		mapString		_env_for_cgi;
+		std::string		_body;
+		std::string 	_version;
+		std::string 	_method;
+		int				_port;
+		std::string 	_path;
+		std::string 	_query;
+		Server			_server;
 		
 };
 
