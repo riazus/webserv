@@ -26,6 +26,7 @@ class Request
 		std::string 	getHeader(std::string header);
 		std::string		getMethod() const;
 		mapString		getHeaders() const;
+		Server			*getServer()	const;
 
 		//SETTERS
 		void			setCode(int code);
@@ -47,7 +48,7 @@ class Request
 		int				_port;
 		std::string 	_path;
 		std::string 	_query;
-		Server			_server;
+		Server			*_server;
 		
 };
 

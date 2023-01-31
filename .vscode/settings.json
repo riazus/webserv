@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "istream": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "iostream": "cpp",
+        "vector": "cpp"
     }
 }

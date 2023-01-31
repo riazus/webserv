@@ -19,8 +19,11 @@ class Client
 		Request request;
 		timeval	lastRequest;
 
+		void	setServer(Server &server);
+
 	private:
-		int	_socket;
+		int		_socket;
+		Server	_server;
 
 };
 

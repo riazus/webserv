@@ -3,6 +3,7 @@
 
 #include "../Request/Request.hpp"
 #include "../Response/Response.hpp"
+#include "../Response/ResponseBody.hpp"
 #include "../includes.hpp"
 
 class ParseMsg
@@ -24,11 +25,12 @@ class ParseMsg
         void            ParseFirstLine(Request &request);
 
     /*RESPONSE*/
-    /*public:
-        static void ParseResponse(Response &response);
+    public:
+        void            ParseResponse(ResponseBody &responseBody, Request &request, Server &server);
     private:
-        static Config FindLocation(Server &server, std::string &locationName);
-        static std::string CheckContentLocation(std::string contentLocation);*/
+        Server          FindLocation(Server &server, std::string &locationName);
+        std::string     CheckContentLocation(std::string contentLocation);
+        void		    ParseCookies(ResponseBody& responseBody, Request& request);
 
 };
 

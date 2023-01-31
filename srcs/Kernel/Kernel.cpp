@@ -35,6 +35,37 @@ void Kernel::DeleteClient(int socketFd)
 	close(socketFd);
 }
 
+void Kernel::getServerForClient(Client &client)
+{
+	bool foundAConf = false;
+	Server *rightServer = (*(this->_servers.begin()));
+
+	for (serverVector::iterator it = _servers.begin(); it != _servers.end(); it++)
+	{
+		if (!(client.request.getServer()->getHostName().empty()))
+		{
+			std::string serverName = (*it)->getHostName();
+			if (client.request.getServer()->getHostName() == serverName && (*it)->getPort() == client.request.getServer()->getPort())
+			{
+				foundAConf = true;
+				rightServer = *it;
+				break ;
+			}
+		}
+		else
+		{
+			if (client.request.getServer() == *it)
+			{
+				rightServer = *it;
+				foundAConf = true;
+			}
+		}
+		if (foundAConf)
+			break ;
+	}
+	client.setServer(*rightServer);
+}
+
 // Parsing http request and return ready string to send response
 std::string Kernel::getResponse()
 {
@@ -51,24 +82,18 @@ std::string Kernel::getResponse()
     return std::string("HTTP/1.1 200 OK \nContent-Type: text/html\nContent-Length: 142\n\n" + body);
 }
 
-bool Kernel::WriteClientRequest(int socketFd)
-{
-
-    return false;
-}
-
 void Kernel::ClientWrite(int eventPollFd)
 {
-	throw std::logic_error("Non implemented ClientWrite");
+	//throw std::logic_error("Non implemented ClientWrite");
 	
 	std::string response;
 
 	std::cout << "CLIENT WRITE TO SERVER" << std::endl;
 	std::cout << _clients[eventPollFd].request.requestLine << std::endl;
 
-	//this->getRightsServer(this->_clients[eventPollFd]);
+	this->getServerForClient(this->_clients[eventPollFd]);
 
-	//response = this->_clients[eventPollFd].
+	//this->_parserMsg->ParseResponse()
 }
 
 bool Kernel::ReadClientRequest(int clientSocket)

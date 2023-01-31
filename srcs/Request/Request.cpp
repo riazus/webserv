@@ -79,6 +79,11 @@ mapString Request::getHeaders() const
     return this->_headers;
 }
 
+Server *Request::getServer() const
+{
+    return this->_server;
+}
+
 void Request::setBody(std::string body)
 {
 	this->_body = body;
@@ -120,10 +125,10 @@ void Request::setNetwork(std::string ip)
 
 	host = ip.substr(0, colons);
 	if (host == "localhost")
-		this->_server.setHostAddr(inet_addr("127.0.0.1"));
+		this->_server->setHostAddr(inet_addr("127.0.0.1"));
 	else if (host.find_first_not_of("0123456789.") != std::string::npos)
-		this->_server.setHostName(host.c_str());
+		this->_server->setHostName(host.c_str());
 	else
-		this->_server.setHostAddr(inet_addr(host.c_str()));
-	this->_server.setPort(std::atoi(ip.substr(++colons).c_str()));
+		this->_server->setHostAddr(inet_addr(host.c_str()));
+	this->_server->setPort(std::atoi(ip.substr(++colons).c_str()));
 }

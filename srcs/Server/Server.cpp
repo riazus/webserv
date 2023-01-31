@@ -120,6 +120,11 @@ long long Server::getMaxClientBodySize()
 	return (this->max_client_body_size);
 }
 
+std::string Server::getHostName()
+{
+    return this->hostName;
+}
+
 Server::~Server()
 {
 }

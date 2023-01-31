@@ -49,6 +49,7 @@ class Server
         std::map<int, std::string> getErrorPage();
         std::map<std::string, std::string> getCgi();
         long long getMaxClientBodySize();
+        std::string getHostName();
 
 
         ~Server();

@@ -22,3 +22,8 @@ void Client::SetSocket(int socket)
 {
 	this->_socket = socket;
 }
+
+void Client::setServer(Server &server)
+{
+	this->_server = server;
+}

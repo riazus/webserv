@@ -45,11 +45,13 @@
 # define APP_TIMEOUT 200
 
 // For more comfort
-# define stringVector	std::vector<std::string>
-# define intVector      std::vector<int>
-# define serverVector   std::vector<Server *>
-# define mapClient      std::map<int,Client>
-# define mapString      std::map<std::string, std::string>
+# define stringVector	    std::vector<std::string>
+# define intVector          std::vector<int>
+# define serverVector       std::vector<Server *>
+# define mapClient          std::map<int,Client>
+# define mapString          std::map<std::string,std::string>
+# define mapStringVectorInt std::map<std::string,std::vector<int>>
+# define mapError           std::map<int,std::string>
 
 #include <fstream>
 #include <string>
