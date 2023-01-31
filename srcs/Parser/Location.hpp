@@ -8,12 +8,7 @@ class Location
 {
     private:
 
-        std::string path;    	class ConfigFileContentException : public std::exception
-	{
-	    public:
-
-		    virtual const char* what() const throw();
-	};
+        std::string path;
         std::string name;
         std::vector<std::string> methods;
         std::string root;
@@ -40,8 +35,17 @@ class Location
         int getAutoindex();
         std::vector<std::string> getMethods();
 
+        void location_error(std::string error);
+        void is_valid();
 
         ~Location();
+
+        class InvalidLocationException : public std::exception
+    	{
+	    public:
+
+		    virtual const char* what() const throw();
+	    };
 
 };
 

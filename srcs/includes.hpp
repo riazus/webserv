@@ -36,6 +36,7 @@
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <ostream>
+# include <stdlib.h>
 
 // SHORTCUT
 # define BUFFER_SIZE 4096
@@ -53,13 +54,6 @@
 # define mapStringVectorInt std::map<std::string,std::vector<int>>
 # define mapError           std::map<int,std::string>
 
-#include <fstream>
-#include <string>
-#include <algorithm>
-#include <iostream>
-#include <vector>
-#include <map>
-#include <stdlib.h>
 
 
 # define CHARTOSKIP "; \t"
