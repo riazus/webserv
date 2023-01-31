@@ -77,7 +77,7 @@ bool Kernel::ReadClientRequest(int clientSocket)
 	std::string body("");
 
 	ssize_t requestLen = read(clientSocket, buffer, BUFFER_SIZE);
-
+	//std::cout << buffer << std::endl;
 	if (requestLen == -1)
 	{
 		this->DeleteClient(clientSocket);

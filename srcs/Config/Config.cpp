@@ -53,7 +53,7 @@ void Config::Parsing(std::string filename)
 
 void Config::getFullInfo()
 {
-	// std::cout << "--------------------CONFIG FILE INFO--------------------" << std::endl;
+	std::cout << "--------------------CONFIG FILE INFO--------------------" << std::endl;
 	for (int i=0; i < servers.size(); i++)
 	{
 		std::cout << "===================Server " << i << "===================" << std::endl << std::endl;
@@ -61,16 +61,16 @@ void Config::getFullInfo()
 		std::cout << " port:	" << servers[i]->getPort() << std::endl;
 		std::cout << "root:	" << servers[i]->getRoot() << std::endl;
 		std::cout << "index:	" << servers[i]->getIndex() << std::endl;
-		std::list<Location> loc_tmp = servers[i]->getLocation();
-		std::list<Location>::iterator loc = loc_tmp.begin();
-		std::list<Location>::iterator loc_end = loc_tmp.end();
-		while (loc != loc_end)
+		std::list<Location *> loc_tmp = servers[i]->getLocation();
+		std::list<Location *>::iterator loc_end = loc_tmp.end();
+		for (std::list<Location *>::iterator loc = loc_tmp.begin(); loc != loc_end; loc++)
 		{
 			std::cout << "+++++++++++++++++++Location+++++++++++++++++++" << std::endl << std::endl;
-			std::cout << "root:	" << loc->getPath() << std::endl;
-			std::cout << "index:	" << loc->getIndex() << std::endl;
-			std::cout << "autoindex:	" << loc->getAutoindex() << std::endl;
-			loc++;
+			std::cout << "root:	" << (*loc)->getPath() << std::endl;
+			std::cout << "index:	" << (*loc)->getIndex() << std::endl;
+			std::cout << "autoindex:	" << (*loc)->getAutoindex() << std::endl;
+			std::cout << "autoindex:	" << (*loc)->getAutoindex() << std::endl;
+			std::cout << "autoindex:	" << (*loc)->getAutoindex() << std::endl;
 		}
 		std::map<std::string, std::string> map_tmp = servers[i]->getCgi();
 		std::map<std::string, std::string>::iterator it(map_tmp.begin());

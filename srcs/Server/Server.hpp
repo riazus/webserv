@@ -20,7 +20,7 @@ class Server
         std::vector<std::string>            methods;
         std::map<int, std::string>          error_page;
         std::map<std::string, std::string>  cgi;
-        std::list<Location>               location;
+        std::list<Location *>               location;
         long long                           max_client_body_size;
 
     public:
@@ -35,7 +35,7 @@ class Server
         void setRoot(std::string root);
         void setIndex(std::string index);
         void setMethods(std::string methods);
-        void setLocation(Location location);
+        void setLocation(Location *location);
         void setErrorPage(int num, std::string page);
         void setCgi(std::string name, std::string path);
         void setMaxClientBodySize(long long size);
@@ -47,7 +47,7 @@ class Server
         std::string getRoot();
         std::string getIndex();
         std::vector<std::string> getMethods();
-        std::list<Location> getLocation();
+        std::list<Location *> getLocation();
         std::map<int, std::string> getErrorPage();
         std::map<std::string, std::string> getCgi();
         long long getMaxClientBodySize();

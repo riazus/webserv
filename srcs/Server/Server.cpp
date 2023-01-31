@@ -65,12 +65,12 @@ std::vector<std::string> Server::getMethods()
 	return (this->methods);
 }
 
-void Server::setLocation(Location location)
+void Server::setLocation(Location *location)
 {
 	this->location.push_back(location);
 }
 
-std::list<Location> Server::getLocation()
+std::list<Location *> Server::getLocation()
 {
 	return (this->location);
 }
@@ -126,28 +126,30 @@ void Server::is_valid()
 {
 	if (getPort() == 0)
 		server_error("port is not set");
+	if (getServerName() == "")
+		server_error("server name is not set");
 	// if (get_ip_address() == "")
 	// 	server_error("ip_address is not set");
 	if (getRoot() == "")
 		server_error("root is not set");
 	if (getIndex() == "")
 		server_error("index is not set");
-	if (getMaxClientBodySize() == 0)
-		server_error("max_client_body_size is not set");
+	// if (getMaxClientBodySize() == 0)
+	// 	server_error("max_client_body_size is not set");
 
 	int fd;
 	std::string error;
-	std::map<std::string, std::string> cgis = getCgi();
-	for (std::map<std::string, std::string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
-	{
-		fd = ::open(cgi->second.c_str(), O_RDONLY);
-		if (fd <= 0)
-		{
-			error = "cgi " + cgi->second + " is unavailable";
-			server_error(error);
-		}
-		close(fd);
-	}
+	// std::map<std::string, std::string> cgis = getCgi();
+	// for (std::map<std::string, std::string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
+	// {
+	// 	fd = ::open(cgi->second.c_str(), O_RDONLY);
+	// 	if (fd <= 0)
+	// 	{
+	// 		error = "cgi " + cgi->second + " is unavailable";
+	// 		server_error(error);
+	// 	}
+	// 	close(fd);
+	// }
 	std::map<int, std::string> error_pages = getErrorPage();
 	for (std::map<int, std::string>::iterator page = error_pages.begin(); page != error_pages.end(); page++)
 	{
@@ -159,12 +161,12 @@ void Server::is_valid()
 		}
 		close(fd);
 	}
-	std::list<Location> locations = getLocation();
+	std::list<Location *> locations = getLocation();
 	if (!locations.size())
 		server_error("location is not set");
-	for (std::list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
+	for (std::list<Location*>::iterator it = locations.begin(); it != locations.end(); it++)
 	{
-		location->is_valid();
+		(*it)->is_valid();
 	}
 }
 
