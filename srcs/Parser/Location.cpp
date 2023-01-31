@@ -65,6 +65,38 @@ std::vector<std::string> Location::getMethods()
 	return (this->methods);
 }
 
+void Location::location_error(std::string error)
+{
+	if (error != "")
+		std::cout << "Error: " << error << std::endl;
+	throw Location::InvalidLocationException();
+}
+
+void	Location::is_valid()
+{
+	std::string error;
+	if (getPath() == "")
+	{
+		error = (getPath() + " path is not set");
+		location_error(error);
+	}
+	std::vector<std::string> methods = getMethods();
+	if (methods.size() == 0)
+	{
+		error = (getPath() + " allowed methods are not set");
+		location_error(error);
+	}
+	if (getRoot() == "")
+	{
+		error = (getPath() + " location_root is not set");
+		location_error(error);
+	}
+}
+
+const char* Location::InvalidLocationException::what() const throw()
+{
+	return "InvalidLocationException: Invalid location configuration!";
+}
 
 Location::~Location()
 {

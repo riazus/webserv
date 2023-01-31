@@ -35,10 +35,11 @@ void Engine::Execute(int argc, char **argv)
         //for example Parser *parser = new Parser();
         //parser->Parse();
         Config *config = new Config();
-        Kernel *kernel = new Kernel();
-        config->Parsing("./test_1server.conf");
-        kernel->SetConfig(config);
-        kernel->Run();
+        // Kernel *kernel = new Kernel();
+        config->Parsing("./test.conf");
+        config->getFullInfo();
+        // kernel->SetConfig(config);
+        // kernel->Run();
 
     }
     catch(const std::exception& e)

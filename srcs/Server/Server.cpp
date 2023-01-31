@@ -15,11 +15,6 @@ Server &Server::operator=(const Server &server)
 	return (*this);
 }
 
-bool isSpace(unsigned char c) {
-	return ( c == '\n' || c == '\r' ||
-		c == '\t' || c == '\v' || c == '\f');
-}
-
 void Server::setServerName(std::string name)
 {
 	this->name = name;
@@ -75,7 +70,7 @@ void Server::setLocation(Location location)
 	this->location.push_back(location);
 }
 
-std::vector<Location> Server::getLocation()
+std::list<Location> Server::getLocation()
 {
 	return (this->location);
 }
@@ -118,6 +113,64 @@ void Server::setHostName(std::string name)
 long long Server::getMaxClientBodySize()
 {
 	return (this->max_client_body_size);
+}
+
+void Server::server_error(std::string error)
+{
+	if (error != "")
+		std::cout << "Error: " << error << std::endl;
+	throw Server::InvalidServerException();
+}
+
+void Server::is_valid()
+{
+	if (getPort() == 0)
+		server_error("port is not set");
+	// if (get_ip_address() == "")
+	// 	server_error("ip_address is not set");
+	if (getRoot() == "")
+		server_error("root is not set");
+	if (getIndex() == "")
+		server_error("index is not set");
+	if (getMaxClientBodySize() == 0)
+		server_error("max_client_body_size is not set");
+
+	int fd;
+	std::string error;
+	std::map<std::string, std::string> cgis = getCgi();
+	for (std::map<std::string, std::string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
+	{
+		fd = ::open(cgi->second.c_str(), O_RDONLY);
+		if (fd <= 0)
+		{
+			error = "cgi " + cgi->second + " is unavailable";
+			server_error(error);
+		}
+		close(fd);
+	}
+	std::map<int, std::string> error_pages = getErrorPage();
+	for (std::map<int, std::string>::iterator page = error_pages.begin(); page != error_pages.end(); page++)
+	{
+		fd = ::open((getRoot() + page->second).c_str(), O_RDONLY);
+		if (fd <= 0)
+		{
+			error = "error_page " + getRoot() + page->second + " is unavailable";
+			server_error(error);
+		}
+		close(fd);
+	}
+	std::list<Location> locations = getLocation();
+	if (!locations.size())
+		server_error("location is not set");
+	for (std::list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
+	{
+		location->is_valid();
+	}
+}
+
+const char* Server::InvalidServerException::what() const throw()
+{
+	return "InvalidServerException: Invalid server configuration!";
 }
 
 Server::~Server()

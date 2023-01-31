@@ -107,10 +107,8 @@ Server *parse_server(std::vector<std::string> config, int *line_count)
 		end = ft_split(config[*line_count], CHARTOSKIP);
 	}
 	if (end.size() && end[0] != "}")
-		throw Config::ConfigFileContentException();
-	// if (!server->is_valid(error))
-	// 	throw Config::ConfigFileContentException(); ------------))
-	// 	throw Config::ConfigFileContentException();--------------------------------------
+		config_error("expected '}'");
+	server->is_valid();
 	return server;
 }
 
@@ -146,6 +144,7 @@ Location parse_location(std::vector<std::string> &config, int *line_count, Serve
 			break;
 		else if (line[0] == "allow_methods")
 		{
+			std::cout << "allow_methods: " << line[1] << std::endl;
 			if (line.size() < 2)
 				config_error("expected 1 argument min after allow_methods");
 			for (std::vector<std::string>::const_iterator it = line.begin() + 1; it != line.end(); it++)
@@ -155,18 +154,21 @@ Location parse_location(std::vector<std::string> &config, int *line_count, Serve
 		}
 		else if (line[0] == "root")
 		{
+			std::cout << "root: " << line[1] << std::endl;
 			if (line.size() != 2)
 				config_error("expected 1 argument after root");
 			location.setRoot(line[1]);
 		}
 		else if (line[0] == "index")
 		{
+			std::cout << "index: " << line[1] << std::endl;
 			if (line.size() != 2)
 				config_error("expected 1 argument after index");
 			location.setIndex(line[1]);
 		}
 		else if (line[0] == "autoindex")
 		{
+			std::cout << "autoindex: " << line[1] << std::endl;
 			std::cout << line.size() << " " << line[0] << line[1] << std::endl;
 			if (line.size() != 2)
 				config_error("expected 1 argument after autoindex");
