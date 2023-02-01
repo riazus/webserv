@@ -232,7 +232,7 @@ int Kernel::CreateSocket(Server *server)
 
 	servaddr.sin_family = AF_INET;
 	//NB! Need to FIX
-	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	servaddr.sin_addr.s_addr = server->getHostAddr();
 	servaddr.sin_port = htons(server->getPort());
 
 	std::memset(servaddr.sin_zero, '\0', sizeof(servaddr.sin_zero));

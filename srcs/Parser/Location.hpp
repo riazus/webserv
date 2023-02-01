@@ -2,7 +2,9 @@
 #define LOCATION_HPP
 
 #include "../includes.hpp"
+#include "../Config/Config.hpp"
 
+class Server;
 
 class Location
 {
@@ -47,6 +49,7 @@ class Location
 		    virtual const char* what() const throw();
 	    };
 
+        static Location *parse_location(std::vector<std::string> &config, int *line_count, Server* server);
 };
 
 #endif

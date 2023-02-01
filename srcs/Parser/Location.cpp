@@ -93,6 +93,74 @@ void	Location::is_valid()
 	}
 }
 
+Location* Location::parse_location(std::vector<std::string> &config, int *line_count, Server* server)
+{
+	Location *location = new Location();
+
+	(*line_count)++;
+	std::vector<std::string> line = ft_split(config[*line_count], CHARTOSKIP);
+	if (line.size()!= 3)
+		config_error("expected a directory and '{' after location");
+	location->setPath(line[1]);
+	if (line[2] != "{")
+		config_error("missing '{'");
+	(*line_count)++;
+	std::vector<std::string>::const_iterator it = config.begin() + *line_count;
+	while (it != config.end())
+	{
+		std::vector<std::string> line = ft_split(*it, CHARTOSKIP);
+		if (!line.size() || !line[0].size())
+		{
+			it++;
+			(*line_count)++;
+			continue;
+		}
+		if (line[0][0] == '#')
+		{
+			it++;
+			(*line_count)++;
+			continue;
+		}
+		if (line[0] == "}")
+			break;
+		else if (line[0] == "allow_methods")
+		{
+			if (line.size() < 2)
+				config_error("expected 1 argument min after allow_methods");
+			for (std::vector<std::string>::const_iterator it = line.begin() + 1; it != line.end(); it++)
+			{
+				location->setMethods(*it);
+			}
+		}
+		else if (line[0] == "root")
+		{
+			if (line.size() != 2)
+				config_error("expected 1 argument after root");
+			location->setRoot(line[1]);
+		}
+		else if (line[0] == "index")
+		{
+			if (line.size() != 2)
+				config_error("expected 1 argument after index");
+			location->setIndex(line[1]);
+		}
+		else if (line[0] == "autoindex")
+		{
+			if (line.size() != 2)
+				config_error("expected 1 argument after autoindex");
+			location->setAutoindex(atoi(line[1].c_str()));
+		}
+		it++;
+		(*line_count)++;
+	}
+	std::vector<std::string> end = ft_split(*it, CHARTOSKIP);
+	if (end[0] != "}")
+		config_error("missing '}'");
+	if (location->getRoot().size() == 0)
+		location->setRoot(location->getPath());
+	return location;
+}
+
 const char* Location::InvalidLocationException::what() const throw()
 {
 	return "InvalidLocationException: Invalid location configuration!";

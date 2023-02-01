@@ -3,8 +3,11 @@
 
 #include "../includes.hpp"
 #include "../Parser/Location.hpp"
+#include "../Config/Config.hpp"
 
 class Config;
+class Location;
+
 
 class Server
 {
@@ -13,6 +16,7 @@ class Server
 
         std::string                         name;
         int                                 port;
+        std::string                         ip_adress;
         struct in_addr	                    host;
         std::string                         hostName;
         std::string                         root;
@@ -41,9 +45,11 @@ class Server
         void setMaxClientBodySize(long long size);
         void setHostAddr(in_addr_t addr);
         void setHostName(std::string name);
+        void setIpAddress(std::string ip_adress);
 
         std::string getServerName();
         int getPort();
+        std::string getIpAdress();
         std::string getRoot();
         std::string getIndex();
         std::vector<std::string> getMethods();
@@ -52,6 +58,8 @@ class Server
         std::map<std::string, std::string> getCgi();
         long long getMaxClientBodySize();
         std::string getHostName();
+        std::string getHostAddr();
+        static Server *parse_server(std::vector<std::string> config, int *line_count);
 
         void server_error(std::string error);
         void is_valid();

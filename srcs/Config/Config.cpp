@@ -43,10 +43,24 @@ void Config::Parsing(std::string filename)
 		std::vector<std::string> line = ft_split(config[line_count], CHARTOSKIP);
 		if (line[0] == "server")
 		{
-			Server *server = parse_server(config, &line_count);
+			Server *server = Server::parse_server(config, &line_count);
 			servers.push_back(server);
 		}
 		line_count++;
+	}
+	std::vector<Server *>tmp = servers;
+	std::vector<Server *>::iterator end = tmp.end();
+	int i = 0;
+	for(std::vector<Server *>::iterator it = tmp.begin(); it != end; it++)
+	{
+		i = 0;
+		for(std::vector<Server *>::iterator tmp_it = tmp.begin(); tmp_it != end; tmp_it++)
+		{
+			if ((*tmp_it)->getPort() == (*it)->getPort())
+				i++;
+		}
+		if (i > 1)
+			config_error("same port specified twice");
 	}
 	//getFullInfo();
 }
@@ -57,21 +71,11 @@ void Config::getFullInfo()
 	for (int i=0; i < servers.size(); i++)
 	{
 		std::cout << "===================Server " << i << "===================" << std::endl << std::endl;
-		std::cout << "server_name:	" << servers[i]->getServerName();
-		std::cout << " port:	" << servers[i]->getPort() << std::endl;
+		std::cout << "server_name:	" << servers[i]->getServerName() << std::endl;
+		std::cout << "port:	" << servers[i]->getPort() << std::endl;
+		std::cout << "ip_adress:	" << servers[i]->getIpAdress() << std::endl;
 		std::cout << "root:	" << servers[i]->getRoot() << std::endl;
 		std::cout << "index:	" << servers[i]->getIndex() << std::endl;
-		std::list<Location *> loc_tmp = servers[i]->getLocation();
-		std::list<Location *>::iterator loc_end = loc_tmp.end();
-		for (std::list<Location *>::iterator loc = loc_tmp.begin(); loc != loc_end; loc++)
-		{
-			std::cout << "+++++++++++++++++++Location+++++++++++++++++++" << std::endl << std::endl;
-			std::cout << "root:	" << (*loc)->getPath() << std::endl;
-			std::cout << "index:	" << (*loc)->getIndex() << std::endl;
-			std::cout << "autoindex:	" << (*loc)->getAutoindex() << std::endl;
-			std::cout << "autoindex:	" << (*loc)->getAutoindex() << std::endl;
-			std::cout << "autoindex:	" << (*loc)->getAutoindex() << std::endl;
-		}
 		std::map<std::string, std::string> map_tmp = servers[i]->getCgi();
 		std::map<std::string, std::string>::iterator it(map_tmp.begin());
 		std::map<std::string, std::string>::iterator end(map_tmp.end());
@@ -88,7 +92,16 @@ void Config::getFullInfo()
 			std::cout << "error_pages:	" << it2->first <<  "  " << it2->second << std::endl;
 			it2++;
 		}
-		//std::cout << "max_client_body_size:	" << servers[i]->getMaxClientBodySize() << std::endl;
+		std::cout << "max_client_body_size:	" << servers[i]->getMaxClientBodySize() << std::endl;
+		std::list<Location *> loc_tmp = servers[i]->getLocation();
+		std::list<Location *>::iterator loc_end = loc_tmp.end();
+		for (std::list<Location *>::iterator loc = loc_tmp.begin(); loc != loc_end; loc++)
+		{
+			std::cout << "+++++++++++++++++++Location+++++++++++++++++++" << std::endl << std::endl;
+			std::cout << "root:	" << (*loc)->getPath() << std::endl;
+			std::cout << "index:	" << (*loc)->getIndex() << std::endl;
+			std::cout << "autoindex:	" << (*loc)->getAutoindex() << std::endl;
+		}
 		std::cout << std::endl;
 	}
 }
