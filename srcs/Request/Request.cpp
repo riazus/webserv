@@ -51,6 +51,18 @@ void Request::ResetHeaders()
 	_headers["Connection"] = "Keep-Alive";
 }
 
+void Request::ResetRequest()
+{
+	this->headerReady = false;
+	this->bodyReady = false;
+	this->bodySize = 0;
+	this->contentSize = 0;
+	this->requestLine.clear();
+	this->_server->setPort(0);
+	this->_server->setHostName("");
+	this->_server->setHostAddr(inet_addr(0));
+}
+
 int Request::getCode() const
 {
 	return this->_code;
@@ -82,6 +94,11 @@ mapString Request::getHeaders() const
 Server *Request::getServer() const
 {
     return this->_server;
+}
+
+std::string Request::getPath() const
+{
+	return this->_path;
 }
 
 void Request::setBody(std::string body)

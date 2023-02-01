@@ -5,6 +5,7 @@
 # include "../Request/Request.hpp"
 # include "../Config/Config.hpp"
 # include "../Response/Response.hpp"
+# include "../Response/ResponseBody.hpp"
 
 class Client
 {
@@ -14,12 +15,16 @@ class Client
 		Client &operator=(const Client &rhs);
 		~Client(void);
 
-		void	SetSocket(int socket);	
 		bool	hadResponse;
 		Request request;
 		timeval	lastRequest;
 
+		Response 		*response;
+		ResponseBody	*responseBody;
+
 		void	setServer(Server &server);
+		void	SetSocket(int socket);
+		Server	getServer() const;
 
 	private:
 		int		_socket;

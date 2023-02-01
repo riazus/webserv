@@ -18,3 +18,12 @@ Response::~Response(void)
 {
 }
 
+std::string Response::getResponse() const
+{
+	return this->_response;
+}
+
+void Response::setResponse(std::string response)
+{
+	this->_response = response;
+}

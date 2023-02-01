@@ -12,7 +12,7 @@ class ResponseBody
 		ResponseBody &operator=(const ResponseBody &rhs);
 		~ResponseBody(void);
 
-		void				setRequest(Request& request);
+		/*void				setRequest(Request& request);
 		void				setServer(Server server);
 		void				setLocation(Location location);
 		void				setLocationPath(std::string path);
@@ -25,17 +25,17 @@ class ResponseBody
 		void				setLanguage(std::string lang);
 		void				setAutoIndex(bool Index);
 		void				setIndex(std::string index);
-		void				setContentLocation(std::string content);
 		void				setCode(int code);
+		void				setCookies(mapString cookies);*/
+		void				setContentLocation(std::string content);
 		void				setContent(std::string content);
-		void				setCookies(mapString cookies);
 
-		mapString			getCookies(void) const;
+		/*mapString			getCookies(void) const;
 		std::string			getCookie(std::string key) const;
 		int					getCode(void) const;
 		Request				getRequest(void) const;
 		Server				getServer(void) const;
-		Location				getLocation(void) const;
+		Location			getLocation(void) const;
 		std::string			getLocationPath(void) const;
 		std::string			getLocationFile(void) const;
 		mapError			getErrorMap(void) const;
@@ -48,8 +48,8 @@ class ResponseBody
 		std::string			getLanguage(void) const;
 		bool				getAutoIndex(void) const;
 		std::string			getIndex(void) const;
-		std::string			getContentLocation(void) const;
-		std::string			getContent(void) const;
+		std::string			getContentLocation(void) const;*/
+		std::string			getContent() const;
 
 	private:
 		Request			_request;

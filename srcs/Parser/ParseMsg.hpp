@@ -26,7 +26,7 @@ class ParseMsg
 
     /*RESPONSE*/
     public:
-        void            ParseResponse(ResponseBody &responseBody, Request &request, Server &server);
+        void            ParseResponse(ResponseBody &responseBody, Request &request, Server const &server);
     private:
         Server          FindLocation(Server &server, std::string &locationName);
         std::string     CheckContentLocation(std::string contentLocation);

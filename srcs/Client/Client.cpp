@@ -27,3 +27,8 @@ void Client::setServer(Server &server)
 {
 	this->_server = server;
 }
+
+Server Client::getServer() const
+{
+	return this->_server;
+}

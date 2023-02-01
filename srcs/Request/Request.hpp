@@ -13,6 +13,7 @@ class Request
 		~Request(void);
 		
 		void			ResetHeaders();
+		void			ResetRequest();
 		
 		int				bodySize;
 		int				contentSize;
@@ -27,6 +28,7 @@ class Request
 		std::string		getMethod() const;
 		mapString		getHeaders() const;
 		Server			*getServer()	const;
+		std::string		getPath() const;
 
 		//SETTERS
 		void			setCode(int code);

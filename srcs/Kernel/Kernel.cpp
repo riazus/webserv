@@ -66,22 +66,6 @@ void Kernel::getServerForClient(Client &client)
 	client.setServer(*rightServer);
 }
 
-// Parsing http request and return ready string to send response
-std::string Kernel::getResponse()
-{
-	//TODO: Matvey
-	/*
-    1.. Need validate path from buffer
-	2. Validate any cases of denied access(cannot open file, permission, etc.)
-	And many many more... :)
-	*/
-	std::string body;
-	//body = "<b>Pick your favorite color</b><br>\n<form method="POST" action="http://www.whizkidtech.redprince.net/cgi-bin/c">\n<input type="RADIO" name="color" value="red"> Red<br>\n<input type="RADIO" name="color" value="green"> Green<br>\n<input type="RADIO" checked name="color" value="blue"> Blue<br>\n<input type="RADIO" name="color" value="cyan"> Cyan<br>\n<input type="RADIO" name="color" value="magenta"> Magenta<br>\n<input type="RADIO" name="color" value="yellow"> Yellow<br>\n<br><b>On the scale 1 - 3, how favorite is it?</b><br><br>\n<select name="scale" size=1>\n<option>1\n<option selected>2\n<option>3\n</select>\n<br>\n<input type="HIDDEN" name="favorite color" size="32">\n<input type="Submit" value="I'm learning" name="Attentive student">\n<input type="Submit" value="Give me a break!" name="Overachiever">\n<input type="Reset" name="Reset">\n</form>";
-	body = "<html>\n<body>\n<center>\n<h1>Hi! This is webserv written by Riyaz and Matvey, enjoy!</h1>\n<center>\n</body>\n</html>";
-	//body = "<!DOCTYPE html>\n<html>\n<title>404 Not Found</title>\n<body>\n<div>\n<H1>404 Not Found</H1>\n</div>\n</body>\n</html>";
-    return std::string("HTTP/1.1 200 OK \nContent-Type: text/html\nContent-Length: 142\n\n" + body);
-}
-
 void Kernel::ClientWrite(int eventPollFd)
 {
 	//throw std::logic_error("Non implemented ClientWrite");
@@ -93,7 +77,16 @@ void Kernel::ClientWrite(int eventPollFd)
 
 	this->getServerForClient(this->_clients[eventPollFd]);
 
-	//this->_parserMsg->ParseResponse()
+	this->_parserMsg->ParseResponse(*this->_clients[eventPollFd].responseBody, this->_clients[eventPollFd].request, this->_clients[eventPollFd].getServer());
+	
+	response = "HTTP/1.1 200 OK \nContent-Type: text/html\nContent-Length: 142\n\n<html>\n<body>\n<center>\n<h1>Hi! This is webserv written by Riyaz and Matvey, enjoy!</h1>\n<center>\n</body>\n</html>";
+	if (write(eventPollFd, response.c_str(), response.size()))
+		this->DeleteClient(eventPollFd);
+	this->_clients[eventPollFd].hadResponse = true;
+	this->_event.events = EPOLLIN;
+	this->_event.data.fd = eventPollFd;
+	epoll_ctl(this->_epollFd, EPOLL_CTL_MOD, eventPollFd, &this->_event);
+	this->_clients[eventPollFd].request.ResetRequest();
 }
 
 bool Kernel::ReadClientRequest(int clientSocket)
