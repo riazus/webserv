@@ -58,7 +58,7 @@ class Server
         std::map<std::string, std::string> getCgi();
         long long getMaxClientBodySize();
         std::string getHostName();
-        std::string getHostAddr();
+        in_addr_t getHostAddr();
         static Server *parse_server(std::vector<std::string> config, int *line_count);
 
         void server_error(std::string error);

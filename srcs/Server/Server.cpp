@@ -136,9 +136,9 @@ void Server::server_error(std::string error)
 	throw Server::InvalidServerException();
 }
 
-std::string Server::getHostAddr()
+in_addr_t Server::getHostAddr()
 {
-	return (inet_addr(get_ip_address()));
+	return (inet_addr(getIpAdress().c_str()));
 }
 
 
