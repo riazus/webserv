@@ -25,6 +25,7 @@ class Client
 		void	setServer(Server &server);
 		void	SetSocket(int socket);
 		Server	getServer() const;
+		Server *getServerAddr();
 
 	private:
 		int		_socket;

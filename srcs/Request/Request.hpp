@@ -39,6 +39,7 @@ class Request
 		void			setHeader(std::string token, std::string value);
 		void 			setEnvForCgi(std::string token, std::string value);
 		void			setNetwork(std::string ip);
+		void			setServer(Server *server);
 
 	private:
 		int				_code;

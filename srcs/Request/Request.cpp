@@ -58,9 +58,10 @@ void Request::ResetRequest()
 	this->bodySize = 0;
 	this->contentSize = 0;
 	this->requestLine.clear();
+	std::cout << this->_server << std::endl;
 	this->_server->setPort(0);
 	this->_server->setHostName("");
-	this->_server->setHostAddr(inet_addr(0));
+	this->_server->setHostAddr(inet_addr("0")); //CONST CHAR !!!!!
 }
 
 int Request::getCode() const
@@ -124,6 +125,11 @@ void Request::setVersion(std::string version)
 void Request::setHeader(std::string token, std::string value)
 {
 	this->_headers[token] = value;
+}
+
+void Request::setServer(Server *server)
+{
+	this->_server = server;
 }
 
 void Request::setEnvForCgi(std::string token, std::string value)

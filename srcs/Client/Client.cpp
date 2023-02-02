@@ -32,3 +32,8 @@ Server Client::getServer() const
 {
 	return this->_server;
 }
+
+Server* Client::getServerAddr()
+{
+	return &this->_server;
+}

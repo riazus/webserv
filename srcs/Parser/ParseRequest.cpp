@@ -48,6 +48,7 @@ void ParseMsg::ParseHeader(Request &request)
 			request.setEnvForCgi(token, value);
 		}
 	}
+	
 	request.setNetwork(request.getHeader("Host"));
 }
 

@@ -72,39 +72,44 @@ void Kernel::ClientWrite(int eventPollFd)
 	
 	std::string response;
 
-	std::cout << "CLIENT WRITE TO SERVER" << std::endl;
-	std::cout << _clients[eventPollFd].request.requestLine << std::endl;
-
+	std::cout << std::endl << "SERVER BEGIN HANDLE REQUEST" << std::endl;
+	//std::cout << _clients[eventPollFd].request.requestLine << std::endl;
 	this->getServerForClient(this->_clients[eventPollFd]);
-
+	std::cout << "get server for client" << std::endl;
 	this->_parserMsg->ParseResponse(*this->_clients[eventPollFd].responseBody, this->_clients[eventPollFd].request, this->_clients[eventPollFd].getServer());
-	
+	std::cout << "server parse response" << std::endl;
 	response = "HTTP/1.1 200 OK \nContent-Type: text/html\nContent-Length: 142\n\n<html>\n<body>\n<center>\n<h1>Hi! This is webserv written by Riyaz and Matvey, enjoy!</h1>\n<center>\n</body>\n</html>";
+
 	if (write(eventPollFd, response.c_str(), response.size()))
 		this->DeleteClient(eventPollFd);
+	std::cout << "after call write()" << std::endl;
 	this->_clients[eventPollFd].hadResponse = true;
 	this->_event.events = EPOLLIN;
 	this->_event.data.fd = eventPollFd;
 	epoll_ctl(this->_epollFd, EPOLL_CTL_MOD, eventPollFd, &this->_event);
 	this->_clients[eventPollFd].request.ResetRequest();
+	std::cout << "SERVER WROTE TO CLIENT" << std::endl;
 }
 
 bool Kernel::ReadClientRequest(int clientSocket)
 {
 	char buffer[BUFFER_SIZE + 1];
 	std::string body("");
-
+	this->_clients[clientSocket].request.setServer(this->_clients[clientSocket].getServerAddr());
+	std::cout << std::endl << "SERVER START READ CLIENT'S REQUEST" << std::endl;
 	ssize_t requestLen = read(clientSocket, buffer, BUFFER_SIZE);
 	//std::cout << buffer << std::endl;
 	if (requestLen == -1)
 	{
 		this->DeleteClient(clientSocket);
 		//throw std::logic_error("Error: read Client's request failed");
+		std::cout << "SERVER END READ CLIENT'S REQUEST" << std::endl;
 		return false;
 	}
 	else if (requestLen == 0) //Closing connection request from clients
 	{
 		this->DeleteClient(clientSocket);
+		std::cout << "SERVER END READ CLIENT'S REQUEST" << std::endl;
 		return false;
 	}
 	else
@@ -124,6 +129,7 @@ bool Kernel::ReadClientRequest(int clientSocket)
 		if (std::atoi(this->_clients[clientSocket].request.getHeader("Content-Lenght").c_str()) == 0)
 		{
 			this->_clients[clientSocket].request.bodyReady = true;
+			std::cout << "SERVER END READ CLIENT'S REQUEST" << std::endl;
 			return true;
 		}
 	}
@@ -138,7 +144,7 @@ bool Kernel::ReadClientRequest(int clientSocket)
 			_clients[clientSocket].request.bodyReady = true;
 		}
 	}
-
+	std::cout << "SERVER END READ CLIENT'S REQUEST" << std::endl;
     return true;
 }
 
@@ -293,6 +299,7 @@ void Kernel::Run()
 		//TODO: Main logic ->
 		for (int i = 0; i < nfds; i++)
 		{
+			std::cout << "\n" << nfds;
 			if (this->_eventsArray[i].events & EPOLLERR ||  this->_eventsArray[i].events & EPOLLHUP)
 				throw std::logic_error("There is a bad event in events array");
 			else if (this->_eventsArray[i].events & EPOLLIN && this->fdIsServer(this->_eventsArray[i].data.fd))
