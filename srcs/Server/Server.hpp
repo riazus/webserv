@@ -27,6 +27,7 @@ class Server
         std::list<Location *>               location;
         long long                           max_client_body_size;
 
+
     public:
 
         Server();

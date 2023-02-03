@@ -45,6 +45,10 @@
 # define CLIENT_TIMEOUT 10
 # define APP_TIMEOUT 200
 
+# define IS_A_DIRECTORY 2
+# define IS_A_FILE 1
+# define IS_SOMETHING_ELSE 0
+
 // For more comfort
 # define stringVector	    std::vector<std::string>
 # define intVector          std::vector<int>
@@ -53,7 +57,8 @@
 # define mapString          std::map<std::string,std::string>
 # define mapStringVectorInt std::map<std::string,std::vector<int>>
 # define mapError           std::map<int,std::string>
-
+# define stringSet          std::set<std::string>
+# define methodMap			std::map<std::string, void (Response::*)(void)>
 
 
 # define CHARTOSKIP "; \t"

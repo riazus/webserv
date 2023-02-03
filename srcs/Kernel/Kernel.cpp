@@ -76,13 +76,23 @@ void Kernel::ClientWrite(int eventPollFd)
 	//std::cout << _clients[eventPollFd].request.requestLine << std::endl;
 	this->getServerForClient(this->_clients[eventPollFd]);
 	std::cout << "get server for client" << std::endl;
-	this->_parserMsg->ParseResponse(*this->_clients[eventPollFd].responseBody, this->_clients[eventPollFd].request, this->_clients[eventPollFd].getServer());
+	this->_parserMsg->ParseResponse(*this->_clients[eventPollFd].responseBody, this->_clients[eventPollFd].request, *this->_clients[eventPollFd].getServerAddr());
 	std::cout << "server parse response" << std::endl;
-	response = "HTTP/1.1 200 OK \nContent-Type: text/html\nContent-Length: 142\n\n<html>\n<body>\n<center>\n<h1>Hi! This is webserv written by Riyaz and Matvey, enjoy!</h1>\n<center>\n</body>\n</html>";
+	this->_clients[eventPollFd].response->resetResponse(*this->_clients[eventPollFd].responseBody);
 
+	this->_clients[eventPollFd].response->initResponseProcess();
+
+	//response = "HTTP/1.1 200 OK \nContent-Type: text/html\nContent-Length: 142\n\n<html>\n<body>\n<center>\n<h1>Hi! This is webserv written by Riyaz and Matvey, enjoy!</h1>\n<center>\n</body>\n</html>";
+	
+	if (this->_clients[eventPollFd].UserId == "")
+		this->_clients[eventPollFd].UserId = this->_clients[eventPollFd].response->UserId;
+
+	if (this->_clients[eventPollFd].response->getIsValid() == false)
+		return ;
+	
+	response = this->_clients[eventPollFd].response->getResponse();
 	if (write(eventPollFd, response.c_str(), response.size()))
 		this->DeleteClient(eventPollFd);
-	std::cout << "after call write()" << std::endl;
 	this->_clients[eventPollFd].hadResponse = true;
 	this->_event.events = EPOLLIN;
 	this->_event.data.fd = eventPollFd;

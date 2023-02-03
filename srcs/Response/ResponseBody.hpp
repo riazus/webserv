@@ -12,7 +12,7 @@ class ResponseBody
 		ResponseBody &operator=(const ResponseBody &rhs);
 		~ResponseBody(void);
 
-		/*void				setRequest(Request& request);
+		void				setRequest(Request& request);
 		void				setServer(Server server);
 		void				setLocation(Location location);
 		void				setLocationPath(std::string path);
@@ -26,29 +26,29 @@ class ResponseBody
 		void				setAutoIndex(bool Index);
 		void				setIndex(std::string index);
 		void				setCode(int code);
-		void				setCookies(mapString cookies);*/
+		void				setCookies(mapString cookies);
 		void				setContentLocation(std::string content);
 		void				setContent(std::string content);
 
-		/*mapString			getCookies(void) const;
+		// mapString			getCookies(void) const;
 		std::string			getCookie(std::string key) const;
-		int					getCode(void) const;
-		Request				getRequest(void) const;
-		Server				getServer(void) const;
-		Location			getLocation(void) const;
-		std::string			getLocationPath(void) const;
-		std::string			getLocationFile(void) const;
-		mapError			getErrorMap(void) const;
+		int					getCode() const;
+		Request				getRequest() const;
+		// Server				getServer(void) const;
+		Location			getLocation() const;
+		// std::string			getLocationPath(void) const;
+		// std::string			getLocationFile(void) const;
+		// mapError			getErrorMap(void) const;
 		std::string			getErrorPath(int code) const;
 		size_t				getClientBodyBufferSize(void) const;
-		stringVector		getCgiParam(void) const;
-		std::string			getCgiPass(void) const;
-		stringVector		getAllowMethod(void) const;
-		stringVector		getAllow(void) const;
-		std::string			getLanguage(void) const;
-		bool				getAutoIndex(void) const;
-		std::string			getIndex(void) const;
-		std::string			getContentLocation(void) const;*/
+		// stringVector		getCgiParam(void) const;
+		// std::string			getCgiPass(void) const;
+		stringSet			getAllowMethod() const;
+		stringVector		getAllow() const;
+		std::string			getLanguage() const;
+		// bool				getAutoIndex(void) const;
+		// std::string			getIndex(void) const;
+		std::string			getContentLocation() const;
 		std::string			getContent() const;
 
 	private:
@@ -61,7 +61,7 @@ class ResponseBody
 		size_t			_clientBodyBufferSize;
 		stringVector	_cgiParam;
 		std::string		_cgiPass;
-		stringVector	_allowMethod;
+		stringSet		_allowMethod;
 		stringVector	_allow;
 		std::string		_acceptLanguage;
 		bool			_autoIndex;

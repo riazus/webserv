@@ -15,17 +15,18 @@ class Client
 		Client &operator=(const Client &rhs);
 		~Client(void);
 
-		bool	hadResponse;
-		Request request;
-		timeval	lastRequest;
+		bool			hadResponse;
+		Request 		request;
+		timeval			lastRequest;
+		std::string		UserId;
 
 		Response 		*response;
 		ResponseBody	*responseBody;
 
-		void	setServer(Server &server);
-		void	SetSocket(int socket);
-		Server	getServer() const;
-		Server *getServerAddr();
+		void			setServer(Server &server);
+		void			SetSocket(int socket);
+		Server			getServer();
+		Server 			*getServerAddr();
 
 	private:
 		int		_socket;
