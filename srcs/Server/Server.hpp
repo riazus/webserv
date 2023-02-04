@@ -54,7 +54,7 @@ class Server
         std::string getRoot();
         std::string getIndex();
         std::vector<std::string> getMethods();
-        std::list<Location *> getLocation();
+        Location *getLocation();
         std::map<int, std::string> getErrorPage();
         std::map<std::string, std::string> getCgi();
         long long getMaxClientBodySize();

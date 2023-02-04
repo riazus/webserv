@@ -223,7 +223,7 @@ std::string Response::readFile(std::string path)
 
 std::string Response::getErrorFileBody(int code)
 {
-    std::string	path("../../website/error_pages/" + ft_itoa(code) + ".html");
+    std::string	path("./website/error_pages/" + ft_itoa(code) + ".html");
 	std::ofstream		file;
 	std::stringstream	buffer;
 

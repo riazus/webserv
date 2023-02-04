@@ -76,21 +76,21 @@ void Kernel::ClientWrite(int eventPollFd)
 	//std::cout << _clients[eventPollFd].request.requestLine << std::endl;
 	this->getServerForClient(this->_clients[eventPollFd]);
 	std::cout << "get server for client" << std::endl;
-	this->_parserMsg->ParseResponse(*this->_clients[eventPollFd].responseBody, this->_clients[eventPollFd].request, *this->_clients[eventPollFd].getServerAddr());
+	this->_parserMsg->ParseResponse(this->_clients[eventPollFd].responseBody, this->_clients[eventPollFd].request, *this->_clients[eventPollFd].getServerAddr());
 	std::cout << "server parse response" << std::endl;
-	this->_clients[eventPollFd].response->resetResponse(*this->_clients[eventPollFd].responseBody);
+	this->_clients[eventPollFd].response.resetResponse(this->_clients[eventPollFd].responseBody);
 
-	this->_clients[eventPollFd].response->initResponseProcess();
+	this->_clients[eventPollFd].response.initResponseProcess();
 
 	//response = "HTTP/1.1 200 OK \nContent-Type: text/html\nContent-Length: 142\n\n<html>\n<body>\n<center>\n<h1>Hi! This is webserv written by Riyaz and Matvey, enjoy!</h1>\n<center>\n</body>\n</html>";
 	
 	if (this->_clients[eventPollFd].UserId == "")
-		this->_clients[eventPollFd].UserId = this->_clients[eventPollFd].response->UserId;
+		this->_clients[eventPollFd].UserId = this->_clients[eventPollFd].response.UserId;
 
-	if (this->_clients[eventPollFd].response->getIsValid() == false)
+	if (this->_clients[eventPollFd].response.getIsValid() == false)
 		return ;
 	
-	response = this->_clients[eventPollFd].response->getResponse();
+	response = this->_clients[eventPollFd].response.getResponse();
 	if (write(eventPollFd, response.c_str(), response.size()))
 		this->DeleteClient(eventPollFd);
 	this->_clients[eventPollFd].hadResponse = true;
@@ -309,7 +309,6 @@ void Kernel::Run()
 		//TODO: Main logic ->
 		for (int i = 0; i < nfds; i++)
 		{
-			std::cout << "\n" << nfds;
 			if (this->_eventsArray[i].events & EPOLLERR ||  this->_eventsArray[i].events & EPOLLHUP)
 				throw std::logic_error("There is a bad event in events array");
 			else if (this->_eventsArray[i].events & EPOLLIN && this->fdIsServer(this->_eventsArray[i].data.fd))

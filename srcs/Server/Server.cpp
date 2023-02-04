@@ -80,9 +80,9 @@ void Server::setLocation(Location *location)
 	this->location.push_back(location);
 }
 
-std::list<Location *> Server::getLocation()
+Location * Server::getLocation()
 {
-	return (this->location);
+	return (this->location).back();
 }
 
 void Server::setErrorPage(int num, std::string page)
@@ -181,13 +181,13 @@ void Server::is_valid()
 		}
 		close(fd);
 	}
-	std::list<Location *> locations = getLocation();
+	/*std::list<Location *> locations = getLocation();
 	if (!locations.size())
 		server_error("location is not set");
 	for (std::list<Location*>::iterator it = locations.begin(); it != locations.end(); it++)
 	{
 		(*it)->is_valid();
-	}
+	}*/
 }
 
 

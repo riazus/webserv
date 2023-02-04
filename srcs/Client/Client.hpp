@@ -20,8 +20,8 @@ class Client
 		timeval			lastRequest;
 		std::string		UserId;
 
-		Response 		*response;
-		ResponseBody	*responseBody;
+		Response 		response;
+		ResponseBody	responseBody;
 
 		void			setServer(Server &server);
 		void			SetSocket(int socket);
