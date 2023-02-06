@@ -5,19 +5,17 @@
 </head>
 <title>Current time</title>
 	<body bgcolor="#c0c0c0">
-		<div>
-		<center class="text">
+		<center >
 		<br>
-		<br>
-		<br>
-		<br>
-Current Time = 18:51:43
+		<script type=text/javascript>
+			function refresh()
+			{
+			document.all.iframe1.src = document.all.iframe1.src;
+			}
+			window.setInterval("refresh()",1000);
+			</script>
+		Time = <IFRAME name="iframe1" src="time.txt" align="absmiddle" frameborder="0" marginheight="67" marginwidth="" scrolling="no"></IFRAME>
 		</center>
-		</div>
 	</body>
-<html>
-02
-		</center>
-		</div>
 	</body>
 <html>

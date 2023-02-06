@@ -10,7 +10,7 @@ int main()
 	int fd;
 	while(1)
 	{	
-		fd = open("test.html", O_RDWR);
+		fd = open("time.txt", O_RDWR);
 		dup2(fd, 1);
 		pid = fork();
 		if (pid == 0)
