@@ -48,7 +48,7 @@ void Response::deleteMethod()
 	
 }
 
-void Response::resetResponse(ResponseBody responseBody)
+void Response::resetResponse(ResponseBody &responseBody)
 {
 	this->_code = responseBody.getCode();
 	this->_header = "";
@@ -147,10 +147,10 @@ void Response::initResponseProcess()
 		createHeader();
 		return ;
 	}*/
-
-	if (tmp.find(this->_responseBody->getRequest().getMethod()) == tmp.end()) // this method doesn't exists
+	
+	if (tmp.find(this->_responseBody->getRequest()->getMethod()) == tmp.end()) // this method doesn't exists
 		this->_code = 405;
-	else if (this->_responseBody->getClientBodyBufferSize() < this->_responseBody->getRequest().bodySize)
+	else if (this->_responseBody->getClientBodyBufferSize() < this->_responseBody->getRequest()->bodySize)
 		this->_code = 413;
 	
 	if (this->_code == 408)
@@ -163,8 +163,8 @@ void Response::initResponseProcess()
 		this->_directives["Content-Length"] = this->readFile(this->_code);
 		this->createHeader();
 	}
-	else if (this->_method.find(this->_responseBody->getRequest().getMethod()) != this->_method.end())
-		(this->*Response::_method[this->_responseBody->getRequest().getMethod()])();
+	else if (this->_method.find(this->_responseBody->getRequest()->getMethod()) != this->_method.end())
+		(this->*Response::_method[this->_responseBody->getRequest()->getMethod()])();
 }
 
 static int		checkPath(const std::string &path)

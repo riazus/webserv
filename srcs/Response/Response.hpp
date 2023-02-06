@@ -21,7 +21,7 @@ class Response
 		void			postMethod();
 		void			deleteMethod();
 
-		void			resetResponse(ResponseBody responseBody);
+		void			resetResponse(ResponseBody &responseBody);
 		void			createHeader();
 		void			initErrorMap();
 		void			initDirectories();

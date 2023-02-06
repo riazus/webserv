@@ -56,7 +56,8 @@ void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Serve
 
 	//parseCookies(responseBody, request);
 	responseBody.setCode(request.getCode());
-	responseBody.setRequest(request);
+	std::cout << "IN BEGIN Parse Response: " << &request << std::endl;
+	responseBody.setRequest(&request);
 	responseBody.setServer(server);
 	responseBody.setLocationFile(locationName);
 	responseBody.setLocationPath(request.getPath());

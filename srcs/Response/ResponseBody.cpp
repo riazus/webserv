@@ -18,7 +18,7 @@ ResponseBody::~ResponseBody(void)
 {
 }
 
-void ResponseBody::setRequest(Request &request)
+void ResponseBody::setRequest(Request *request)
 {
 	this->_request = request;
 }
@@ -86,7 +86,7 @@ int ResponseBody::getCode() const
     return this->_code;
 }
 
-Request ResponseBody::getRequest() const
+Request *ResponseBody::getRequest() const
 {
     return this->_request;
 }
