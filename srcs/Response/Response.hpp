@@ -29,6 +29,8 @@ class Response
 		std::string		readFile(int code);
 		std::string		readFile(std::string path);
 
+		void			execCgi(std::string path, int file_format);
+
 		std::string		UserId;
 
 	private:
@@ -49,6 +51,7 @@ static std::string	getDate(void);
 static std::string	getLastMod(const std::string& path);
 static std::string	ft_itoa(int nb);
 static std::string	gen_random(const int len);
+
 
 
 #endif

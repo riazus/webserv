@@ -14,7 +14,7 @@ Config &Config::operator=(Config const &rhs)
 	return *this;
 }
 
-std::string Config::getFile(std::string filename)
+std::string getFile(std::string filename)
 {
 	std::ifstream file;
 	std::string s;
@@ -24,13 +24,14 @@ std::string Config::getFile(std::string filename)
 		throw Config::ConfigFileOpenException();
 	std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 	file.close();
-	configFile.append("\0");
 	return content;
 }
 
 void Config::Parsing(std::string filename)
 {
 	std::string config_file = getFile(filename);
+	configFile.append("\0");
+
 
 	if (!config_file.length())
 		throw Config::ConfigFileContentException();

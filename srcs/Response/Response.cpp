@@ -33,9 +33,51 @@ void Response::setResponse(std::string response)
 	this->_response = response;
 }
 
+int isCgi(std::string path)
+{
+	if (path.find(".py"))
+		return 1;
+	if (path.find(".php"))
+		return 1;
+	else
+		return 0;
+}
+
+void Response::execCgi(std::string path, int file_format)
+{
+	std::string format;
+	pid_t pid;
+	int fd;
+
+	if (file_format == 1)
+		format = "python";
+	if (file_format == 2)
+		format = "php";
+	pid = fork();
+	if (pid == 0)
+	{
+		fd = open("cgi_tmp_file", O_RDWR, O_CREAT);
+		dup2(fd, 1);
+		execlp(format.c_str(), format.c_str(), path.c_str(), (char*) NULL);
+		exit(0);
+	}
+	waitpid(pid, 0, 0);
+	this->_body = getFile("cgi_tmp_file");
+
+
+	std::cout << std::endl << "Body:" << this->_body << "--------------------<<" << std::endl;
+}
+
+
 void Response::getMethod()
 {
+	int file_format = isCgi("cgi-bin/current_time.py"); // isCgi(this->_path)
 
+	if (file_format != 0)
+	{
+		execCgi("cgi-bin/current_time.py", file_format);
+	}
+	//else{ get static .html file }
 }
 
 void Response::postMethod()
@@ -129,6 +171,9 @@ void Response::initDirectories()
 void Response::initResponseProcess()
 {
 	stringSet tmp(this->_responseBody->getAllowMethod());
+
+	// std::cout << "HERE!-------------------------------------------------<" << std::endl;
+	this->getMethod();
 
 	if (this->_responseBody->getCookie("user_id") == "")
 	{
