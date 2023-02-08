@@ -159,7 +159,6 @@ void Response::initResponseProcess()
 		createHeader();
 		return ;
 	}*/
-	
 	if (tmp.find(this->_responseBody->getRequest()->getMethod()) == tmp.end()) // this method doesn't exists
 		this->_code = 405;
 	else if (this->_responseBody->getClientBodyBufferSize() < this->_responseBody->getRequest()->bodySize)
@@ -172,6 +171,7 @@ void Response::initResponseProcess()
 	}
 	else if (this->_code != 200)
 	{
+		std::cout << "WE HERE " << std::endl;
 		this->_directives["Content-Length"] = this->readFile(this->_code);
 		this->createHeader();
 	}

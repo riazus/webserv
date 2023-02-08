@@ -72,6 +72,7 @@ void Server::setMethods(std::string methods)
 
 std::vector<std::string> Server::getMethods()
 {
+	std::cout << "GET METHOD[0]: " << this->methods[0] << std::endl;
 	return (this->methods);
 }
 
@@ -293,6 +294,15 @@ Server *Server::parse_server(std::vector<std::string> config, int *line_count)
 			if (line.size() != 2)
 				config_error("expected 1 argument after index");
 			server->setIndex(line[1]);
+		}
+		else if (line[0] == "allow_methods")
+		{
+			if (line.size() != 2)
+				config_error("expected min 1 argument allow methods");
+			for(int i = 1; i < line.size(); i++){
+				std::cout << "SET TO SERVER ALLOW METHOD: " << line[i] << std::endl;
+				server->setMethods(line[i]);
+			}
 		}
 		it++;
 		(*line_count)++;

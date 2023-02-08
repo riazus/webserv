@@ -21,9 +21,9 @@ class Server
         std::string                         hostName;
         std::string                         root;
         std::string                         index;
-        std::vector<std::string>            methods;
+        stringVector                        methods;
         std::map<int, std::string>          error_page;
-        std::map<std::string, std::string>  cgi;
+        mapString                           cgi;
         std::list<Location *>               location;
         long long                           max_client_body_size;
 
