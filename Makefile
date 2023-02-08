@@ -1,7 +1,7 @@
 NAME	=	webserv
 
 CC			=	clang++
-INCLUDES	=	srcs/Kernel/*.hpp 
+INCLUDES	=	srcs/*.hpp 
 
 CPPFLAGS	=	-MD -std=c++98 -std=c++0x -I$(INCLUDES)
 RM			=	rm -rf
@@ -12,6 +12,7 @@ SRCS		=	srcs/main.cpp \
 				srcs/Request/Request.cpp \
 				srcs/Response/Response.cpp \
 				srcs/Response/ResponseBody.cpp \
+				srcs/Response/autoindex.cpp \
 				srcs/Client/Client.cpp \
 				srcs/Config/Config.cpp \
 				srcs/Server/Server.cpp \

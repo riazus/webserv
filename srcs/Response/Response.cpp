@@ -35,7 +35,19 @@ void Response::setResponse(std::string response)
 
 void Response::getMethod()
 {
-
+	std::cout << "BEGIN EXEC Get method" << std::endl;
+	//TODO:
+	if(checkPath(this->_responseBody->getContentLocation()) == IS_A_DIRECTORY &&
+		this->_responseBody->getContentLocation() == (this->_responseBody->getLocation()->getRoot() /*+ this->_responseBody->getLocation()->getAlias()*/))
+	{
+		this->_responseBody->setContent(this->_responseBody->getContentLocation() + "/" + this->_responseBody->getIndex());
+		if (this->_responseBody->getIndex() != "")
+			this->_responseBody->setAutoIndex(false);
+	}
+	else
+		this->_responseBody->setContent(this->_responseBody->getContentLocation());
+	_directives["Content-Length"] = readFile(this->_responseBody->getContent());
+	createHeader();
 }
 
 void Response::postMethod()
@@ -167,25 +179,9 @@ void Response::initResponseProcess()
 		(this->*Response::_method[this->_responseBody->getRequest()->getMethod()])();
 }
 
-static int		checkPath(const std::string &path)
-{
-	struct stat s;
-
-	if (stat(path.c_str(), &s) == 0)
-	{
-		if (s.st_mode & S_IFDIR)
-			return IS_A_DIRECTORY;
-		else if (s.st_mode & S_IFREG)
-			return IS_A_FILE;
-		else
-			return IS_SOMETHING_ELSE;
-	}
-	else
-		return IS_SOMETHING_ELSE;
-}
-
 std::string Response::readFile(int code)
 {
+	std::cout << code << " :code <-> errorPath: " << this->_responseBody->getErrorPath(code) << std::endl;;
 	std::string	path(this->_responseBody->getErrorPath(code));
 	std::ofstream		file;
 	std::stringstream	buffer;
@@ -204,21 +200,115 @@ std::string Response::readFile(int code)
 		file.close();
 		this->_directives["Content-Type"] = "text/html";
 		this->_body = buffer.str();
-		//return (ft_itoa(_body.size()));
 	}
 	else
 	{
 		this->_code = 404;
 		this->_directives["Content-Type"] = "text/html";
 		this->_body = this->getErrorFileBody(404);
-		//return (ft_itoa(_body.size()));
 	}
 	return (ft_itoa(_body.size()));
 }
 
 std::string Response::readFile(std::string path)
 {
-	return std::string();
+	std::cout << "PATH: " << std::endl;
+	std::ofstream		file;
+	std::stringstream	buffer;
+
+	if (checkPath(this->_responseBody->getContentLocation()) == IS_A_DIRECTORY && this->_responseBody->getAutoIndex())
+		_body = createAutoindexPage(this->_responseBody->getContentLocation(), this->_responseBody->getRequest()->getPath());
+	else if (checkPath(path) == IS_A_FILE)
+	{
+
+		file.open(path.c_str(), std::ifstream::in);
+		if (file.is_open() == false)
+		{
+			_code = 404;
+			return (readFile(_code));
+		}
+		buffer << file.rdbuf();
+		file.close();
+		_directives["Content-Type"] = findType(path);
+		if (checkReadPermission(path) == 0)
+		{
+			_code = 403;
+			return (readFile(_code));
+		}
+		_body = buffer.str();
+	}
+	else
+	{
+		_code = 404;
+		readFile(_code);
+	}
+	return (ft_itoa(_body.size()));
+}
+
+mapString Response::initType()
+{
+	mapString tmp;
+
+	tmp["acc"] = "audio/aac";
+	tmp["abw"] = "application/x-abiword";
+	tmp["avi"] = "video/x-msvideo";
+	tmp["bin"] = "application/octet-stream";
+	tmp["bmp"] = "image/bmp";
+	tmp["bz"] = "application/x-bzip";
+	tmp["bz2"] = "application/x-bzip2";
+	tmp["csh"] = "application/x-csh";
+	tmp["css"] = "text/css";
+	tmp["csv"] = "text/csv";
+	tmp["doc"] = "application/msword";
+	tmp["gif"] = "image/gif";
+	tmp["htm"] = "text/html";
+	tmp["html"] = "text/html";
+	tmp["ico"] = "image/x-icon";
+	tmp["ics"] = "text/calendar";
+	tmp["jar"] = "application/java-archive";
+	tmp["jpeg"] = "image/jpeg";
+	tmp["jpg"] = "image/jpeg";
+	tmp["js"] = "application/javascript";
+	tmp["json"] = "application/json";
+	tmp["mid"] = "audio/midi";
+	tmp["midi"] = "audio/midi";
+	tmp["mpeg"] = "video/mpeg";
+	tmp["oga"] = "audio/ogg";
+	tmp["ogv"] = "video/ogg";
+	tmp["ogx"] = "application/ogg";
+	tmp["otf"] = "font/otf";
+	tmp["png"] = "image/png";
+	tmp["pdf"] = "application/pdf";
+	tmp["rar"] = "application/x-rar-compressed";
+	tmp["rtf"] = "application/rtf";
+	tmp["sh"] = "application/x-sh";
+	tmp["svg"] = "image/svg+xml";
+	tmp["tif"] = "image/tiff";
+	tmp["tiff"] = "image/tiff";
+	tmp["ts"] = "application/typescript";
+	tmp["ttf"] = "font/ttf";
+	tmp["vsd"] = "application/vnd.visio";
+	tmp["wav"] = "audio/x-wav";
+	tmp["weba"] = "audio/webm";
+	tmp["webm"] = "video/webm";
+	tmp["webp"] = "image/webm";
+	tmp["woff"] = "font/woff";
+	tmp["woff2"] = "font/woff2";
+	tmp["xhtml"] = "application/xhtml+xml";
+	tmp["xml"] = "application/xml";
+	tmp["zip"] = "application/zip";
+
+	return (tmp);
+}
+
+mapString Response::_typeMap = Response::initType();
+
+std::string	Response::findType(std::string contentlocation)
+{
+	std::string type(contentlocation.substr(contentlocation.rfind(".") + 1, contentlocation.size() - contentlocation.rfind(".")));
+	if (_typeMap.find(type) == _typeMap.end())
+		return "text/plain";
+	return _typeMap[type];
 }
 
 std::string Response::getErrorFileBody(int code)
@@ -292,4 +382,41 @@ static std::string gen_random(const int len)
 		tmp_s += alphanum[rand() % (sizeof(alphanum) - 1)];
 
 	return tmp_s;
+}
+
+static int		checkPath(const std::string &path)
+{
+	struct stat s;
+
+	if (stat(path.c_str(), &s) == 0)
+	{
+		if (s.st_mode & S_IFDIR)
+			return IS_A_DIRECTORY;
+		else if (s.st_mode & S_IFREG)
+			return IS_A_FILE;
+		else
+			return IS_SOMETHING_ELSE;
+	}
+	else
+		return IS_SOMETHING_ELSE;
+}
+
+static int checkReadPermission(const std::string &path)
+{
+	struct stat s;
+
+	if (stat(path.c_str(), &s) == 0)
+		if(s.st_mode & S_IROTH)
+			return (1);
+	return (0);
+}
+
+static int checkWritePermission(const std::string &path)
+{
+	struct stat s;
+
+	if (stat(path.c_str(), &s) == 0)
+		if(s.st_mode & S_IWOTH)
+			return (1);
+	return (0);
 }

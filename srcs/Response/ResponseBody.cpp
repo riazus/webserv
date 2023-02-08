@@ -73,6 +73,18 @@ void ResponseBody::setContent(std::string content)
 	this->_content = content;
 }
 
+void ResponseBody::setAllowMethod(stringVector allow)
+{
+	for (stringVector::const_iterator i = allow.begin(); i != allow.end(); i++)
+		this->_allowMethod.insert(*i);
+	this->_allow = allow;
+}
+
+void ResponseBody::setAutoIndex(bool autoindex)
+{
+	this->_autoIndex = autoindex;
+}
+
 std::string ResponseBody::getCookie(std::string key) const
 {
     if (this->_cookies.count(key))
@@ -133,9 +145,12 @@ std::string ResponseBody::getContent() const
 	return this->_content;
 }
 
-void ResponseBody::setAllowMethod(stringVector allow)
+bool ResponseBody::getAutoIndex(void) const
 {
-	for (stringVector::const_iterator i = allow.begin(); i != allow.end(); i++)
-		this->_allowMethod.insert(*i);
-	this->_allow = allow;
+	return this->_autoIndex;
+}
+
+std::string ResponseBody::getIndex(void) const
+{
+	return this->_index;
 }

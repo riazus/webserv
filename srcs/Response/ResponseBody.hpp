@@ -46,8 +46,8 @@ class ResponseBody
 		stringSet			getAllowMethod() const;
 		stringVector		getAllow() const;
 		std::string			getLanguage() const;
-		// bool				getAutoIndex(void) const;
-		// std::string			getIndex(void) const;
+		bool				getAutoIndex(void) const;
+		std::string			getIndex(void) const;
 		std::string			getContentLocation() const;
 		std::string			getContent() const;
 
