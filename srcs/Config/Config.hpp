@@ -11,10 +11,11 @@ class Config
 {
 	private:
 
-	std::vector<Server *> servers;
+	
 	std::string configFile;
 
 	public:
+		std::vector<Server> servers;
 		Config(void);
 		Config(Config const & src);
 		Config &operator=(const Config &rhs);

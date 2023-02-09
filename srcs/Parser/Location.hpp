@@ -49,7 +49,7 @@ class Location
 		    virtual const char* what() const throw();
 	    };
 
-        static Location *parse_location(std::vector<std::string> &config, int *line_count, Server* server);
+        Location parse_location(std::vector<std::string> &config, int *line_count);
 };
 
 #endif

@@ -27,7 +27,7 @@ class Request
 		std::string 	getHeader(std::string header);
 		std::string		getMethod() const;
 		mapString		getHeaders() const;
-		Server			*getServer()	const;
+		Server			getServer()	const;
 		std::string		getPath() const;
 
 		//SETTERS
@@ -39,7 +39,7 @@ class Request
 		void			setHeader(std::string token, std::string value);
 		void 			setEnvForCgi(std::string token, std::string value);
 		void			setNetwork(std::string ip);
-		void			setServer(Server *server);
+		void			setServer(Server server);
 
 	private:
 		int				_code;
@@ -51,7 +51,7 @@ class Request
 		int				_port;
 		std::string 	_path;
 		std::string 	_query;
-		Server			*_server;
+		Server			_server;
 		
 };
 

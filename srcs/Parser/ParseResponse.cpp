@@ -56,7 +56,7 @@ void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Serve
 
 	//parseCookies(responseBody, request);
 	responseBody.setCode(request.getCode());
-	responseBody.setRequest(&request);
+	responseBody.setRequest(request);
 	responseBody.setServer(server);
 	responseBody.setLocationFile(locationName);
 	responseBody.setLocationPath(request.getPath());
@@ -65,11 +65,6 @@ void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Serve
 	responseBody.setClientBodyBufferSize(server.getMaxClientBodySize());
 	//responseBody.setCgiParam(location.getCgiParam());
 	//responseBody.setCgiPass(location.getCgiPass());
-	std::vector<std::string> methods = server.getMethods();
-	for(int i = 0; i < methods.size(); i++){
-		std::cout << "ALLOW METHOD: " << methods[i] << std::endl;
-	}
-	std::cout << "ALLOW METHOD size: " << methods.size() << std::endl;
 	responseBody.setAllowMethod(server.getMethods());
 	responseBody.setLanguage(setLanguage(request.getHeader("Accept-Language")));
 	//responseBody.setAutoIndex(server.getIndex());

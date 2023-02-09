@@ -11,6 +11,16 @@ Request::Request(Request const & src)
 
 Request &Request::operator=(Request const &rhs)
 {
+	this->_code = rhs._code;
+	this->_headers = rhs._headers;
+	this->_env_for_cgi = rhs._env_for_cgi;
+	this->_body = rhs._body;
+	this->_version = rhs._version;
+	this->_method = rhs._method;
+	this->_port = rhs._port;
+	this->_path = rhs._path;
+	this->_query = rhs._query;
+	this->_server = rhs._server;
 	return *this;
 }
 
@@ -53,14 +63,15 @@ void Request::ResetHeaders()
 
 void Request::ResetRequest()
 {
+	std::cout << "RESET REQUEST" << std::endl;
 	this->headerReady = false;
 	this->bodyReady = false;
 	this->bodySize = 0;
 	this->contentSize = 0;
 	this->requestLine.clear();
-	this->_server->setPort(0);
-	this->_server->setHostName("");
-	this->_server->setHostAddr(inet_addr("0")); //CONST CHAR !!!!!
+	this->_server.setPort(0);
+	this->_server.setHostName("");
+	this->_server.setHostAddr(inet_addr("0")); //CONST CHAR !!!!!
 }
 
 int Request::getCode() const
@@ -91,7 +102,7 @@ mapString Request::getHeaders() const
     return this->_headers;
 }
 
-Server *Request::getServer() const
+Server Request::getServer() const
 {
     return this->_server;
 }
@@ -126,7 +137,7 @@ void Request::setHeader(std::string token, std::string value)
 	this->_headers[token] = value;
 }
 
-void Request::setServer(Server *server)
+void Request::setServer(Server server)
 {
 	this->_server = server;
 }
@@ -147,10 +158,10 @@ void Request::setNetwork(std::string ip)
 
 	host = ip.substr(0, colons);
 	if (host == "localhost")
-		this->_server->setHostAddr(inet_addr("127.0.0.1"));
+		this->_server.setHostAddr(inet_addr("127.0.0.1"));
 	else if (host.find_first_not_of("0123456789.") != std::string::npos)
-		this->_server->setHostName(host.c_str());
+		this->_server.setHostName(host.c_str());
 	else
-		this->_server->setHostAddr(inet_addr(host.c_str()));
-	this->_server->setPort(std::atoi(ip.substr(++colons).c_str()));
+		this->_server.setHostAddr(inet_addr(host.c_str()));
+	this->_server.setPort(std::atoi(ip.substr(++colons).c_str()));
 }

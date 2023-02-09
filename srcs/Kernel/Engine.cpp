@@ -18,6 +18,14 @@ Engine::~Engine()
 {
 }
 
+extern volatile bool g_run;
+
+void signal_handler(int signum)
+{
+	(void)signum;
+	g_run = false;
+}
+
 //Validate/Parse app's config
 void Engine::Validate(int argc, char **argv)
 {
@@ -28,18 +36,19 @@ void Engine::Validate(int argc, char **argv)
 //Main executable method
 void Engine::Execute(int argc, char **argv)
 {
+    Config config;
+    Kernel kernel;
+    signal(SIGINT, signal_handler);
     try
     {
         //In this place need parse all things from config
 
         //for example Parser *parser = new Parser();
         //parser->Parse();
-        Config *config = new Config();
-        Kernel *kernel = new Kernel();
-        config->Parsing("./test_1server.conf");
-        //config->getFullInfo();
-        kernel->SetConfig(config);
-        kernel->Run();
+        config.Parsing("./test_1server.conf");
+        //config.getFullInfo();
+        kernel.SetConfig(config);
+        kernel.Run();
 
     }
     catch(const std::exception& e)

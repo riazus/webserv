@@ -9,18 +9,14 @@
 class ParseMsg
 {
     public:
-		ParseMsg(void);
-		ParseMsg(ParseMsg const & src);
-		ParseMsg &operator=(const ParseMsg &rhs);
-		~ParseMsg(void);
     
     /*REQUEST*/
     public:
         void            ParseBody(Request &request);
         void            ParseHeader(Request &request);
     private:
-        stringVector    methods;
-        stringVector    InitMethods();
+        static stringVector    methods;
+        static stringVector    InitMethods();
         void            SplitHeader(Request &request);
         void            ParseFirstLine(Request &request);
 

@@ -11,7 +11,13 @@ Location::Location(const Location &location)
 
 Location &Location::operator=(const Location &location)
 {
-	this->name = location.name;
+	this->path = location.path;
+    this->name = location.name;
+    this->methods = location.methods;
+    this->root = location.root;
+    this->index = location.index;
+    this->autoindex = location.autoindex;
+    this->client_body_buffer_size = location.client_body_buffer_size;
 	return (*this);
 }
 
@@ -93,15 +99,13 @@ void	Location::is_valid()
 	}
 }
 
-Location* Location::parse_location(std::vector<std::string> &config, int *line_count, Server* server)
+Location Location::parse_location(std::vector<std::string> &config, int *line_count)
 {
-	Location *location = new Location();
-
 	(*line_count)++;
 	std::vector<std::string> line = ft_split(config[*line_count], CHARTOSKIP);
 	if (line.size()!= 3)
 		config_error("expected a directory and '{' after location");
-	location->setPath(line[1]);
+	this->setPath(line[1]);
 	if (line[2] != "{")
 		config_error("missing '{'");
 	(*line_count)++;
@@ -129,26 +133,26 @@ Location* Location::parse_location(std::vector<std::string> &config, int *line_c
 				config_error("expected 1 argument min after allow_methods");
 			for (std::vector<std::string>::const_iterator it = line.begin() + 1; it != line.end(); it++)
 			{
-				location->setMethods(*it);
+				this->setMethods(*it);
 			}
 		}
 		else if (line[0] == "root")
 		{
 			if (line.size() != 2)
 				config_error("expected 1 argument after root");
-			location->setRoot(line[1]);
+			this->setRoot(line[1]);
 		}
 		else if (line[0] == "index")
 		{
 			if (line.size() != 2)
 				config_error("expected 1 argument after index");
-			location->setIndex(line[1]);
+			this->setIndex(line[1]);
 		}
 		else if (line[0] == "autoindex")
 		{
 			if (line.size() != 2)
 				config_error("expected 1 argument after autoindex");
-			location->setAutoindex(atoi(line[1].c_str()));
+			this->setAutoindex(atoi(line[1].c_str()));
 		}
 		it++;
 		(*line_count)++;
@@ -156,9 +160,9 @@ Location* Location::parse_location(std::vector<std::string> &config, int *line_c
 	std::vector<std::string> end = ft_split(*it, CHARTOSKIP);
 	if (end[0] != "}")
 		config_error("missing '}'");
-	if (location->getRoot().size() == 0)
-		location->setRoot(location->getPath());
-	return location;
+	if (this->getRoot().size() == 0)
+		this->setRoot(this->getPath());
+	return *this;
 }
 
 const char* Location::InvalidLocationException::what() const throw()

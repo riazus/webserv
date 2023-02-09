@@ -11,6 +11,7 @@ Response::Response(Response const & src)
 
 Response &Response::operator=(Response const &rhs)
 {
+	this->_responseBody = rhs._responseBody;
 	return *this;
 }
 
@@ -38,7 +39,7 @@ void Response::getMethod()
 	std::cout << "BEGIN EXEC Get method" << std::endl;
 	//TODO:
 	if(checkPath(this->_responseBody->getContentLocation()) == IS_A_DIRECTORY &&
-		this->_responseBody->getContentLocation() == (this->_responseBody->getLocation()->getRoot() /*+ this->_responseBody->getLocation()->getAlias()*/))
+		this->_responseBody->getContentLocation() == (this->_responseBody->getLocation().getRoot() /*+ this->_responseBody->getLocation()->getAlias()*/))
 	{
 		this->_responseBody->setContent(this->_responseBody->getContentLocation() + "/" + this->_responseBody->getIndex());
 		if (this->_responseBody->getIndex() != "")
@@ -159,9 +160,9 @@ void Response::initResponseProcess()
 		createHeader();
 		return ;
 	}*/
-	if (tmp.find(this->_responseBody->getRequest()->getMethod()) == tmp.end()) // this method doesn't exists
+	if (tmp.find(this->_responseBody->getRequest().getMethod()) == tmp.end()) // this method doesn't exists
 		this->_code = 405;
-	else if (this->_responseBody->getClientBodyBufferSize() < this->_responseBody->getRequest()->bodySize)
+	else if (this->_responseBody->getClientBodyBufferSize() < this->_responseBody->getRequest().bodySize)
 		this->_code = 413;
 	
 	if (this->_code == 408)
@@ -171,12 +172,11 @@ void Response::initResponseProcess()
 	}
 	else if (this->_code != 200)
 	{
-		std::cout << "WE HERE " << std::endl;
 		this->_directives["Content-Length"] = this->readFile(this->_code);
 		this->createHeader();
 	}
-	else if (this->_method.find(this->_responseBody->getRequest()->getMethod()) != this->_method.end())
-		(this->*Response::_method[this->_responseBody->getRequest()->getMethod()])();
+	else if (this->_method.find(this->_responseBody->getRequest().getMethod()) != this->_method.end())
+		(this->*Response::_method[this->_responseBody->getRequest().getMethod()])();
 }
 
 std::string Response::readFile(int code)
@@ -217,7 +217,7 @@ std::string Response::readFile(std::string path)
 	std::stringstream	buffer;
 
 	if (checkPath(this->_responseBody->getContentLocation()) == IS_A_DIRECTORY && this->_responseBody->getAutoIndex())
-		_body = createAutoindexPage(this->_responseBody->getContentLocation(), this->_responseBody->getRequest()->getPath());
+		_body = createAutoindexPage(this->_responseBody->getContentLocation(), this->_responseBody->getRequest().getPath());
 	else if (checkPath(path) == IS_A_FILE)
 	{
 

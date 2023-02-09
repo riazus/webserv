@@ -3,7 +3,7 @@ NAME	=	webserv
 CC			=	clang++
 INCLUDES	=	srcs/*.hpp 
 
-CPPFLAGS	=	-MD -std=c++98 -std=c++0x -I$(INCLUDES)
+CPPFLAGS	=	-MD -g -std=c++98 -std=c++0x -I$(INCLUDES)
 RM			=	rm -rf
 
 SRCS		=	srcs/main.cpp \

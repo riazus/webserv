@@ -15,7 +15,7 @@ class Kernel
         ~Kernel();
 
         void    Run();
-        void    SetConfig(Config *config);
+        void    SetConfig(Config &config);
 
     private :
         //epoll vars
@@ -28,14 +28,14 @@ class Kernel
         
         mapClient   _clients;
 
-        Config      *_config;
-        ParseMsg    *_parserMsg;
+        Config      _config;
+        ParseMsg    _parserMsg;
 
         void    LoadKernel();
         void    CreateEpoll();
         void    InitEpoll();
         void    InitSocket();
-        int     CreateSocket(Server *server);
+        int     CreateSocket(Server server);
         void    CloseSockets();
         void    AcceptNewClient(int eventPollFd);
         bool    fdIsServer(int eventPollFd);

@@ -1,5 +1,7 @@
 #include "Kernel.hpp"
 
+volatile bool g_run = true;
+
 Kernel::Kernel()
 {
 }
@@ -20,11 +22,8 @@ Kernel::~Kernel()
 
 void Kernel::CloseSockets()
 {
-	//TODO:
     for(intVector::iterator it = _serverFds.begin(); it != _serverFds.end(); it++)
-    {
         close(*it);
-    }
     close(_epollFd);
 }
 
@@ -38,9 +37,9 @@ void Kernel::DeleteClient(int socketFd)
 void Kernel::getServerForClient(Client &client)
 {
 	bool foundAConf = false;
-	Server *rightServer = (*(this->_servers.begin()));
+	Server rightServer = (*(this->_servers.begin()));
 
-	for (serverVector::iterator it = _servers.begin(); it != _servers.end(); it++)
+	/*for (serverVector::iterator it = _servers.begin(); it != _servers.end(); it++)
 	{
 		if (!(client.request.getServer()->getHostName().empty()))
 		{
@@ -62,8 +61,8 @@ void Kernel::getServerForClient(Client &client)
 		}
 		if (foundAConf)
 			break ;
-	}
-	client.setServer(*rightServer);
+	}*/
+	client.setServer(rightServer);
 }
 
 void Kernel::ClientWrite(int eventPollFd)
@@ -71,13 +70,9 @@ void Kernel::ClientWrite(int eventPollFd)
 	//throw std::logic_error("Non implemented ClientWrite");
 	
 	std::string response;
-
-	std::cout << std::endl << "SERVER BEGIN HANDLE REQUEST" << std::endl;
 	//std::cout << _clients[eventPollFd].request.requestLine << std::endl;
 	this->getServerForClient(this->_clients[eventPollFd]);
-	std::cout << "get server for client" << std::endl;
-	this->_parserMsg->ParseResponse(this->_clients[eventPollFd].responseBody, this->_clients[eventPollFd].request, *this->_clients[eventPollFd].getServerAddr());
-	std::cout << "server parse response" << std::endl;
+	this->_parserMsg.ParseResponse(this->_clients[eventPollFd].responseBody, this->_clients[eventPollFd].request, *this->_clients[eventPollFd].getServerAddr());
 	this->_clients[eventPollFd].response.resetResponse(this->_clients[eventPollFd].responseBody);
 
 	this->_clients[eventPollFd].response.initResponseProcess();
@@ -89,37 +84,44 @@ void Kernel::ClientWrite(int eventPollFd)
 
 	if (this->_clients[eventPollFd].response.getIsValid() == false)
 		return ;
-	
+	std::cout << eventPollFd <<" :EV <-> END REQUEST " << this->_clients[eventPollFd].request.getMethod() << std::endl;
 	response = this->_clients[eventPollFd].response.getResponse();
 	if (write(eventPollFd, response.c_str(), response.size()))
 		this->DeleteClient(eventPollFd);
 	this->_clients[eventPollFd].hadResponse = true;
+
+	//request
+	char buffer[100];
+	struct tm *tm = gmtime(&this->_clients[eventPollFd].lastRequest.tv_sec);
+	strftime(buffer, 100, "%F - %T", tm);
+	
+	std::cout << std::endl << "CLIENT: " << buffer <<" | "<< this->_clients[eventPollFd].request.getMethod()+" " << this->_clients[eventPollFd].request.getPath()+" ";
+	std::cout << this->_clients[eventPollFd].request.getServer().getServerName()+" " << this->_clients[eventPollFd].request.getServer().getPort() << std::endl;
+	std::cout << std::endl << "CLIENT: " << this->_clients[eventPollFd].request.getMethod()+" " << this->_clients[eventPollFd].request.getPath()+" "<< this->_clients[eventPollFd].request.getServer().getServerName()+" " << this->_clients[eventPollFd].request.getServer().getPort() << std::endl;
+
 	this->_event.events = EPOLLIN;
 	this->_event.data.fd = eventPollFd;
 	epoll_ctl(this->_epollFd, EPOLL_CTL_MOD, eventPollFd, &this->_event);
 	this->_clients[eventPollFd].request.ResetRequest();
-	std::cout << "SERVER WROTE TO CLIENT" << std::endl;
 }
 
 bool Kernel::ReadClientRequest(int clientSocket)
 {
 	char buffer[BUFFER_SIZE + 1];
 	std::string body("");
-	this->_clients[clientSocket].request.setServer(this->_clients[clientSocket].getServerAddr());
-	std::cout << std::endl << "SERVER START READ CLIENT'S REQUEST" << std::endl;
+	this->_clients[clientSocket].request.setServer(this->_clients[clientSocket].getServer());
+	//
 	ssize_t requestLen = read(clientSocket, buffer, BUFFER_SIZE);
 	//std::cout << buffer << std::endl;
 	if (requestLen == -1)
 	{
 		this->DeleteClient(clientSocket);
 		//throw std::logic_error("Error: read Client's request failed");
-		std::cout << "SERVER END READ CLIENT'S REQUEST" << std::endl;
 		return false;
 	}
 	else if (requestLen == 0) //Closing connection request from clients
 	{
 		this->DeleteClient(clientSocket);
-		std::cout << "SERVER END READ CLIENT'S REQUEST" << std::endl;
 		return false;
 	}
 	else
@@ -134,12 +136,11 @@ bool Kernel::ReadClientRequest(int clientSocket)
 	if (this->_clients[clientSocket].request.requestLine.find("\r\n\r\n") != std::string::npos
 		&& this->_clients[clientSocket].request.headerReady == false)
 	{
-		this->_parserMsg->ParseHeader(this->_clients[clientSocket].request);
+		this->_parserMsg.ParseHeader(this->_clients[clientSocket].request);
 		this->_clients[clientSocket].request.headerReady = true;
 		if (std::atoi(this->_clients[clientSocket].request.getHeader("Content-Lenght").c_str()) == 0)
 		{
 			this->_clients[clientSocket].request.bodyReady = true;
-			std::cout << "SERVER END READ CLIENT'S REQUEST" << std::endl;
 			return true;
 		}
 	}
@@ -150,11 +151,10 @@ bool Kernel::ReadClientRequest(int clientSocket)
 		if ((this->_clients[clientSocket].request.contentSize - header.size()) == (unsigned long)std::atol(_clients[clientSocket].request.getHeader("Content-Length").c_str()))
 		{
 			std::cout << "CONTENT SIZE = " << this->_clients[clientSocket].request.contentSize - header.size() << " CONTENT LENGTH " << std::atoi(_clients[clientSocket].request.getHeader("Content-Length").c_str()) << '\n';
-			this->_parserMsg->ParseBody(_clients[clientSocket].request);
+			this->_parserMsg.ParseBody(_clients[clientSocket].request);
 			_clients[clientSocket].request.bodyReady = true;
 		}
 	}
-	std::cout << "SERVER END READ CLIENT'S REQUEST" << std::endl;
     return true;
 }
 
@@ -217,7 +217,7 @@ void Kernel::InitEpoll()
 }
 
 // Returns prepared socket's fd for accept connection
-int Kernel::CreateSocket(Server *server)
+int Kernel::CreateSocket(Server server)
 {
 	const int opt = 1;
 	int listen_fd;
@@ -241,8 +241,8 @@ int Kernel::CreateSocket(Server *server)
 
 	servaddr.sin_family = AF_INET;
 	//NB! Need to FIX
-	servaddr.sin_addr.s_addr = server->getHostAddr();
-	servaddr.sin_port = htons(server->getPort());
+	servaddr.sin_addr.s_addr = server.getHostAddr();
+	servaddr.sin_port = htons(server.getPort());
 
 	std::memset(servaddr.sin_zero, '\0', sizeof(servaddr.sin_zero));
 
@@ -281,9 +281,8 @@ void Kernel::CreateEpoll()
 
 void Kernel::LoadKernel()
 {
-	this->_servers = this->_config->getServers();
-	this->_parserMsg = new ParseMsg();
-	
+	this->_servers = this->_config.getServers();
+
 	this->CreateEpoll();
 	this->InitSocket();
 	this->InitEpoll();
@@ -297,14 +296,14 @@ void Kernel::Run()
 
 	std::cout << "Start servers initialization..." << std::endl;
     this->LoadKernel();
-	while(true)
+	while(g_run)
 	{
 		errno = 0;
 		nfds = epoll_wait(this->_epollFd, this->_eventsArray, MAX_EV, APP_TIMEOUT);
 		if (errno == EINVAL || errno == EFAULT || errno == EBADFD)
 			throw std::logic_error("Error: epoll_wait() failed");
-		else if (errno == EINTR)
-			break;
+		else if (errno == EINTR) // interrupted by ctrl+c
+			g_run = false;
 
 		//TODO: Main logic ->
 		for (int i = 0; i < nfds; i++)
@@ -329,10 +328,10 @@ void Kernel::Run()
 		}
 	}
 	this->CloseSockets();
-	std::cout << "Shutting down server..." << std::endl;
+	std::cout << std::endl << "Shutting down server..." << std::endl;
 }
 
-void Kernel::SetConfig(Config *config)
+void Kernel::SetConfig(Config &config)
 {
 	this->_config = config;
 }

@@ -24,7 +24,7 @@ class Server
         stringVector                        methods;
         std::map<int, std::string>          error_page;
         mapString                           cgi;
-        std::list<Location *>               location;
+        std::list<Location>                 location;
         long long                           max_client_body_size;
 
 
@@ -40,7 +40,7 @@ class Server
         void setRoot(std::string root);
         void setIndex(std::string index);
         void setMethods(std::string methods);
-        void setLocation(Location *location);
+        void setLocation(Location location);
         void setErrorPage(int num, std::string page);
         void setCgi(std::string name, std::string path);
         void setMaxClientBodySize(long long size);
@@ -54,13 +54,13 @@ class Server
         std::string getRoot();
         std::string getIndex();
         std::vector<std::string> getMethods();
-        Location *getLocation();
+        Location getLocation();
         std::map<int, std::string> getErrorPage();
         std::map<std::string, std::string> getCgi();
         long long getMaxClientBodySize();
         std::string getHostName();
         in_addr_t getHostAddr();
-        static Server *parse_server(std::vector<std::string> config, int *line_count);
+        void parse_server(std::vector<std::string> config, int *line_count);
 
         void server_error(std::string error);
         void is_valid();

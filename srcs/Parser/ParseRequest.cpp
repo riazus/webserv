@@ -1,9 +1,17 @@
 #include "ParseMsg.hpp"
 
-ParseMsg::ParseMsg(void)
+stringVector		ParseMsg::InitMethods()
 {
-    this->methods = this->InitMethods();
+	stringVector	methods;
+
+	methods.push_back("GET");
+	methods.push_back("POST");
+	methods.push_back("DELETE");
+
+	return methods;
 }
+
+stringVector	ParseMsg::methods = ParseMsg::InitMethods();
 
 void ParseMsg::ParseBody(Request &request)
 {
@@ -60,15 +68,6 @@ static std::string	findtoken(std::string line)
 static std::string	findvalue(std::string line)
 {
 	return (line.substr(line.find_first_of(' ') + 1));
-}
-
-stringVector ParseMsg::InitMethods()
-{
-    stringVector methods;
-    methods.push_back("GET");
-    methods.push_back("POST");
-    methods.push_back("DELETE");
-    return methods;
 }
 
 void ParseMsg::SplitHeader(Request &request)

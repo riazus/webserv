@@ -16,15 +16,16 @@ class Client
 		~Client(void);
 
 		bool			hadResponse;
-		Request 		request;
 		timeval			lastRequest;
 		std::string		UserId;
 
+		Request 		request;
 		Response 		response;
 		ResponseBody	responseBody;
 
 		void			setServer(Server &server);
 		void			SetSocket(int socket);
+		
 		Server			getServer();
 		Server 			*getServerAddr();
 

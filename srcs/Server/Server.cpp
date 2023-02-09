@@ -11,7 +11,19 @@ Server::Server(const Server &server)
 
 Server &Server::operator=(const Server &server)
 {
+
 	this->name = server.name;
+	this->port = server.port;
+	this->ip_adress = server.ip_adress;
+	this->host = server.host;
+	this->hostName = server.hostName;
+	this->root = server.root;
+	this->index = server.index;
+	this->methods = server.methods;
+	this->error_page = server.error_page;
+	this->cgi = server.cgi;
+	this->location = server.location;
+	this->max_client_body_size = server.max_client_body_size;
 	return (*this);
 }
 
@@ -72,16 +84,15 @@ void Server::setMethods(std::string methods)
 
 std::vector<std::string> Server::getMethods()
 {
-	std::cout << "GET METHOD[0]: " << this->methods[0] << std::endl;
 	return (this->methods);
 }
 
-void Server::setLocation(Location *location)
+void Server::setLocation(Location location)
 {
 	this->location.push_back(location);
 }
 
-Location * Server::getLocation()
+Location Server::getLocation()
 {
 	return (this->location).back();
 }
@@ -192,13 +203,13 @@ void Server::is_valid()
 }
 
 
-Server *Server::parse_server(std::vector<std::string> config, int *line_count)
+void Server::parse_server(std::vector<std::string> config, int *line_count)
 {
 	std::vector<std::string> line = ft_split(config[0], CHARTOSKIP);
 
 	if (line[1] != "{")
 		config_error("expected '{' after server");
-	Server *server = new Server();
+	//Server server;
 	std::vector<std::string>::const_iterator it = config.begin() + *line_count;
 
 	if (it == config.end())
@@ -227,20 +238,21 @@ Server *Server::parse_server(std::vector<std::string> config, int *line_count)
 			if (line.size() != 3)
 						config_error("expected 2 arguments after location");
 			int tmp_count = *line_count;
-			server->setLocation(Location::parse_location(config, line_count, server));
+			Location location;
+			this->setLocation(location.parse_location(config, line_count));
 			it += *line_count - tmp_count - 1;
 		}
 		else if (line[0] == "server_name")
 		{
 			if (line.size() != 2)
 				config_error("expected 1 argument after server_name");
-			server->setServerName(line[1]);
+			this->setServerName(line[1]);
 		}
 		else if (line[0] == "error_page")
 		{
 			if (line.size() != 3)
 				config_error("expected 2 arguments after error_page");
-			server->setErrorPage(atoi(line[1].c_str()), line[2]);
+			this->setErrorPage(atoi(line[1].c_str()), line[2]);
 		}
 		else if (line[0] == "listen")
 		{
@@ -261,25 +273,25 @@ Server *Server::parse_server(std::vector<std::string> config, int *line_count)
 				port = listen[1];
 			if (address == "localhost")
 				address = "127.0.0.1";
-			server->setIpAddress(address);
+			this->setIpAddress(address);
 			for (int i=0; i < port.size(); i++)
 			{
 				if (!isdigit(port[i]) || i > 4)
 									config_error("expected integer after listen");
 			}
-			server->setPort(atoi(port.c_str()));
+			this->setPort(atoi(port.c_str()));
 		}
 		else if (line[0] == "cgi")
 		{
 			if (line.size() != 3)
 				config_error("expected 2 arguments after cgi");
-			server->setCgi(line[1], line[2]);
+			this->setCgi(line[1], line[2]);
 		}
 		else if (line[0] == "root")
 		{
 			if (line.size() != 2)
 				config_error("expected 1 argument after root");
-			server->setRoot(line[1]);
+			this->setRoot(line[1]);
 		}
 		else if (line[0] == "max_client_body_size")
 		{
@@ -287,21 +299,20 @@ Server *Server::parse_server(std::vector<std::string> config, int *line_count)
 				config_error("expected 1 argument after max_client_body_size");
 			if (!is_integer(line[1]))
 				config_error("expected integer after max_client_body_size");
-			server->setMaxClientBodySize(atoll(line[1].c_str()));
+			this->setMaxClientBodySize(atoll(line[1].c_str()));
 		}
 		else if (line[0] == "index")
 		{
 			if (line.size() != 2)
 				config_error("expected 1 argument after index");
-			server->setIndex(line[1]);
+			this->setIndex(line[1]);
 		}
 		else if (line[0] == "allow_methods")
 		{
 			if (line.size() != 2)
 				config_error("expected min 1 argument allow methods");
 			for(int i = 1; i < line.size(); i++){
-				std::cout << "SET TO SERVER ALLOW METHOD: " << line[i] << std::endl;
-				server->setMethods(line[i]);
+				this->setMethods(line[i]);
 			}
 		}
 		it++;
@@ -315,8 +326,7 @@ Server *Server::parse_server(std::vector<std::string> config, int *line_count)
 	}
 	if (end.size() && end[0] != "}")
 		config_error("expected '}'");
-	//server->is_valid();
-	return server;
+	//this->is_valid();
 }
 
 const char* Server::InvalidServerException::what() const throw()
