@@ -59,9 +59,29 @@ Location ParseMsg::FindLocation(Server &server, std::string &locationName)
 	return server.getLocations().back();
 }
 
-std::string ParseMsg::CheckContentLocation(std::string contentLocation)
+std::string ParseMsg::CheckContentLocation(std::string content)
 {
-	return contentLocation;
+	const char	*tmp = content.c_str();
+	std::string	ret;
+	int			i = 0;
+	bool		was = false;
+
+	while(tmp[i])
+	{
+		if (tmp[i] == '/')
+		{
+			if (was == false && tmp[i + 1])
+				ret.push_back(tmp[i]);
+			was = true;
+		}
+		else
+		{
+			ret.push_back(tmp[i]);
+			was = false;
+		}
+		i++;
+	}
+	return (ret);
 }
 
 void ParseMsg::ParseCookies(ResponseBody& responseBody, Request& request)
@@ -97,8 +117,7 @@ void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Serve
 		content = location.getRoot() + location.getAlias() + locationName;
 	else
 		content = location.getRoot() + request.getPath();
-	
-	content = server.getRoot() + request.getPath();
 
-	responseBody.setContent(content);
+	content = CheckContentLocation(content);
+	responseBody.setContentLocation(content);
 }

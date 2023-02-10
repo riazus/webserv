@@ -39,7 +39,7 @@ void Response::getMethod()
 	std::cout << "BEGIN EXEC Get method" << std::endl;
 	//TODO:
 	if(checkPath(this->_responseBody->getContentLocation()) == IS_A_DIRECTORY &&
-		this->_responseBody->getContentLocation() == (this->_responseBody->getLocation().getRoot() /*+ this->_responseBody->getLocation()->getAlias()*/))
+		this->_responseBody->getContentLocation() == (this->_responseBody->getLocation().getRoot() + this->_responseBody->getLocation().getAlias()))
 	{
 		this->_responseBody->setContent(this->_responseBody->getContentLocation() + "/" + this->_responseBody->getIndex());
 		if (this->_responseBody->getIndex() != "")
@@ -212,15 +212,12 @@ std::string Response::readFile(int code)
 
 std::string Response::readFile(std::string path)
 {
-	std::cout << "PATH: " << std::endl;
 	std::ofstream		file;
 	std::stringstream	buffer;
-
 	if (checkPath(this->_responseBody->getContentLocation()) == IS_A_DIRECTORY && this->_responseBody->getAutoIndex())
 		_body = createAutoindexPage(this->_responseBody->getContentLocation(), this->_responseBody->getRequest().getPath());
 	else if (checkPath(path) == IS_A_FILE)
 	{
-
 		file.open(path.c_str(), std::ifstream::in);
 		if (file.is_open() == false)
 		{
