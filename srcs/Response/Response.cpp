@@ -176,11 +176,12 @@ void Response::initResponseProcess()
 		this->createHeader();
 	}
 	else if (this->_method.find(this->_responseBody->getRequest().getMethod()) != this->_method.end())
-		(this->*Response::_method[this->_responseBody->getRequest().getMethod()])();
+		(this->*Response::_method[this->_responseBody->getRequest().getMethod()])(); //start execute found method
 }
 
 std::string Response::readFile(int code)
 {
+	std::cout << code << " PATH TO READ : " << this->_responseBody->getErrorPath(code) << std::endl;
 	std::string	path(this->_responseBody->getErrorPath(code));
 	std::ofstream		file;
 	std::stringstream	buffer;

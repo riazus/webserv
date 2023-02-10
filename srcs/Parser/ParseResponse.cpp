@@ -24,18 +24,39 @@ std::string	ParseMsg::setLanguage(std::string acceptLanguage)
 		return (acceptLanguage.substr(0, acceptLanguage.find_first_of('-')));
 }
 
-Server ParseMsg::FindLocation(Server &server, std::string &locationName)
+Location ParseMsg::FindLocation(Server &server, std::string &locationName)
 {
-    /*std::list<Location *> locations(server.getLocation());
+    std::list<Location> locations(server.getLocations());
 	if (*locationName.end() == '/')
 		locationName.resize(locationName.size() - 1);
 
 	if (locationName.empty())
-		return server;
+		return server.getLocations().back();
 	if (locations.empty())
-		return server;*/
+		return server.getLocations().back();
+
+	for (std::list<Location>::const_iterator i = locations.begin(); i != locations.end(); i++)
+		if (i->getPath()  != "*")
+		{
+			for (std::string tmp = locationName; !tmp.empty(); tmp.resize(tmp.size() - 1))
+				if (tmp == i->getPath())
+				{
+					locationName = tmp;
+					return *i;
+				}
+		}
+		else
+		{
+			std::string suffix(i->getPath().substr(1));
+			if (locationName.size() > suffix.size() && !locationName.compare(locationName.size() - suffix.size(), suffix.size(), suffix))
+			{
+				Location ret(*i);
+				ret.setIsExtension(true);
+				return ret;
+			}
+		}
 	//TODO fix it
-	return server;
+	return server.getLocations().back();
 }
 
 std::string ParseMsg::CheckContentLocation(std::string contentLocation)
@@ -51,7 +72,7 @@ void ParseMsg::ParseCookies(ResponseBody& responseBody, Request& request)
 void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Server &server)
 {
 	std::string	locationName(request.getPath());
-	Server		location(FindLocation(server, locationName));
+	Location location(FindLocation(server, locationName));
 	std::string	content;
 
 	//parseCookies(responseBody, request);
@@ -60,26 +81,24 @@ void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Serve
 	responseBody.setServer(server);
 	responseBody.setLocationFile(locationName);
 	responseBody.setLocationPath(request.getPath());
-	responseBody.setLocation(server.getLocation());
-	//responseBody.setErrorMap(location.getErrorPage());
+	responseBody.setLocation(location);
+	responseBody.setErrorMap(server.getErrorPage());
 	responseBody.setClientBodyBufferSize(server.getMaxClientBodySize());
 	//responseBody.setCgiParam(location.getCgiParam());
 	//responseBody.setCgiPass(location.getCgiPass());
 	responseBody.setAllowMethod(server.getMethods());
 	responseBody.setLanguage(setLanguage(request.getHeader("Accept-Language")));
-	//responseBody.setAutoIndex(server.getIndex());
+	responseBody.setAutoIndex(server.getAutoindex());
 	responseBody.setIndex(server.getIndex());
 
-	/*if (!server.getAlias().empty() && location.extension == false)
+	if (!server.getAlias().empty() && location.getIsExtension() == false)
 		content = location.getRoot() + location.getAlias() + request.getPath().substr(locationName.size());
-	else if (!location.getAlias().empty() && location.extension)
+	else if (!location.getAlias().empty() && location.getIsExtension())
 		content = location.getRoot() + location.getAlias() + locationName;
 	else
-		content = location.getRoot() + request.getPath();*/
+		content = location.getRoot() + request.getPath();
 	
 	content = server.getRoot() + request.getPath();
-
-	//content = "HTTP/1.1 200 OK \nContent-Type: text/html\nContent-Length: 142\n\n<html>\n<body>\n<center>\n<h1>Hi! This is webserv written by Riyaz and Matvey, enjoy!</h1>\n<center>\n</body>\n</html>";//checkContentLocation(content);
 
 	responseBody.setContent(content);
 }

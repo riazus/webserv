@@ -22,11 +22,11 @@ class Server
         std::string                         root;
         std::string                         index;
         stringVector                        methods;
-        std::map<int, std::string>          error_page;
+        mapError                            error_page;
         mapString                           cgi;
         std::list<Location>                 location;
         long long                           max_client_body_size;
-
+        bool                                autoindex;
 
     public:
 
@@ -47,21 +47,24 @@ class Server
         void setHostAddr(in_addr_t addr);
         void setHostName(std::string name);
         void setIpAddress(std::string ip_adress);
+        void setAutoindex(bool var);
 
-        std::string getServerName();
-        int getPort();
-        std::string getIpAdress();
-        std::string getRoot();
-        std::string getIndex();
-        std::vector<std::string> getMethods();
-        Location getLocation();
-        std::map<int, std::string> getErrorPage();
-        std::map<std::string, std::string> getCgi();
-        long long getMaxClientBodySize();
-        std::string getHostName();
+        std::string &getServerName();
+        int &getPort();
+        std::string &getIpAdress();
+        std::string &getRoot();
+        std::string &getIndex();
+        stringVector &getMethods();
+        std::list<Location> &getLocations();
+        mapError &getErrorPage();
+        std::map<std::string, std::string> &getCgi();
+        long long &getMaxClientBodySize();
+        std::string &getHostName();
         in_addr_t getHostAddr();
-        void parse_server(std::vector<std::string> config, int *line_count);
+        bool &getAutoindex();
+        std::string getAlias();
 
+        void parse_server(std::vector<std::string> config, int *line_count);
         void server_error(std::string error);
         void is_valid();
 

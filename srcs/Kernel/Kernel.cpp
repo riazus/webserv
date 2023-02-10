@@ -301,7 +301,6 @@ int Kernel::CreateSocket(Server server)
 	}
 
 	servaddr.sin_family = AF_INET;
-	//NB! Need to FIX
 	servaddr.sin_addr.s_addr = server.getHostAddr();
 	servaddr.sin_port = htons(server.getPort());
 
@@ -371,7 +370,6 @@ void Kernel::Run()
 		else if (errno == EINTR) // interrupted by ctrl+c
 			g_run = false;
 
-		//TODO: Main logic ->
 		for (int i = 0; i < nfds; i++)
 		{
 			if (this->_eventsArray[i].events & EPOLLERR ||  this->_eventsArray[i].events & EPOLLHUP)
@@ -381,10 +379,7 @@ void Kernel::Run()
 			else if (this->_eventsArray[i].events & EPOLLIN)
 				this->ClientRead(this->_eventsArray[i].data.fd);
 			else if (this->_eventsArray[i].events & EPOLLOUT)
-			{
-				//TODO:
 				this->ClientWrite(this->_eventsArray[i].data.fd);
-			}
 		}
 
 		if (nfds == 0)

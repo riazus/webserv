@@ -1,6 +1,6 @@
 #include "Request.hpp"
 
-Request::Request(void)
+Request::Request(void): bodySize(0), contentSize(0), requestLine(""), bodyReady(false), headerReady(false), _code(200), _method(""), _version(""), _body(""), _port(8080), _path(""), _query("")
 {
 }
 
@@ -12,6 +12,7 @@ Request::Request(Request const & src)
 Request &Request::operator=(Request const &rhs)
 {
 	this->_code = rhs._code;
+	this->bodySize = rhs.bodySize;
 	this->_headers = rhs._headers;
 	this->_env_for_cgi = rhs._env_for_cgi;
 	this->_body = rhs._body;

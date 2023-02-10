@@ -43,6 +43,11 @@ void ResponseBody::setLocationFile(std::string path)
 	this->_locationFile = path;
 }
 
+void ResponseBody::setErrorMap(mapError map)
+{
+	this->_errorPage = map;
+}
+
 void ResponseBody::setClientBodyBufferSize(size_t size)
 {
 	this->_clientBodyBufferSize = size;

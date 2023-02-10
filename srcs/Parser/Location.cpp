@@ -1,6 +1,6 @@
 #include "Location.hpp"
 
-Location::Location()
+Location::Location(): path(""), name(""), root(""), index(""), autoindex(0), client_body_buffer_size(0), extension(false)
 {
 }
 
@@ -18,6 +18,7 @@ Location &Location::operator=(const Location &location)
     this->index = location.index;
     this->autoindex = location.autoindex;
     this->client_body_buffer_size = location.client_body_buffer_size;
+	this->extension = location.extension;
 	return (*this);
 }
 
@@ -26,7 +27,7 @@ void Location::setPath(std::string path)
 	this->path = path;
 }
 
-std::string Location::getPath()
+std::string Location::getPath() const
 {
 	return (this->path);
 }
@@ -66,9 +67,24 @@ void Location::setMethods(std::string method)
 	this->methods.push_back(method);
 }
 
+void Location::setIsExtension(bool val)
+{
+	this->extension = val;
+}
+
 std::vector<std::string> Location::getMethods()
 {
 	return (this->methods);
+}
+
+bool Location::getIsExtension()
+{
+    return this->extension;
+}
+
+std::string Location::getAlias()
+{
+    return "";
 }
 
 void Location::location_error(std::string error)

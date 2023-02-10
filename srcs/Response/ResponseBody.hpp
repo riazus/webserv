@@ -17,7 +17,7 @@ class ResponseBody
 		void				setLocation(Location location);
 		void				setLocationPath(std::string path);
 		void				setLocationFile(std::string path);
-		void				setErrorMap(mapStringVectorInt map);
+		void				setErrorMap(mapError map);
 		void				setClientBodyBufferSize(size_t size);
 		void				setCgiParam(stringVector cgiParam);
 		void				setCgiPass(std::string cgiPass);

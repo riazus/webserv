@@ -17,6 +17,7 @@ class Location
         std::string index;
         int autoindex;
         int client_body_buffer_size;
+        bool extension;
 
     public:
 
@@ -30,12 +31,15 @@ class Location
         void setIndex(std::string index);
         void setAutoindex(int autoindex);
         void setMethods(std::string method);
+        void setIsExtension(bool);
 
-        std::string getPath();
+        std::string getPath() const;
         std::string getRoot();
         std::string getIndex();
         int getAutoindex();
         std::vector<std::string> getMethods();
+        bool getIsExtension();
+        std::string getAlias();
 
         void location_error(std::string error);
         void is_valid();

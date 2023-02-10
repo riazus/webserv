@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-Server::Server()
+Server::Server(): name(""), port(8080), ip_adress(""), hostName(""), root(""), index(""), max_client_body_size(0)
 {
 }
 
@@ -40,7 +40,7 @@ void Server::setServerName(std::string name)
 	this->name = name;
 }
 
-std::string Server::getServerName()
+std::string &Server::getServerName()
 {
 	return (this->name);
 }
@@ -50,7 +50,7 @@ void Server::setPort(int port)
 	this->port = port;
 }
 
-int Server::getPort()
+int &Server::getPort()
 {
 	return (this->port);
 }
@@ -60,7 +60,12 @@ void Server::setIpAddress(std::string ip_adress)
 	this->ip_adress = ip_adress;
 }
 
-std::string Server::getIpAdress()
+void Server::setAutoindex(bool var)
+{
+	this->autoindex = var;
+}
+
+std::string &Server::getIpAdress()
 {
 	return (this->ip_adress);
 }
@@ -70,7 +75,7 @@ void Server::setRoot(std::string root)
 	this->root = root;
 }
 
-std::string Server::getRoot()
+std::string &Server::getRoot()
 {
 	return (this->root);
 }
@@ -80,7 +85,7 @@ void Server::setIndex(std::string index)
 	this->index = index;
 }
 
-std::string Server::getIndex()
+std::string &Server::getIndex()
 {
 	return (this->index);
 }
@@ -90,7 +95,7 @@ void Server::setMethods(std::string methods)
 	this->methods.push_back(methods);
 }
 
-std::vector<std::string> Server::getMethods()
+std::vector<std::string> &Server::getMethods()
 {
 	return (this->methods);
 }
@@ -100,9 +105,9 @@ void Server::setLocation(Location location)
 	this->location.push_back(location);
 }
 
-Location Server::getLocation()
+std::list<Location> &Server::getLocations()
 {
-	return (this->location).back();
+	return this->location;
 }
 
 void Server::setErrorPage(int num, std::string page)
@@ -110,7 +115,7 @@ void Server::setErrorPage(int num, std::string page)
 	this->error_page[num] = page;
 }
 
-std::map<int, std::string> Server::getErrorPage()
+mapError &Server::getErrorPage()
 {
 	return (this->error_page);
 }
@@ -120,7 +125,7 @@ void Server::setCgi(std::string name, std::string path)
 	this->cgi[name] = path;
 }
 
-std::map<std::string, std::string> Server::getCgi()
+std::map<std::string, std::string> &Server::getCgi()
 {
 	return (this->cgi);
 }
@@ -140,12 +145,12 @@ void Server::setHostName(std::string name)
 	this->hostName = name;
 }
 
-long long Server::getMaxClientBodySize()
+long long &Server::getMaxClientBodySize()
 {
 	return (this->max_client_body_size);
 }
 
-std::string Server::getHostName()
+std::string &Server::getHostName()
 {
     return this->hostName;
 }
@@ -158,9 +163,18 @@ void Server::server_error(std::string error)
 
 in_addr_t Server::getHostAddr()
 {
-	return (inet_addr(getIpAdress().c_str()));
+	return inet_addr(getIpAdress().c_str());
 }
 
+bool &Server::getAutoindex()
+{
+    return this->autoindex;
+}
+
+std::string Server::getAlias()
+{
+    return "";
+}
 
 void Server::is_valid()
 {
@@ -322,6 +336,14 @@ void Server::parse_server(std::vector<std::string> config, int *line_count)
 			for(int i = 1; i < line.size(); i++){
 				this->setMethods(line[i]);
 			}
+		}
+		else if (line[0] == "autoindex")
+		{
+			if (line.size() != 2)
+				config_error("expected min 2 argument in autoindex");
+			if (line[1] != "1" && line[1] != "0")
+				config_error("expected bool var in autoindex");
+			this->setAutoindex(line[1] == "1"? true : false);
 		}
 		it++;
 		(*line_count)++;
