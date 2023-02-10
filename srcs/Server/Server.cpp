@@ -254,7 +254,6 @@ void Server::parse_server(std::vector<std::string> config, int *line_count)
 		{
 			if (line.size() != 2)
 				config_error("expected 1 argument after server_name");
-			std::cout << "SET SERVER NAME " << line[1] << std::endl; 
 			this->setServerName(line[1]);
 		}
 		else if (line[0] == "error_page")

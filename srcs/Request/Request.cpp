@@ -63,7 +63,6 @@ void Request::ResetHeaders()
 
 void Request::ResetRequest()
 {
-	std::cout << "RESET REQUEST" << std::endl;
 	this->headerReady = false;
 	this->bodyReady = false;
 	this->bodySize = 0;

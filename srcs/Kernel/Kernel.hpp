@@ -37,12 +37,13 @@ class Kernel
         void    InitSocket();
         int     CreateSocket(Server server);
         void    CloseSockets();
+        void    HandleEpollError(int eventPollFd);
         void    AcceptNewClient(int eventPollFd);
         bool    fdIsServer(int eventPollFd);
-        void    ClientWrite(int eventPollFd);
-        void    ClientRead(int eventPollFd);
 
         //Handle read/write methods
+        void    ClientWrite(int eventPollFd);
+        void    ClientRead(int eventPollFd);
         bool    ReadClientRequest(int socketFd);
         bool    WriteClientRequest(int socketFd);
         void    DeleteClient(int socketFd);
@@ -51,6 +52,7 @@ class Kernel
         std::string getResponse();
 
 };
-void    displayClientInfo(Client &client);
-void    displayServerInfo(int eventPollFd);
+void        displayClientInfo(Client &client);
+void        displayServerInfo(Client &client, Response &response);
+std::string	get_time_diff(struct timeval *last);
 #endif

@@ -27,6 +27,17 @@ void Kernel::CloseSockets()
     close(_epollFd);
 }
 
+void Kernel::HandleEpollError(int eventPollFd)
+{
+	if (fdIsServer(eventPollFd))
+	{
+		this->CloseSockets();
+		throw std::logic_error("There is a bad event in events array");
+	}
+	epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, eventPollFd, NULL);
+	close(eventPollFd);
+}
+
 void Kernel::DeleteClient(int socketFd)
 {
 	this->_clients.erase(socketFd);
@@ -76,14 +87,57 @@ void displayClientInfo(Client &client)
 	std::cout << client.getServer().getServerName()+" " << client.getServer().getPort() << std::endl;
 }
 
-void displayServerInfo(int eventPollFd)
+void displayServerInfo(Client &client, Response &response)
 {
-	
+	char			buffer[100];
+	struct tm		*tm;
+	std::string	resp = response.getResponse();
+	std::string firstLine = resp.substr(0, resp.find_first_of('\n') - 1);
+
+	tm = gmtime(&client.lastRequest.tv_sec);
+	strftime(buffer, 100, "%F - %T", tm);
+
+	std::cout << "SERVER: " << buffer << " (" << get_time_diff(&client.lastRequest)+")" << " | " << firstLine+" ";
+	std::cout << client.getServer().getServerName()+" " << client.getServer().getPort() << std::endl;
+}
+
+std::string	get_time_diff(struct timeval *last)
+{
+	if (last == 0)
+		return "        - ";
+	struct timeval end;
+	gettimeofday(&end, NULL);
+
+	size_t	usec = end.tv_usec - last->tv_usec;
+	size_t	sec = end.tv_sec - last->tv_sec;
+	bool	is_micro = false;
+	std::stringstream ss;
+
+	if (sec > 0)
+	{
+		ss << sec << " s";
+	}
+	else
+	{
+		if (usec >= 1000)
+		{
+			ss << usec / 1000 << " ms";
+		}
+		else
+		{
+			ss << usec << " μs";
+			is_micro = true;
+		}
+	}
+
+	std::string str = ss.str();
+	if (str.size() > 10)
+		return "eternity..";
+	return str;
 }
 
 void Kernel::ClientWrite(int eventPollFd)
 {
-	//std::cout << std::endl;	
 	std::string response;
 
 	this->getServerForClient(this->_clients[eventPollFd]);
@@ -92,8 +146,6 @@ void Kernel::ClientWrite(int eventPollFd)
 
 	this->_clients[eventPollFd].response.initResponseProcess();
 
-	//response = "HTTP/1.1 200 OK \nContent-Type: text/html\nContent-Length: 142\n\n<html>\n<body>\n<center>\n<h1>Hi! This is webserv written by Riyaz and Matvey, enjoy!</h1>\n<center>\n</body>\n</html>";
-	
 	if (this->_clients[eventPollFd].UserId == "")
 		this->_clients[eventPollFd].UserId = this->_clients[eventPollFd].response.UserId;
 
@@ -107,6 +159,7 @@ void Kernel::ClientWrite(int eventPollFd)
 	this->_clients[eventPollFd].hadResponse = true;
 
 	displayClientInfo(this->_clients[eventPollFd]);
+	displayServerInfo(this->_clients[eventPollFd], this->_clients[eventPollFd].response);
 
 	this->_event.events = EPOLLIN;
 	this->_event.data.fd = eventPollFd;
@@ -287,6 +340,11 @@ void Kernel::CreateEpoll()
 		throw std::logic_error("Error: epoll_create1() couldn't init");
 }
 
+void Kernel::SetConfig(Config &config)
+{
+	this->_config = config;
+}
+
 void Kernel::LoadKernel()
 {
 	this->_servers = this->_config.getServers();
@@ -317,7 +375,7 @@ void Kernel::Run()
 		for (int i = 0; i < nfds; i++)
 		{
 			if (this->_eventsArray[i].events & EPOLLERR ||  this->_eventsArray[i].events & EPOLLHUP)
-				throw std::logic_error("There is a bad event in events array");
+				this->HandleEpollError(this->_eventsArray[i].data.fd);
 			else if (this->_eventsArray[i].events & EPOLLIN && this->fdIsServer(this->_eventsArray[i].data.fd))
 				this->AcceptNewClient(this->_eventsArray[i].data.fd);
 			else if (this->_eventsArray[i].events & EPOLLIN)
@@ -337,9 +395,4 @@ void Kernel::Run()
 	}
 	this->CloseSockets();
 	std::cout << std::endl << "Shutting down server..." << std::endl;
-}
-
-void Kernel::SetConfig(Config &config)
-{
-	this->_config = config;
 }
