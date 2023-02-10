@@ -36,9 +36,9 @@ void Response::setResponse(std::string response)
 
 int isCgi(std::string path)
 {
-	if (path.find(".py"))
+	if (path.find(".py") != std::string::npos)
 		return 1;
-	if (path.find(".php"))
+	if (path.find(".php") != std::string::npos)
 		return 1;
 	else
 		return 0;
@@ -64,7 +64,6 @@ std::string Response::execCgi(std::string path, int file_format)
 	}
 	waitpid(pid, 0, 0);
 	this->_body = getFile("cgi_tmp_file");
-	std::cout << std::endl << "Body:" << this->_body << "--------------------<<" << std::endl;
 	return (ft_itoa(_body.size()));
 }
 
@@ -84,9 +83,8 @@ void Response::getMethod()
 		this->_responseBody->setContent(this->_responseBody->getContentLocation());
 
 	int file_format = isCgi(this->_responseBody->getContent());
-
 	if(file_format != 0)
-		execCgi(this->_responseBody->getContent(), file_format);
+		_directives["Content-Length"] = execCgi(this->_responseBody->getContent(), file_format);
 	else
 		_directives["Content-Length"] = readFile(this->_responseBody->getContent());
 	
