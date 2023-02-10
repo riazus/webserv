@@ -20,7 +20,6 @@ class Config
 		Config(Config const & src);
 		Config &operator=(const Config &rhs);
 
-		std::string getFile(std::string filename);
 		void Parsing(std::string filename);
 		void getFullInfo();
 		serverVector getServers();
@@ -45,5 +44,6 @@ class Config
 std::vector<std::string> ft_split(const std::string &str, const std::string &charset);	
 bool is_integer(const std::string &s);
 void config_error(std::string error);
+std::string getFile(std::string filename);
 
 #endif

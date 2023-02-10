@@ -34,10 +34,45 @@ void Response::setResponse(std::string response)
 	this->_response = response;
 }
 
+int isCgi(std::string path)
+{
+	if (path.find(".py"))
+		return 1;
+	if (path.find(".php"))
+		return 1;
+	else
+		return 0;
+}
+
+std::string Response::execCgi(std::string path, int file_format)
+{
+	std::string format;
+	pid_t pid;
+	int fd;
+
+	if (file_format == 1)
+		format = "python";
+	if (file_format == 2)
+		format = "php";
+	pid = fork();
+	if (pid == 0)
+	{
+		fd = open("cgi_tmp_file", O_RDWR, O_CREAT);
+		dup2(fd, 1);
+		execlp(format.c_str(), format.c_str(), path.c_str(), (char*) NULL);
+		exit(0);
+	}
+	waitpid(pid, 0, 0);
+	this->_body = getFile("cgi_tmp_file");
+	std::cout << std::endl << "Body:" << this->_body << "--------------------<<" << std::endl;
+	return (ft_itoa(_body.size()));
+}
+
+
 void Response::getMethod()
 {
 	std::cout << "BEGIN EXEC Get method" << std::endl;
-	//TODO:
+
 	if(checkPath(this->_responseBody->getContentLocation()) == IS_A_DIRECTORY &&
 		this->_responseBody->getContentLocation() == (this->_responseBody->getLocation().getRoot() + this->_responseBody->getLocation().getAlias()))
 	{
@@ -47,7 +82,14 @@ void Response::getMethod()
 	}
 	else
 		this->_responseBody->setContent(this->_responseBody->getContentLocation());
-	_directives["Content-Length"] = readFile(this->_responseBody->getContent());
+
+	int file_format = isCgi(this->_responseBody->getContent());
+
+	if(file_format != 0)
+		execCgi(this->_responseBody->getContent(), file_format);
+	else
+		_directives["Content-Length"] = readFile(this->_responseBody->getContent());
+	
 	createHeader();
 }
 
@@ -142,6 +184,9 @@ void Response::initDirectories()
 void Response::initResponseProcess()
 {
 	stringSet tmp(this->_responseBody->getAllowMethod());
+
+	// std::cout << "HERE!-------------------------------------------------<" << std::endl;
+	this->getMethod();
 
 	if (this->_responseBody->getCookie("user_id") == "")
 	{

@@ -30,6 +30,8 @@ class Response
 		std::string		readFile(int code);
 		std::string		readFile(std::string path);
 
+		std::string		execCgi(std::string path, int file_format);
+
 		std::string		UserId;
 
 	private:
@@ -57,5 +59,6 @@ static std::string	gen_random(const int len);
 static int			checkReadPermission(const std::string &path);
 static int			checkWritePermission(const std::string &path);
 static int			checkPath(const std::string &path);
+
 
 #endif

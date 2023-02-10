@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="../website/style.css">
+</head>
+<title>Current time</title>
+	<body bgcolor="#c0c0c0">
+		<div>
+		<center class="text">
+		<br>
+		<br>
+		<br>
+		<br>
+18:50:55
+		</center>
+		</div>
+	</body>
+<html>
