@@ -39,12 +39,12 @@ void Kernel::getServerForClient(Client &client)
 	bool foundAConf = false;
 	Server rightServer = (*(this->_servers.begin()));
 
-	/*for (serverVector::iterator it = _servers.begin(); it != _servers.end(); it++)
+	for (serverVector::iterator it = _servers.begin(); it != _servers.end(); it++)
 	{
-		if (!(client.request.getServer()->getHostName().empty()))
+		if (!(client.request.getServer().getHostName().empty()))
 		{
-			std::string serverName = (*it)->getHostName();
-			if (client.request.getServer()->getHostName() == serverName && (*it)->getPort() == client.request.getServer()->getPort())
+			std::string serverName = it->getServerName();
+			if (client.request.getServer().getHostName() == serverName && it->getPort() == client.request.getServer().getPort())
 			{
 				foundAConf = true;
 				rightServer = *it;
@@ -61,18 +61,33 @@ void Kernel::getServerForClient(Client &client)
 		}
 		if (foundAConf)
 			break ;
-	}*/
+		std::cout << "RIGHT SERVER NOT FOUND!!" << std::endl;
+	}
 	client.setServer(rightServer);
+}
+
+void displayClientInfo(Client &client)
+{
+	char buffer[100];
+	struct tm *tm = gmtime(&client.lastRequest.tv_sec);
+	strftime(buffer, 100, "%F - %T", tm);
+	
+	std::cout << "CLIENT: " << buffer <<" | "<< client.request.getMethod()+" " << client.request.getPath()+" ";
+	std::cout << client.getServer().getServerName()+" " << client.getServer().getPort() << std::endl;
+}
+
+void displayServerInfo(int eventPollFd)
+{
+	
 }
 
 void Kernel::ClientWrite(int eventPollFd)
 {
-	//throw std::logic_error("Non implemented ClientWrite");
-	
+	//std::cout << std::endl;	
 	std::string response;
-	//std::cout << _clients[eventPollFd].request.requestLine << std::endl;
+
 	this->getServerForClient(this->_clients[eventPollFd]);
-	this->_parserMsg.ParseResponse(this->_clients[eventPollFd].responseBody, this->_clients[eventPollFd].request, *this->_clients[eventPollFd].getServerAddr());
+	this->_parserMsg.ParseResponse(this->_clients[eventPollFd].responseBody, this->_clients[eventPollFd].request, this->_clients[eventPollFd].getServer());
 	this->_clients[eventPollFd].response.resetResponse(this->_clients[eventPollFd].responseBody);
 
 	this->_clients[eventPollFd].response.initResponseProcess();
@@ -84,20 +99,14 @@ void Kernel::ClientWrite(int eventPollFd)
 
 	if (this->_clients[eventPollFd].response.getIsValid() == false)
 		return ;
-	std::cout << eventPollFd <<" :EV <-> END REQUEST " << this->_clients[eventPollFd].request.getMethod() << std::endl;
+	
 	response = this->_clients[eventPollFd].response.getResponse();
-	if (write(eventPollFd, response.c_str(), response.size()))
+	
+	if (write(eventPollFd, response.c_str(), response.size()) < 0)
 		this->DeleteClient(eventPollFd);
 	this->_clients[eventPollFd].hadResponse = true;
 
-	//request
-	char buffer[100];
-	struct tm *tm = gmtime(&this->_clients[eventPollFd].lastRequest.tv_sec);
-	strftime(buffer, 100, "%F - %T", tm);
-	
-	std::cout << std::endl << "CLIENT: " << buffer <<" | "<< this->_clients[eventPollFd].request.getMethod()+" " << this->_clients[eventPollFd].request.getPath()+" ";
-	std::cout << this->_clients[eventPollFd].request.getServer().getServerName()+" " << this->_clients[eventPollFd].request.getServer().getPort() << std::endl;
-	std::cout << std::endl << "CLIENT: " << this->_clients[eventPollFd].request.getMethod()+" " << this->_clients[eventPollFd].request.getPath()+" "<< this->_clients[eventPollFd].request.getServer().getServerName()+" " << this->_clients[eventPollFd].request.getServer().getPort() << std::endl;
+	displayClientInfo(this->_clients[eventPollFd]);
 
 	this->_event.events = EPOLLIN;
 	this->_event.data.fd = eventPollFd;
@@ -109,9 +118,8 @@ bool Kernel::ReadClientRequest(int clientSocket)
 {
 	char buffer[BUFFER_SIZE + 1];
 	std::string body("");
-	this->_clients[clientSocket].request.setServer(this->_clients[clientSocket].getServer());
-	//
 	ssize_t requestLen = read(clientSocket, buffer, BUFFER_SIZE);
+
 	//std::cout << buffer << std::endl;
 	if (requestLen == -1)
 	{

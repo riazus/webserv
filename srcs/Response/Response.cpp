@@ -181,7 +181,6 @@ void Response::initResponseProcess()
 
 std::string Response::readFile(int code)
 {
-	std::cout << code << " :code <-> errorPath: " << this->_responseBody->getErrorPath(code) << std::endl;;
 	std::string	path(this->_responseBody->getErrorPath(code));
 	std::ofstream		file;
 	std::stringstream	buffer;

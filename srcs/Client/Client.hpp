@@ -23,11 +23,11 @@ class Client
 		Response 		response;
 		ResponseBody	responseBody;
 
-		void			setServer(Server &server);
+		void			setServer(Server server);
 		void			SetSocket(int socket);
 		
-		Server			getServer();
-		Server 			*getServerAddr();
+		Server			&getServer();
+		int				getSocket();
 
 	private:
 		int		_socket;

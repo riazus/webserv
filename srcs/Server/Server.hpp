@@ -32,8 +32,8 @@ class Server
 
         Server();
         Server(const Server &Server);
-        Server& operator= (const Server &Server);
-
+        Server& operator=(const Server &Server);
+        bool operator==(const Server &rhs);
 
         void setServerName(std::string name);
         void setPort(int port);

@@ -51,5 +51,6 @@ class Kernel
         std::string getResponse();
 
 };
-
+void    displayClientInfo(Client &client);
+void    displayServerInfo(int eventPollFd);
 #endif
