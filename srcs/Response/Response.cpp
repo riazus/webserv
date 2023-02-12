@@ -107,8 +107,8 @@ void Response::postMethod()
 
 	if (this->_code == 200)
 	{
-		std::string host = std::string(inet_ntoa(this->_responseBody.getServer().get));
-		std::string port = ft_itoa(_config.getServer().getNetwork().port);
+		std::string host = this->_responseBody.getServer().getIpAdress();
+		std::string port = ft_itoa(this->_responseBody.getServer().getPort());
 		std::string location = host + ":" + port + "/upload";
 		_code = 201;
 		_directives["Location"] = location;
@@ -127,7 +127,7 @@ void Response::resetResponse(ResponseBody &responseBody)
 	this->_body = "";
 	this->initErrorMap();
 	this->initDirectories();
-	this->_responseBody = &responseBody;
+	this->_responseBody = responseBody;
 	this->_isValid = false;
 }
 // Creat and append header with body

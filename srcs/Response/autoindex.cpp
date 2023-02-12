@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   autoindex.cpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jannabel <jannabel@student.21-school.ru    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/07 12:36:53 by vdescham          #+#    #+#             */
-/*   Updated: 2023/02/11 19:02:18 by jannabel         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "autoindex.hpp"
 
 std::string setLink(struct stat &buf, std::string dname, std::string url)

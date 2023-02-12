@@ -45,7 +45,7 @@ void Engine::Execute(int argc, char **argv)
 
         //for example Parser *parser = new Parser();
         //parser->Parse();
-        config.Parsing("./test_1server.conf");
+        config.Parsing("./configs/test_1server.conf");
         config.Parsing(DEFAULT);
         //config.getFullInfo();
         kernel.SetConfig(config);

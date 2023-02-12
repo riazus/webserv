@@ -11,6 +11,25 @@ ResponseBody::ResponseBody(ResponseBody const & src)
 
 ResponseBody &ResponseBody::operator=(ResponseBody const &rhs)
 {
+	this->_request = rhs._request;
+	this->_acceptLanguage = rhs._acceptLanguage;
+	this->_allow = rhs._allow;
+	this->_allowMethod = rhs._allowMethod;
+	this->_autoIndex = rhs._autoIndex;
+	this->_cgiParam = rhs._cgiParam;
+	this->_cgiPass = rhs._cgiPass;
+	this->_clientBodyBufferSize = rhs._clientBodyBufferSize;
+	this->_code = rhs._code;
+	this->_content = rhs._content;
+	this->_contentLocation = rhs._contentLocation;
+	this->_cookies = rhs._cookies;
+	this->_errorPage = rhs._errorPage;
+	this->_index = rhs._index;
+	this->_location = rhs._location;
+	this->_locationFile = rhs._locationFile;
+	this->_locationPath = rhs._locationPath;
+	this->_request = rhs._request;
+	this->_server = rhs._server;
 	return *this;
 }
 
