@@ -97,15 +97,15 @@ void Config::getFullInfo()
 			it2++;
 		}
 		std::cout << "max_client_body_size:	" << servers[i].getMaxClientBodySize() << std::endl;
-		/*std::list<Location *> loc_tmp = servers[i].getLocation();
-		std::list<Location *>::iterator loc_end = loc_tmp.end();
-		for (std::list<Location *>::iterator loc = loc_tmp.begin(); loc != loc_end; loc++)
+		std::list<Location> loc_tmp = servers[i].getLocations();
+		std::list<Location>::iterator loc_end = loc_tmp.end();
+		for (std::list<Location>::iterator loc = loc_tmp.begin(); loc != loc_end; loc++)
 		{
 			std::cout << "+++++++++++++++++++Location+++++++++++++++++++" << std::endl << std::endl;
-			std::cout << "root:	" << (*loc)->getPath() << std::endl;
-			std::cout << "index:	" << (*loc)->getIndex() << std::endl;
-			std::cout << "autoindex:	" << (*loc)->getAutoindex() << std::endl;
-		}*/
+			std::cout << "root:	" << (loc)->getPath() << std::endl;
+			std::cout << "index:	" << (loc)->getIndex() << std::endl;
+			std::cout << "autoindex:	" << (loc)->getAutoindex() << std::endl;
+		}
 		std::cout << std::endl;
 	}
 }

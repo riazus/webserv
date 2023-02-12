@@ -28,6 +28,8 @@ class Server
         long long                           max_client_body_size;
         bool                                autoindex;
 
+        void                                checkForDefaultFields();
+
     public:
 
         Server();

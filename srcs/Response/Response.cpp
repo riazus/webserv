@@ -80,7 +80,7 @@ void Response::getMethod()
 	}
 	else
 		this->_responseBody.setContent(this->_responseBody.getContentLocation());
-	//std::cout << "GET CONTENT: " << this->_responseBody.getContent() << std::endl;
+	
 	int file_format = isCgi(this->_responseBody.getContent());
 	if(file_format != 0)
 		_directives["Content-Length"] = execCgi(this->_responseBody.getContent(), file_format);

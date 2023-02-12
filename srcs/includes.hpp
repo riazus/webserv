@@ -44,7 +44,7 @@
 # define MAX_CLIENTS 1000
 # define CLIENT_TIMEOUT 10
 # define APP_TIMEOUT 200
-# define DEFAULT "configs/error_pages.conf"
+# define DEFAULT "./configs/error_pages.conf"
 
 # define IS_A_DIRECTORY 2
 # define IS_A_FILE 1

@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-Server::Server(): name(""), port(8080), ip_adress(""), hostName(""), root(""), index(""), max_client_body_size(0)
+Server::Server() : name(""), port(8080), ip_adress(""), hostName(""), root(""), index(""), max_client_body_size(0)
 {
 }
 
@@ -350,6 +350,7 @@ void Server::parse_server(std::vector<std::string> config, int *line_count)
 		it++;
 		(*line_count)++;
 	}
+	this->checkForDefaultFields();
 	std::vector<std::string> end = ft_split(*it, CHARTOSKIP);
 	while (!end.size() || end[0] != "}")
 	{
@@ -359,6 +360,27 @@ void Server::parse_server(std::vector<std::string> config, int *line_count)
 	if (end.size() && end[0] != "}")
 		config_error("expected '}'");
 	//this->is_valid();
+}
+
+
+void Server::checkForDefaultFields()
+{
+	std::string content = getFile(DEFAULT);
+	stringVector lines = ft_split(content, "\n");
+	for(int i = 0; i < lines.size(); i++)
+	{
+		stringVector tmp = ft_split(lines[i], CHARTOSKIP);
+		if (tmp[0] == "error_page")
+		{
+			if (this->getErrorPage().find(std::atoi(tmp[1].c_str())) == this->getErrorPage().end())
+				this->setErrorPage(std::atoi(tmp[1].c_str()), tmp[2]);
+		}
+		else if (tmp[0] == "client_body_buffer_size")
+		{
+			if (this->getMaxClientBodySize() == 0)
+				this->setMaxClientBodySize(std::atoi(tmp[1].c_str()));
+		}
+	}
 }
 
 const char* Server::InvalidServerException::what() const throw()
