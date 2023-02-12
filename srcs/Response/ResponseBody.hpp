@@ -34,7 +34,7 @@ class ResponseBody
 		std::string			getCookie(std::string key) const;
 		int					getCode() const;
 		Request				getRequest() const;
-		// Server				getServer(void) const;
+		Server				getServer(void) const;
 		Location			getLocation() const;
 		// std::string			getLocationPath(void) const;
 		// std::string			getLocationFile(void) const;

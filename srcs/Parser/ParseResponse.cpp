@@ -24,16 +24,16 @@ std::string	ParseMsg::setLanguage(std::string acceptLanguage)
 		return (acceptLanguage.substr(0, acceptLanguage.find_first_of('-')));
 }
 
-Location ParseMsg::FindLocation(Server &server, std::string &locationName)
+std::tuple<bool,Location> ParseMsg::FindLocation(Server &server, std::string &locationName)
 {
     std::list<Location> locations(server.getLocations());
 	if (*locationName.end() == '/')
 		locationName.resize(locationName.size() - 1);
 
 	if (locationName.empty())
-		return server.getLocations().back();
+		return std::make_tuple(false, server.getLocations().back());
 	if (locations.empty())
-		return server.getLocations().back();
+		return std::make_tuple(false, server.getLocations().back());
 
 	for (std::list<Location>::const_iterator i = locations.begin(); i != locations.end(); i++)
 		if (i->getPath()  != "*")
@@ -42,7 +42,7 @@ Location ParseMsg::FindLocation(Server &server, std::string &locationName)
 				if (tmp == i->getPath())
 				{
 					locationName = tmp;
-					return *i;
+					return std::make_tuple(true,*i);
 				}
 		}
 		else
@@ -51,12 +51,12 @@ Location ParseMsg::FindLocation(Server &server, std::string &locationName)
 			if (locationName.size() > suffix.size() && !locationName.compare(locationName.size() - suffix.size(), suffix.size(), suffix))
 			{
 				Location ret(*i);
+				return std::make_tuple(true,ret);
 				ret.setIsExtension(true);
-				return ret;
 			}
 		}
 	//TODO fix it
-	return server.getLocations().back();
+	return std::make_tuple(false, server.getLocations().back());
 }
 
 std::string ParseMsg::CheckContentLocation(std::string content)
@@ -92,7 +92,9 @@ void ParseMsg::ParseCookies(ResponseBody& responseBody, Request& request)
 void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Server &server)
 {
 	std::string	locationName(request.getPath());
-	Location location(FindLocation(server, locationName));
+	Location location;
+	bool isLocationExists;
+	std::tie(isLocationExists, location) = FindLocation(server, locationName);
 	std::string	content;
 
 	//parseCookies(responseBody, request);
@@ -111,13 +113,16 @@ void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Serve
 	responseBody.setAutoIndex(server.getAutoindex());
 	responseBody.setIndex(server.getIndex());
 
+	std::string root = isLocationExists? location.getRoot() : server.getRoot();
+	std::string alias = isLocationExists? location.getAlias() : server.getAlias();
+	std::cout << "ROOT: " << root << std::endl;
+	std::cout << "ALIAS: " << root << std::endl;
 	if (!server.getAlias().empty() && location.getIsExtension() == false)
-		content = location.getRoot() + location.getAlias() + request.getPath().substr(locationName.size());
+		content = root + alias + request.getPath().substr(locationName.size());
 	else if (!location.getAlias().empty() && location.getIsExtension())
-		content = location.getRoot() + location.getAlias() + locationName;
+		content = root + alias + locationName;
 	else
-		content = location.getRoot() + request.getPath();
-
+		content = root + request.getPath();
 	content = CheckContentLocation(content);
 	responseBody.setContentLocation(content);
 }

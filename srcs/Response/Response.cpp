@@ -57,48 +57,67 @@ std::string Response::execCgi(std::string path, int file_format)
 	pid = fork();
 	if (pid == 0)
 	{
-		fd = open("cgi_tmp_file", O_RDWR, O_CREAT);
+		fd = open("cgi-bin/cgi_tmp_file", O_RDWR, O_CREAT);
 		dup2(fd, 1);
 		execlp(format.c_str(), format.c_str(), path.c_str(), (char*) NULL);
 		exit(0);
 	}
 	waitpid(pid, 0, 0);
-	this->_body = getFile("cgi_tmp_file");
+	this->_body = getFile("cgi-bin/cgi_tmp_file");
 	return (ft_itoa(_body.size()));
 }
 
 
 void Response::getMethod()
 {
-	std::cout << "BEGIN EXEC Get method" << std::endl;
-
-	if(checkPath(this->_responseBody->getContentLocation()) == IS_A_DIRECTORY &&
-		this->_responseBody->getContentLocation() == (this->_responseBody->getLocation().getRoot() + this->_responseBody->getLocation().getAlias()))
+	std::cout << "GET HERE " << std::endl;
+	if(checkPath(this->_responseBody.getContentLocation()) == IS_A_DIRECTORY &&
+		this->_responseBody.getContentLocation() == (this->_responseBody.getLocation().getRoot() + this->_responseBody.getLocation().getAlias()))
 	{
-		this->_responseBody->setContent(this->_responseBody->getContentLocation() + "/" + this->_responseBody->getIndex());
-		if (this->_responseBody->getIndex() != "")
-			this->_responseBody->setAutoIndex(false);
+		this->_responseBody.setContent(this->_responseBody.getContentLocation() + "/" + this->_responseBody.getIndex());
+		if (this->_responseBody.getIndex() != "")
+			this->_responseBody.setAutoIndex(false);
 	}
 	else
-		this->_responseBody->setContent(this->_responseBody->getContentLocation());
-
-	int file_format = isCgi(this->_responseBody->getContent());
+		this->_responseBody.setContent(this->_responseBody.getContentLocation());
+	//std::cout << "GET CONTENT: " << this->_responseBody.getContent() << std::endl;
+	int file_format = isCgi(this->_responseBody.getContent());
 	if(file_format != 0)
-		_directives["Content-Length"] = execCgi(this->_responseBody->getContent(), file_format);
+		_directives["Content-Length"] = execCgi(this->_responseBody.getContent(), file_format);
 	else
-		_directives["Content-Length"] = readFile(this->_responseBody->getContent());
+		_directives["Content-Length"] = readFile(this->_responseBody.getContent());
 	
 	createHeader();
 }
 
 void Response::postMethod()
 {
+	std::cout << "POST HERE " << std::endl;	
+	if (checkPath(this->_responseBody.getContentLocation()) == IS_A_DIRECTORY &&
+	this->_responseBody.getContentLocation() == (this->_responseBody.getLocation().getRoot() + this->_responseBody.getLocation().getAlias()))
+		this->_responseBody.setContent(this->_responseBody.getContentLocation() + "/" + this->_responseBody.getIndex());
+	else
+		this->_responseBody.setContent(this->_responseBody.getContentLocation());
+	
+	int file_format = isCgi(this->_responseBody.getContent());
+	if (file_format != 0)
+		_directives["Content-Length"] = execCgi(this->_responseBody.getContent(), file_format);
+	else
+		this->_code = 204;
 
+	if (this->_code == 200)
+	{
+		std::string host = std::string(inet_ntoa(this->_responseBody.getServer().get));
+		std::string port = ft_itoa(_config.getServer().getNetwork().port);
+		std::string location = host + ":" + port + "/upload";
+		_code = 201;
+		_directives["Location"] = location;
+	}
 }
 
 void Response::deleteMethod()
 {
-	
+	std::cout << "DELETE HERE " << std::endl;
 }
 
 void Response::resetResponse(ResponseBody &responseBody)
@@ -114,7 +133,7 @@ void Response::resetResponse(ResponseBody &responseBody)
 // Creat and append header with body
 void Response::createHeader()
 {
-	stringVector tmp(this->_responseBody->getAllow());
+	stringVector tmp(this->_responseBody.getAllow());
 
 	if (this->_code == 405)
 	{
@@ -126,11 +145,11 @@ void Response::createHeader()
 				this->_directives["Allow"] += tmp[i] + " ";
 		}
 	}
-	this->_directives["Content-Language"] = this->_responseBody->getLanguage();
+	this->_directives["Content-Language"] = this->_responseBody.getLanguage();
 	if (this->_code != 404)
-		this->_directives["Content-Location"] = this->_responseBody->getContentLocation();
+		this->_directives["Content-Location"] = this->_responseBody.getContentLocation();
 	this->_directives["Date"] = getDate();
-	this->_directives["Last-Modified"] = getLastMod(this->_responseBody->getContentLocation());
+	this->_directives["Last-Modified"] = getLastMod(this->_responseBody.getContentLocation());
 	if (_code == 503 || _code == 429 || _code == 301)
 		this->_directives["Retry-After"] = "2";
 	if (_code == 401)
@@ -181,19 +200,19 @@ void Response::initDirectories()
 
 void Response::initResponseProcess()
 {
-	stringSet tmp(this->_responseBody->getAllowMethod());
+	stringSet tmp(this->_responseBody.getAllowMethod());
 
 	// std::cout << "HERE!-------------------------------------------------<" << std::endl;
 	this->getMethod();
 
-	if (this->_responseBody->getCookie("user_id") == "")
+	if (this->_responseBody.getCookie("user_id") == "")
 	{
-		std::cout << this->_responseBody->getCookie("user_id") << std::endl;
+		std::cout << this->_responseBody.getCookie("user_id") << std::endl;
 		this->UserId = gen_random(32);
 		this->_directives["Set-Cookie"] = "user_id=" + this->UserId;
 	}
 
-	/*if (this->_responseBody->gettLocation().getReturn().first != "")
+	/*if (this->_responseBody.gettLocation().getReturn().first != "")
 	{
 		if(_config.getRequest().getMethod() != "POST")
 			_code = std::atoi(_config.getLocation().getReturn().first.c_str());
@@ -203,9 +222,9 @@ void Response::initResponseProcess()
 		createHeader();
 		return ;
 	}*/
-	if (tmp.find(this->_responseBody->getRequest().getMethod()) == tmp.end()) // this method doesn't exists
+	if (tmp.find(this->_responseBody.getRequest().getMethod()) == tmp.end()) // this method doesn't exists
 		this->_code = 405;
-	else if (this->_responseBody->getClientBodyBufferSize() < this->_responseBody->getRequest().bodySize)
+	else if (this->_responseBody.getClientBodyBufferSize() < this->_responseBody.getRequest().bodySize)
 		this->_code = 413;
 	
 	if (this->_code == 408)
@@ -218,14 +237,13 @@ void Response::initResponseProcess()
 		this->_directives["Content-Length"] = this->readFile(this->_code);
 		this->createHeader();
 	}
-	else if (this->_method.find(this->_responseBody->getRequest().getMethod()) != this->_method.end())
-		(this->*Response::_method[this->_responseBody->getRequest().getMethod()])(); //start execute found method
+	else if (this->_method.find(this->_responseBody.getRequest().getMethod()) != this->_method.end())
+		(this->*Response::_method[this->_responseBody.getRequest().getMethod()])(); //start execute found method
 }
 
 std::string Response::readFile(int code)
 {
-	std::cout << code << " PATH TO READ : " << this->_responseBody->getErrorPath(code) << std::endl;
-	std::string	path(this->_responseBody->getErrorPath(code));
+	std::string	path(this->_responseBody.getErrorPath(code));
 	std::ofstream		file;
 	std::stringstream	buffer;
 
@@ -257,8 +275,8 @@ std::string Response::readFile(std::string path)
 {
 	std::ofstream		file;
 	std::stringstream	buffer;
-	if (checkPath(this->_responseBody->getContentLocation()) == IS_A_DIRECTORY && this->_responseBody->getAutoIndex())
-		_body = createAutoindexPage(this->_responseBody->getContentLocation(), this->_responseBody->getRequest().getPath());
+	if (checkPath(this->_responseBody.getContentLocation()) == IS_A_DIRECTORY && this->_responseBody.getAutoIndex())
+		_body = createAutoindexPage(this->_responseBody.getContentLocation(), this->_responseBody.getRequest().getPath());
 	else if (checkPath(path) == IS_A_FILE)
 	{
 		file.open(path.c_str(), std::ifstream::in);

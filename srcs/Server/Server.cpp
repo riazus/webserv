@@ -24,6 +24,8 @@ Server &Server::operator=(const Server &server)
 	this->cgi = server.cgi;
 	this->location = server.location;
 	this->max_client_body_size = server.max_client_body_size;
+	this->autoindex = server.autoindex;
+	//TODO ALIAS
 	return (*this);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   autoindex.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vdescham <vdescham@student.42.fr           +#+  +:+       +#+        */
+/*   By: jannabel <jannabel@student.21-school.ru    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 12:36:53 by vdescham          #+#    #+#             */
-/*   Updated: 2022/01/05 01:41:00 by vdescham         ###   ########.fr       */
+/*   Updated: 2023/02/11 19:02:18 by jannabel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,17 +127,3 @@ std::string createAutoindexPage(std::string path, std::string url)
 	closedir(dirp);
 	return page;
 }
-
-// int main(int ac, char const **av)
-// {
-// 	if (ac != 2)
-// 	{
-// 		std::cerr << "Usage: ./a.out [dir_to_display]" << '\n';
-// 		return 0;
-// 	}
-// 	std::string page;
-// 	page = createAutoindexPage(av[1]);
-// 	if (!page.empty())
-// 		std::cout << page << '\n';
-// 	return 0;
-// }

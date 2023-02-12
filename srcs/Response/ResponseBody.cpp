@@ -108,6 +108,11 @@ Request ResponseBody::getRequest() const
     return this->_request;
 }
 
+Server ResponseBody::getServer(void) const
+{
+    return this->_server;
+}
+
 Location ResponseBody::getLocation(void) const
 {
     return this->_location;

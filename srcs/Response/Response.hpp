@@ -37,7 +37,7 @@ class Response
 	private:
 		std::string		getErrorFileBody(int code);
 		std::string		findType(std::string contentlocation);
-		ResponseBody	*_responseBody;
+		ResponseBody	_responseBody;
 		mapError		_status;
 		int				_code;
 		mapString		_directives;

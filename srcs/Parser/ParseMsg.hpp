@@ -24,10 +24,10 @@ class ParseMsg
     public:
         void            ParseResponse(ResponseBody &responseBody, Request &request, Server &server);
     private:
-        Location        FindLocation(Server &server, std::string &locationName);
-        std::string     CheckContentLocation(std::string contentLocation);
-        void		    ParseCookies(ResponseBody& responseBody, Request& request);
-        std::string     setLanguage(std::string acceptLanguage);
+        std::tuple<bool,Location>  FindLocation(Server &server, std::string &locationName);
+        std::string                 CheckContentLocation(std::string contentLocation);
+        void		                ParseCookies(ResponseBody& responseBody, Request& request);
+        std::string                 setLanguage(std::string acceptLanguage);
 
 };
 
