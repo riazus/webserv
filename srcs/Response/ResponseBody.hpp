@@ -14,7 +14,7 @@ class ResponseBody
 
 		void				setRequest(Request &request);
 		void				setServer(Server server);
-		void				setLocation(Location location);
+		void				setLocation(Server location);
 		void				setLocationPath(std::string path);
 		void				setLocationFile(std::string path);
 		void				setErrorMap(mapError map);
@@ -35,7 +35,7 @@ class ResponseBody
 		int					getCode() const;
 		Request				getRequest() const;
 		Server				getServer(void) const;
-		Location			getLocation() const;
+		Server				getLocation() const;
 		// std::string			getLocationPath(void) const;
 		// std::string			getLocationFile(void) const;
 		// mapError			getErrorMap(void) const;
@@ -54,7 +54,7 @@ class ResponseBody
 	private:
 		Request			_request;
 		Server			_server;
-		Location		_location;
+		Server			_location;
 		std::string		_locationPath;
 		std::string		_locationFile;
 		mapError		_errorPage;

@@ -24,7 +24,7 @@ class ParseMsg
     public:
         void            ParseResponse(ResponseBody &responseBody, Request &request, Server &server);
     private:
-        std::tuple<bool,Location>  FindLocation(Server &server, std::string &locationName);
+        std::tuple<bool,Server>  FindLocation(Server &server, std::string &locationName);
         std::string                 CheckContentLocation(std::string contentLocation);
         void		                ParseCookies(ResponseBody& responseBody, Request& request);
         std::string                 setLanguage(std::string acceptLanguage);

@@ -25,9 +25,12 @@ Server &Server::operator=(const Server &server)
 	this->location = server.location;
 	this->max_client_body_size = server.max_client_body_size;
 	this->autoindex = server.autoindex;
-	//TODO ALIAS
+	this->path = server.path;
+	this->alias = server.alias;
+	this->ret = server.ret;
+
 	return (*this);
-}
+};
 
 bool Server::operator==(const Server & rhs)
 {
@@ -102,12 +105,12 @@ std::vector<std::string> &Server::getMethods()
 	return (this->methods);
 }
 
-void Server::setLocation(Location location)
+void Server::setLocation(Server location)
 {
 	this->location.push_back(location);
 }
 
-std::list<Location> &Server::getLocations()
+std::vector<Server> &Server::getLocations()
 {
 	return this->location;
 }
@@ -173,9 +176,44 @@ bool &Server::getAutoindex()
     return this->autoindex;
 }
 
-std::string Server::getAlias()
+void Server::setAlias(std::string alias)
 {
-    return "";
+	this->alias = alias;
+}
+
+std::string &Server::getAlias()
+{
+    return this->alias;
+}
+
+void Server::setPath(std::string path)
+{
+	this->path = path;
+}
+
+std::string Server::getPath() const
+{
+	return (this->path);
+}
+
+void Server::setIsExtension(bool val)
+{
+	this->extension = val;
+}
+
+bool &Server::getIsExtension()
+{
+    return this->extension;
+}
+
+void Server::setReturn(int num, std::string url)
+{
+	this->ret[num] = url;
+}
+
+mapError &Server::getReturn()
+{
+	return (this->ret);
 }
 
 void Server::is_valid()
@@ -227,18 +265,33 @@ void Server::is_valid()
 }
 
 
-void Server::parse_server(std::vector<std::string> config, int *line_count)
+void Server::parse_server(std::vector<std::string> config, int *line_count, bool is_location)
 {
-	std::vector<std::string> line = ft_split(config[0], CHARTOSKIP);
-
-	if (line[1] != "{")
-		config_error("expected '{' after server");
-	//Server server;
 	std::vector<std::string>::const_iterator it = config.begin() + *line_count;
+	if(is_location == true)
+	{
+		(*line_count)++;
+		it++;
+		std::vector<std::string> line = ft_split(config[*line_count], CHARTOSKIP);
+		if (line.size()!= 3)
+			config_error("expected a directory and '{' after location");
+		this->setPath(line[1]);
+		if (line[2] != "{")
+			config_error("missing '{'");
+		(*line_count)++;
+		it++;
+	}
+	else
+	{
+		std::vector<std::string> line = ft_split(config[0], CHARTOSKIP);
 
-	if (it == config.end())
-		config_error("");
-	it++;
+		if (line[1] != "{")
+			config_error("expected '{' after server");
+		//Server server;
+		if (it == config.end())
+			config_error("");
+		it++;
+	}
 	while (it != config.end())
 	{
 		std::vector<std::string> line = ft_split(*it, CHARTOSKIP);
@@ -259,18 +312,30 @@ void Server::parse_server(std::vector<std::string> config, int *line_count)
 			break;
 		else if (line[0] == "location")
 		{
-			if (line.size() != 3)
-						config_error("expected 2 arguments after location");
-			int tmp_count = *line_count;
-			Location location;
-			this->setLocation(location.parse_location(config, line_count));
-			it += *line_count - tmp_count - 1;
+			if (is_location == true)
+				config_error("invalid attribute123");
+			else
+			{
+				if (line.size() != 3)
+							config_error("expected 2 arguments after location");
+				int tmp_count = *line_count;
+				Server location;
+				std::cout << "LINE COUNT: " << *line_count << std::endl;
+				location.parse_server(config, line_count, 1);
+				this->setLocation(location);
+				it += *line_count - tmp_count - 1;
+			}
 		}
 		else if (line[0] == "server_name")
 		{
-			if (line.size() != 2)
-				config_error("expected 1 argument after server_name");
-			this->setServerName(line[1]);
+			if (is_location == true)
+				config_error("invalid attribute");
+			else 
+			{
+				if (line.size() != 2)
+					config_error("expected 1 argument after server_name");
+				this->setServerName(line[1]);
+			}
 		}
 		else if (line[0] == "error_page")
 		{
@@ -280,36 +345,46 @@ void Server::parse_server(std::vector<std::string> config, int *line_count)
 		}
 		else if (line[0] == "listen")
 		{
-			if (line.size() != 2)
-				config_error("expected 1 argument after listen");
-			std::vector<std::string> listen = ft_split(line[1], ":");
-			if (listen.size() != 1 && listen.size() != 2)
-				config_error("expected port or address:port after listen");
-			std::string address;
-			std::string port;
-			address = listen[0];
-			if (listen.size() == 1)
-			{
-				address = "0.0.0.0";
-				port = listen[0];
-			}
+			if (is_location == true)
+				config_error("invalid attribute");
 			else
-				port = listen[1];
-			if (address == "localhost")
-				address = "127.0.0.1";
-			this->setIpAddress(address);
-			for (int i=0; i < port.size(); i++)
 			{
-				if (!isdigit(port[i]) || i > 4)
-									config_error("expected integer after listen");
+				if (line.size() != 2)
+					config_error("expected 1 argument after listen");
+				std::vector<std::string> listen = ft_split(line[1], ":");
+				if (listen.size() != 1 && listen.size() != 2)
+					config_error("expected port or address:port after listen");
+				std::string address;
+				std::string port;
+				address = listen[0];
+				if (listen.size() == 1)
+				{
+					address = "0.0.0.0";
+					port = listen[0];
+				}
+				else
+					port = listen[1];
+				if (address == "localhost")
+					address = "127.0.0.1";
+				this->setIpAddress(address);
+				for (int i=0; i < port.size(); i++)
+				{
+					if (!isdigit(port[i]) || i > 4)
+										config_error("expected integer after listen");
+				}
+				this->setPort(atoi(port.c_str()));
 			}
-			this->setPort(atoi(port.c_str()));
 		}
 		else if (line[0] == "cgi")
 		{
-			if (line.size() != 3)
-				config_error("expected 2 arguments after cgi");
-			this->setCgi(line[1], line[2]);
+			if (is_location == true)
+				config_error("invalid attribute");
+			else
+			{
+				if (line.size() != 3)
+					config_error("expected 2 arguments after cgi");
+				this->setCgi(line[1], line[2]);
+			}
 		}
 		else if (line[0] == "root")
 		{
@@ -333,8 +408,8 @@ void Server::parse_server(std::vector<std::string> config, int *line_count)
 		}
 		else if (line[0] == "allow_methods")
 		{
-			if (line.size() != 2)
-				config_error("expected min 1 argument allow methods");
+			if (line.size() < 2)
+				config_error("expected min 1 argument after allow methods");
 			for(int i = 1; i < line.size(); i++){
 				this->setMethods(line[i]);
 			}
@@ -342,10 +417,24 @@ void Server::parse_server(std::vector<std::string> config, int *line_count)
 		else if (line[0] == "autoindex")
 		{
 			if (line.size() != 2)
-				config_error("expected min 2 argument in autoindex");
+				config_error("expected 1 argument after autoindex");
 			if (line[1] != "1" && line[1] != "0")
 				config_error("expected bool var in autoindex");
 			this->setAutoindex(line[1] == "1"? true : false);
+		}
+		else if (line[0] == "alias")
+		{
+			if (is_location == false)
+				config_error("invalid attribute");
+			if (line.size() != 2)
+				config_error("expected 1 argument after alias");
+			this->setAlias(line[1]);
+		}
+		else if (line[0] == "return")
+		{
+			if (line.size() != 3)
+				config_error("expected 2 arguments after return");
+			this->setReturn(atoi(line[1].c_str()), line[2]);
 		}
 		it++;
 		(*line_count)++;

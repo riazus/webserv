@@ -2,11 +2,11 @@
 #define SERVER_HPP
 
 #include "../includes.hpp"
-#include "../Parser/Location.hpp"
+// #include "../Parser/Location.hpp"
 #include "../Config/Config.hpp"
 
 class Config;
-class Location;
+// class Location;
 
 
 class Server
@@ -24,9 +24,15 @@ class Server
         stringVector                        methods;
         mapError                            error_page;
         mapString                           cgi;
-        std::list<Location>                 location;
+        std::vector<Server>                 location;
         long long                           max_client_body_size;
         bool                                autoindex;
+        std::string                         path;
+        std::string                         alias;
+        mapError                            ret;
+
+
+        bool                                extension;
 
         void                                checkForDefaultFields();
 
@@ -42,7 +48,7 @@ class Server
         void setRoot(std::string root);
         void setIndex(std::string index);
         void setMethods(std::string methods);
-        void setLocation(Location location);
+        void setLocation(Server location);
         void setErrorPage(int num, std::string page);
         void setCgi(std::string name, std::string path);
         void setMaxClientBodySize(long long size);
@@ -50,23 +56,32 @@ class Server
         void setHostName(std::string name);
         void setIpAddress(std::string ip_adress);
         void setAutoindex(bool var);
+        void setPath(std::string path);
+        void setIsExtension(bool);
+        void setAlias(std::string alias);
+        void setReturn(int num, std::string url);
 
+
+        std::string getPath() const;
         std::string &getServerName();
         int &getPort();
         std::string &getIpAdress();
         std::string &getRoot();
         std::string &getIndex();
         stringVector &getMethods();
-        std::list<Location> &getLocations();
+        std::vector<Server> &getLocations();
         mapError &getErrorPage();
         std::map<std::string, std::string> &getCgi();
         long long &getMaxClientBodySize();
         std::string &getHostName();
         in_addr_t getHostAddr();
         bool &getAutoindex();
-        std::string getAlias();
+        std::string &getAlias();
+        bool &getIsExtension();
+        mapError &getReturn();
 
-        void parse_server(std::vector<std::string> config, int *line_count);
+
+        void parse_server(std::vector<std::string> config, int *line_count, bool is_location);
         void server_error(std::string error);
         void is_valid();
 

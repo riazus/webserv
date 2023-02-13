@@ -5,6 +5,7 @@
 int main(int argc, char **argv)
 {
     // Engine::Validate(argc, argv);
+	unlink("file1");
     Engine::Execute(argc, argv);
     // Engine::Exit();
 

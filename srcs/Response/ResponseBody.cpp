@@ -47,7 +47,7 @@ void ResponseBody::setServer(Server server)
 	this->_server = server;
 }
 
-void ResponseBody::setLocation(Location location)
+void ResponseBody::setLocation(Server location)
 {
 	this->_location = location;
 }
@@ -132,7 +132,7 @@ Server ResponseBody::getServer(void) const
     return this->_server;
 }
 
-Location ResponseBody::getLocation(void) const
+Server ResponseBody::getLocation(void) const
 {
     return this->_location;
 }

@@ -16,7 +16,6 @@ SRCS		=	srcs/main.cpp \
 				srcs/Client/Client.cpp \
 				srcs/Config/Config.cpp \
 				srcs/Server/Server.cpp \
-				srcs/Parser/Location.cpp \
 				srcs/Parser/Utils.cpp \
 				srcs/Parser/Parsing.cpp \
 				srcs/Parser/ParseRequest.cpp \

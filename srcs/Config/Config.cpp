@@ -47,7 +47,7 @@ void Config::Parsing(std::string filename)
 		stringVector line = ft_split(config[line_count], CHARTOSKIP);
 		if (line[0] == "server")
 		{
-			server.parse_server(config, &line_count);
+			server.parse_server(config, &line_count, 0);
 			this->servers.push_back(server);
 		}
 		line_count++;
@@ -97,9 +97,9 @@ void Config::getFullInfo()
 			it2++;
 		}
 		std::cout << "max_client_body_size:	" << servers[i].getMaxClientBodySize() << std::endl;
-		std::list<Location> loc_tmp = servers[i].getLocations();
-		std::list<Location>::iterator loc_end = loc_tmp.end();
-		for (std::list<Location>::iterator loc = loc_tmp.begin(); loc != loc_end; loc++)
+		std::vector<Server> loc_tmp = servers[i].getLocations();
+		std::vector<Server>::iterator loc_end = loc_tmp.end();
+		for (std::vector<Server>::iterator loc = loc_tmp.begin(); loc != loc_end; loc++)
 		{
 			std::cout << "+++++++++++++++++++Location+++++++++++++++++++" << std::endl << std::endl;
 			std::cout << "root:	" << (loc)->getPath() << std::endl;

@@ -118,6 +118,12 @@ void Response::postMethod()
 void Response::deleteMethod()
 {
 	std::cout << "DELETE HERE " << std::endl;
+	// if (checkPath(this->_responseBody.getContentLocation()) == IS_A_FILE)
+	// {
+	// 	unlink(this->_responseBody.getContentLocation().c_str());
+	// 	this->_code = 200;
+	// }
+	// this->_code = 404;
 }
 
 void Response::resetResponse(ResponseBody &responseBody)
@@ -202,7 +208,6 @@ void Response::initResponseProcess()
 {
 	stringSet tmp(this->_responseBody.getAllowMethod());
 
-	// std::cout << "HERE!-------------------------------------------------<" << std::endl;
 	this->getMethod();
 
 	if (this->_responseBody.getCookie("user_id") == "")

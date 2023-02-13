@@ -24,9 +24,9 @@ std::string	ParseMsg::setLanguage(std::string acceptLanguage)
 		return (acceptLanguage.substr(0, acceptLanguage.find_first_of('-')));
 }
 
-std::tuple<bool,Location> ParseMsg::FindLocation(Server &server, std::string &locationName)
+std::tuple<bool,Server> ParseMsg::FindLocation(Server &server, std::string &locationName)
 {
-    std::list<Location> locations(server.getLocations());
+    std::vector<Server> locations(server.getLocations());
 	if (*locationName.end() == '/')
 		locationName.resize(locationName.size() - 1);
 
@@ -35,7 +35,7 @@ std::tuple<bool,Location> ParseMsg::FindLocation(Server &server, std::string &lo
 	if (locations.empty())
 		return std::make_tuple(false, server.getLocations().back());
 
-	for (std::list<Location>::const_iterator i = locations.begin(); i != locations.end(); i++)
+	for (std::vector<Server>::const_iterator i = locations.begin(); i != locations.end(); i++)
 		if (i->getPath()  != "*")
 		{
 			for (std::string tmp = locationName; !tmp.empty(); tmp.resize(tmp.size() - 1))
@@ -50,7 +50,7 @@ std::tuple<bool,Location> ParseMsg::FindLocation(Server &server, std::string &lo
 			std::string suffix(i->getPath().substr(1));
 			if (locationName.size() > suffix.size() && !locationName.compare(locationName.size() - suffix.size(), suffix.size(), suffix))
 			{
-				Location ret(*i);
+				Server ret(*i);
 				return std::make_tuple(true,ret);
 				ret.setIsExtension(true);
 			}
@@ -92,7 +92,7 @@ void ParseMsg::ParseCookies(ResponseBody& responseBody, Request& request)
 void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Server &server)
 {
 	std::string	locationName(request.getPath());
-	Location location;
+	Server location;
 	bool isLocationExists;
 	std::tie(isLocationExists, location) = FindLocation(server, locationName);
 	std::string	content;
