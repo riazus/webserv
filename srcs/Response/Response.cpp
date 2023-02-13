@@ -48,7 +48,13 @@ std::string Response::execCgi(std::string path, int file_format)
 {
 	std::string format;
 	pid_t pid;
-	int fd;
+	char	buffer[2];
+	FILE	*tmpIn = tmpfile();
+	FILE	*tmpOut = tmpfile();
+	int		in = fileno(tmpIn);
+	int		out = fileno(tmpOut);
+
+	lseek(in, 0, SEEK_SET);
 
 	if (file_format == 1)
 		format = "python";
@@ -57,13 +63,25 @@ std::string Response::execCgi(std::string path, int file_format)
 	pid = fork();
 	if (pid == 0)
 	{
-		fd = open("cgi-bin/cgi_tmp_file", O_RDWR, O_CREAT);
-		dup2(fd, 1);
+		dup2(in, STDIN_FILENO);
+		dup2(out, STDOUT_FILENO);
+
 		execlp(format.c_str(), format.c_str(), path.c_str(), (char*) NULL);
 		exit(0);
 	}
 	waitpid(pid, 0, 0);
-	this->_body = getFile("cgi-bin/cgi_tmp_file");
+	lseek(out, 0, SEEK_SET);
+
+	int ret = 1;
+	std::string buffer_str;
+	while (ret > 0)
+	{
+		ret = read(out, buffer, 1);
+		buffer[ret] = '\0';
+		buffer_str += buffer;
+	}
+	this->_body = buffer_str;
+	// std::cout << "BODY: " << this->_body <<"----------------------------------------------<" << std::endl;
 	return (ft_itoa(_body.size()));
 }
 
@@ -483,3 +501,61 @@ static int checkWritePermission(const std::string &path)
 			return (1);
 	return (0);
 }
+
+
+// std::string		Cgi::execute(void)
+// {
+// 	char		**CgiEnv = mapToTab();
+// 	int			saveStdin = dup(STDIN_FILENO);
+// 	int			saveStdout = dup(STDOUT_FILENO);
+// 	FILE		*tmpIn = tmpfile();
+// 	FILE		*tmpOut = tmpfile();
+// 	int			In = fileno(tmpIn);
+// 	int			Out = fileno(tmpOut);
+// 	std::string	body;
+// 	pid_t		pid;
+
+// 	write(In, _body.c_str(), std::atoi(_contentSize.c_str()));
+// 	lseek(In, 0, SEEK_SET);
+
+// 	if ((pid = fork()) == -1)
+// 		return ("Status: 500\r\n");
+// 	else if (pid == 0)
+// 	{
+// 		char * const * nll = NULL;
+
+// 		dup2(In, STDIN_FILENO);
+		// dup2(Out, STDOUT_FILENO);
+// 		execve(_cgiPass.c_str(), nll, CgiEnv);
+// 		write(STDOUT_FILENO, "Status: 500\r\n", 15);
+// 	}
+// 	else
+// 	{
+// 		char	buffer[BUFFER_SIZE + 1];
+
+// 		waitpid(0, NULL, 0);
+// 		lseek(Out, 0, SEEK_SET);
+
+// 		int ret = 1;
+// 		while (ret > 0)
+// 		{
+// 			ret = read(Out, buffer, BUFFER_SIZE);
+// 			buffer[ret] = '\0';
+// 			body += buffer;
+// 		}
+// 	}
+// 	dup2(saveStdin, STDIN_FILENO);
+// 	dup2(saveStdout, STDOUT_FILENO);
+// 	fclose(tmpIn);
+// 	fclose(tmpOut);
+// 	close(In);
+// 	close(Out);
+// 	close(saveStdin);
+// 	close(saveStdout);
+
+// 	if (pid == 0)
+// 		exit(0);
+// 	for (int i = 0;  CgiEnv[i]; i++)
+// 		delete CgiEnv[i];
+// 	delete [] CgiEnv;
+// }

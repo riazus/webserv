@@ -29,6 +29,7 @@ std::string getFile(std::string filename)
 	return content;
 }
 
+
 void Config::Parsing(std::string filename)
 {
 	std::string config_file = getFile(filename);

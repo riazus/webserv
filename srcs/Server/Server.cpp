@@ -221,29 +221,17 @@ void Server::is_valid()
 	if (getPort() == 0)
 		server_error("port is not set");
 	if (getServerName() == "")
+	{
+		std::cout << "Serv_name: " << getServerName() << std::endl;
 		server_error("server name is not set");
-	// if (get_ip_address() == "")
-	// 	server_error("ip_address is not set");
+	}
 	if (getRoot() == "")
 		server_error("root is not set");
 	if (getIndex() == "")
 		server_error("index is not set");
-	// if (getMaxClientBodySize() == 0)
-	// 	server_error("max_client_body_size is not set");
 
 	int fd;
 	std::string error;
-	// std::map<std::string, std::string> cgis = getCgi();
-	// for (std::map<std::string, std::string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
-	// {
-	// 	fd = ::open(cgi->second.c_str(), O_RDONLY);
-	// 	if (fd <= 0)
-	// 	{
-	// 		error = "cgi " + cgi->second + " is unavailable";
-	// 		server_error(error);
-	// 	}
-	// 	close(fd);
-	// }
 	std::map<int, std::string> error_pages = getErrorPage();
 	for (std::map<int, std::string>::iterator page = error_pages.begin(); page != error_pages.end(); page++)
 	{
@@ -295,7 +283,6 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 	while (it != config.end())
 	{
 		std::vector<std::string> line = ft_split(*it, CHARTOSKIP);
-		// std::cout << *line_count << "  " << line[0] << std::endl;
 		if (!line.size() || !line[0].size())
 		{
 			it++;
@@ -320,7 +307,7 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 							config_error("expected 2 arguments after location");
 				int tmp_count = *line_count;
 				Server location;
-				std::cout << "LINE COUNT: " << *line_count << std::endl;
+				// std::cout << "LINE COUNT: " << *line_count << std::endl;
 				location.parse_server(config, line_count, 1);
 				this->setLocation(location);
 				it += *line_count - tmp_count - 1;
@@ -448,7 +435,6 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 	}
 	if (end.size() && end[0] != "}")
 		config_error("expected '}'");
-	//this->is_valid();
 }
 
 
