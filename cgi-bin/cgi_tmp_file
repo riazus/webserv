@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
+
 	<link rel="stylesheet" href="../website/pages/style.css">
 </head>
 <title>Current time</title>
@@ -11,7 +9,7 @@
 		<br>
 		<br>
 		<br>
-19:34:14
+19:40:38
 		</center>
 		</div>
 	</body>
