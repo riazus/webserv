@@ -21,7 +21,7 @@ std::string getFile(std::string filename)
 	std::ifstream file;
 	std::string s;
 
-	file.open(filename);
+	file.open(filename.c_str());
 	if (!file.is_open())
 		throw Config::ConfigFileOpenException();
 	std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());

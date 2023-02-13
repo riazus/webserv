@@ -2,7 +2,6 @@
 # define CONFIG_H
 
 #include "../Server/Server.hpp"
-#include "../Parser/Location.hpp"
 
 
 class Server;

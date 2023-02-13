@@ -24,16 +24,16 @@ std::string	ParseMsg::setLanguage(std::string acceptLanguage)
 		return (acceptLanguage.substr(0, acceptLanguage.find_first_of('-')));
 }
 
-std::tuple<bool,Server> ParseMsg::FindLocation(Server &server, std::string &locationName)
+Server ParseMsg::FindLocation(Server &server, std::string &locationName)
 {
     std::vector<Server> locations(server.getLocations());
 	if (*locationName.end() == '/')
 		locationName.resize(locationName.size() - 1);
 
 	if (locationName.empty())
-		return std::make_tuple(false, server.getLocations().back());
+		return server;
 	if (locations.empty())
-		return std::make_tuple(false, server.getLocations().back());
+		return server;
 
 	for (std::vector<Server>::const_iterator i = locations.begin(); i != locations.end(); i++)
 		if (i->getPath()  != "*")
@@ -42,7 +42,7 @@ std::tuple<bool,Server> ParseMsg::FindLocation(Server &server, std::string &loca
 				if (tmp == i->getPath())
 				{
 					locationName = tmp;
-					return std::make_tuple(true,*i);
+					return *i;
 				}
 		}
 		else
@@ -51,12 +51,12 @@ std::tuple<bool,Server> ParseMsg::FindLocation(Server &server, std::string &loca
 			if (locationName.size() > suffix.size() && !locationName.compare(locationName.size() - suffix.size(), suffix.size(), suffix))
 			{
 				Server ret(*i);
-				return std::make_tuple(true,ret);
 				ret.setIsExtension(true);
+				return ret;
 			}
 		}
 	//TODO fix it
-	return std::make_tuple(false, server.getLocations().back());
+	return server;
 }
 
 std::string ParseMsg::CheckContentLocation(std::string content)
@@ -92,9 +92,8 @@ void ParseMsg::ParseCookies(ResponseBody& responseBody, Request& request)
 void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Server &server)
 {
 	std::string	locationName(request.getPath());
-	Server location;
-	bool isLocationExists;
-	std::tie(isLocationExists, location) = FindLocation(server, locationName);
+	Server location(FindLocation(server, locationName));
+	
 	std::string	content;
 
 	//parseCookies(responseBody, request);
@@ -113,16 +112,12 @@ void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Serve
 	responseBody.setAutoIndex(server.getAutoindex());
 	responseBody.setIndex(server.getIndex());
 
-	std::string root = isLocationExists? location.getRoot() : server.getRoot();
-	std::string alias = isLocationExists? location.getAlias() : server.getAlias();
-	std::cout << "ROOT: " << root << std::endl;
-	std::cout << "ALIAS: " << root << std::endl;
 	if (!server.getAlias().empty() && location.getIsExtension() == false)
-		content = root + alias + request.getPath().substr(locationName.size());
+		content = location.getRoot() + location.getAlias() + request.getPath().substr(locationName.size());
 	else if (!location.getAlias().empty() && location.getIsExtension())
-		content = root + alias + locationName;
+		content = location.getRoot() + location.getAlias() + locationName;
 	else
-		content = root + request.getPath();
+		content = location.getRoot() + request.getPath();
 	content = CheckContentLocation(content);
 	responseBody.setContentLocation(content);
 }
