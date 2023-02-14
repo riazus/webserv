@@ -93,24 +93,23 @@ void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Serve
 {
 	std::string	locationName(request.getPath());
 	Server location(FindLocation(server, locationName));
-	
 	std::string	content;
 
 	//parseCookies(responseBody, request);
 	responseBody.setCode(request.getCode());
 	responseBody.setRequest(request);
 	responseBody.setServer(server);
-	responseBody.setLocationFile(locationName);
-	responseBody.setLocationPath(request.getPath());
+	responseBody.setLocationFile(request.getPath());
+	responseBody.setLocationPath(locationName);
 	responseBody.setLocation(location);
-	responseBody.setErrorMap(server.getErrorPage());
-	responseBody.setClientBodyBufferSize(server.getMaxClientBodySize());
+	responseBody.setErrorMap(location.getErrorPage());
+	responseBody.setClientBodyBufferSize(location.getMaxClientBodySize());
 	//responseBody.setCgiParam(location.getCgiParam());
 	//responseBody.setCgiPass(location.getCgiPass());
-	responseBody.setAllowMethod(server.getMethods());
+	responseBody.setAllowMethod(location.getMethods());
 	responseBody.setLanguage(setLanguage(request.getHeader("Accept-Language")));
-	responseBody.setAutoIndex(server.getAutoindex());
-	responseBody.setIndex(server.getIndex());
+	responseBody.setAutoIndex(location.getAutoindex());
+	responseBody.setIndex(location.getIndex());
 
 	if (!server.getAlias().empty() && location.getIsExtension() == false)
 		content = location.getRoot() + location.getAlias() + request.getPath().substr(locationName.size());
