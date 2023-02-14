@@ -29,9 +29,8 @@ class Server
         bool                                autoindex;
         std::string                         path;
         std::string                         alias;
-        mapError                            ret;
-
-
+        pairString                          ret;
+        std::string                         locationName;
         bool                                extension;
 
         void                                checkForDefaultFields();
@@ -59,7 +58,8 @@ class Server
         void setPath(std::string path);
         void setIsExtension(bool);
         void setAlias(std::string alias);
-        void setReturn(int num, std::string url);
+        void setReturn(std::string code, std::string url);
+        void setLocationName(std::string str);
 
 
         std::string getPath() const;
@@ -78,7 +78,8 @@ class Server
         bool &getAutoindex();
         std::string &getAlias();
         bool &getIsExtension();
-        mapError &getReturn();
+        pairString &getReturn();
+        std::string getLocationName() const;
 
 
         void parse_server(std::vector<std::string> config, int *line_count, bool is_location);

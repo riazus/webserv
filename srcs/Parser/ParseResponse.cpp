@@ -36,10 +36,10 @@ Server ParseMsg::FindLocation(Server &server, std::string &locationName)
 		return server;
 
 	for (std::vector<Server>::const_iterator i = locations.begin(); i != locations.end(); i++)
-		if (i->getPath()  != "*")
+		if (i->getLocationName()  != "*")
 		{
 			for (std::string tmp = locationName; !tmp.empty(); tmp.resize(tmp.size() - 1))
-				if (tmp == i->getPath())
+				if (tmp == i->getLocationName())
 				{
 					locationName = tmp;
 					return *i;
@@ -47,7 +47,7 @@ Server ParseMsg::FindLocation(Server &server, std::string &locationName)
 		}
 		else
 		{
-			std::string suffix(i->getPath().substr(1));
+			std::string suffix(i->getLocationName().substr(1));
 			if (locationName.size() > suffix.size() && !locationName.compare(locationName.size() - suffix.size(), suffix.size(), suffix))
 			{
 				Server ret(*i);
@@ -111,12 +111,13 @@ void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Serve
 	responseBody.setAutoIndex(location.getAutoindex());
 	responseBody.setIndex(location.getIndex());
 
-	if (!server.getAlias().empty() && location.getIsExtension() == false)
+	if (!location.getAlias().empty() && location.getIsExtension() == false)
 		content = location.getRoot() + location.getAlias() + request.getPath().substr(locationName.size());
 	else if (!location.getAlias().empty() && location.getIsExtension())
 		content = location.getRoot() + location.getAlias() + locationName;
 	else
 		content = location.getRoot() + request.getPath();
+	
 	content = CheckContentLocation(content);
 	responseBody.setContentLocation(content);
 }
