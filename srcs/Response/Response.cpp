@@ -226,8 +226,6 @@ void Response::initResponseProcess()
 {
 	stringSet tmp(this->_responseBody.getAllowMethod());
 
-	this->getMethod();
-
 	if (this->_responseBody.getCookie("user_id") == "")
 	{
 		std::cout << this->_responseBody.getCookie("user_id") << std::endl;
