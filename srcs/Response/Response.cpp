@@ -132,7 +132,7 @@ void Response::postMethod()
 		this->_responseBody.setContent(this->_responseBody.getContentLocation() + "/" + this->_responseBody.getIndex());
 	else
 		this->_responseBody.setContent(this->_responseBody.getContentLocation());
-	
+	std::cout << "GET CONTENT: " << this->_responseBody.getContent() << std::endl;
 	int file_format = isCgi(this->_responseBody.getContent());
 	if (file_format != 0)
 		_directives["Content-Length"] = execCgi(this->_responseBody.getContent(), file_format);
@@ -264,7 +264,10 @@ void Response::initResponseProcess()
 	if (tmp.find(this->_responseBody.getRequest().getMethod()) == tmp.end()) // this method doesn't exists
 		this->_code = 405;
 	else if (this->_responseBody.getClientBodyBufferSize() < this->_responseBody.getRequest().bodySize)
+	{
+		std::cout << this->_responseBody.getClientBodyBufferSize() << " :serverMaxBuff < requestBuff: " << this->_responseBody.getRequest().bodySize << std::endl;
 		this->_code = 413;
+	}
 	
 	if (this->_code == 408)
 	{

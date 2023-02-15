@@ -487,7 +487,7 @@ void Server::checkForDefaultFields()
 			if (this->getErrorPage().find(std::atoi(tmp[1].c_str())) == this->getErrorPage().end())
 				this->setErrorPage(std::atoi(tmp[1].c_str()), tmp[2]);
 		}
-		else if (tmp[0] == "client_body_buffer_size")
+		else if (tmp[0] == "max_client_body_size")
 		{
 			if (this->getMaxClientBodySize() == 0)
 				this->setMaxClientBodySize(std::atoi(tmp[1].c_str()));
