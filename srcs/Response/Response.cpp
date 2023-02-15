@@ -106,19 +106,12 @@ void Response::getMethod()
 	int file_format = isCgi(this->_responseBody.getContent());
 	if(file_format != 0)
 	{
-		std::ifstream tmp;
 		std::cout << "GET CONTENT BEFOR CGI: " << this->_responseBody.getContent() << std::endl;
-		tmp.open(this->_responseBody.getContent().c_str());
-		std::cout << "TMP: " << tmp << std::endl;
-		if (tmp == 0)
-		{
-			
-			tmp.close();
+		struct stat buffer; 
+		if (stat (this->_responseBody.getContent().c_str(), &buffer) == 0)
 			_directives["Content-Length"] = execCgi(this->_responseBody.getContent(), file_format);
-		}
 		else
 		{
-			tmp.close();
 			this->_code = 404;
 			this->_directives["Content-Type"] = "text/html";
 			this->_body = this->getErrorFileBody(404);

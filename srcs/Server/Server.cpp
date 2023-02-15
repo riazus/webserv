@@ -25,8 +25,8 @@ Server &Server::operator=(const Server &server)
 	this->location = server.location;
 	this->max_client_body_size = server.max_client_body_size;
 	this->autoindex = server.autoindex;
-	//this->path = server.path;
-	this->locationPath = server.locationPath;
+	//this->locationPath = server.locationPath;
+	this->locationName = server.locationName;
 	this->alias = server.alias;
 	this->ret = server.ret;
 	this->cgi_param = server.cgi_param;
@@ -189,15 +189,15 @@ std::string &Server::getAlias()
     return this->alias;
 }
 
-void Server::setLocationPath(std::string locationPath)
-{
-	this->locationPath = locationPath;
-}
+// void Server::setLocationPath(std::string locationPath)
+// {
+// 	this->locationPath = locationPath;
+// }
 
-std::string Server::getLocationPath() const
-{
-	return (this->locationPath);
-}
+// std::string Server::getLocationPath() const
+// {
+// 	return (this->locationPath);
+// }
 
 void Server::setIsExtension(bool val)
 {
@@ -214,15 +214,15 @@ void Server::setReturn(std::string code, std::string url)
 	this->ret = std::make_pair(code, url);
 }
 
-// void Server::setLocationName(std::string str)
-// {
-// 	this->locationName = str;
-// }
+void Server::setLocationName(std::string str)
+{
+	this->locationName = str;
+}
 
-// std::string Server::getLocationName() const
-// {
-// 	return (this->locationName);
-// }
+std::string Server::getLocationName() const
+{
+	return (this->locationName);
+}
 
 pairString &Server::getReturn()
 {
@@ -291,7 +291,7 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 		if (line.size()!= 3)
 			config_error("expected a directory and '{' after location");
 			//std::cout << "SET LOCAT NAME: " <<  << std::endl;
-		this->setLocationPath(line[1]);
+		this->setLocationName(line[1]);
 		if (line[2] != "{")
 			config_error("missing '{'");
 		(*line_count)++;
