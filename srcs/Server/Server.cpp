@@ -28,7 +28,8 @@ Server &Server::operator=(const Server &server)
 	this->path = server.path;
 	this->alias = server.alias;
 	this->ret = server.ret;
-	this->locationName = server.locationName;
+	this->cgi_param = server.cgi_param;
+	this->extension = server.extension;
 
 	return (*this);
 };
@@ -285,6 +286,7 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 	if(is_location == true)
 	{
 		std::vector<std::string> line = ft_split(config[*line_count], CHARTOSKIP);
+		// std::cout << "LINE:	" << *line_count << "	" << line[0] << " " << line[1] << std::endl;
 		if (line.size()!= 3)
 			config_error("expected a directory and '{' after location");
 			//std::cout << "SET LOCAT NAME: " <<  << std::endl;
@@ -336,6 +338,7 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 				location.parse_server(config, line_count, 1);
 				this->setLocation(location);
 				it += *line_count - tmp_count - 1;
+				(*line_count)--;
 			}
 		}
 		else if (line[0] == "server_name")
