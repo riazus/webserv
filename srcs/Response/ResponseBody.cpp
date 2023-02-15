@@ -137,6 +137,16 @@ Server ResponseBody::getLocation(void) const
     return this->_location;
 }
 
+std::string	ResponseBody::getLocationPath(void) const
+{
+	return this->_locationPath;
+}
+
+std::string	ResponseBody::getLocationFile(void) const
+{
+	return this->_locationFile;
+}
+
 std::string ResponseBody::getErrorPath(int code) const
 {
 	if (this->_errorPage.find(code) == this->_errorPage.end())

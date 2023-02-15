@@ -36,8 +36,8 @@ class ResponseBody
 		Request				getRequest() const;
 		Server				getServer(void) const;
 		Server				getLocation() const;
-		// std::string			getLocationPath(void) const;
-		// std::string			getLocationFile(void) const;
+		std::string			getLocationPath(void) const;
+		std::string			getLocationFile(void) const;
 		// mapError			getErrorMap(void) const;
 		std::string			getErrorPath(int code) const;
 		size_t				getClientBodyBufferSize(void) const;
