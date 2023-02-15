@@ -30,6 +30,8 @@ class Server
         std::string                         path;
         std::string                         alias;
         mapError                            ret;
+        stringVector                        cgi_param;
+
 
 
         bool                                extension;
@@ -60,6 +62,8 @@ class Server
         void setIsExtension(bool);
         void setAlias(std::string alias);
         void setReturn(int num, std::string url);
+        void setCgiParam(std::string cgi_param);
+
 
 
         std::string getPath() const;
@@ -79,6 +83,7 @@ class Server
         std::string &getAlias();
         bool &getIsExtension();
         mapError &getReturn();
+        stringVector &getCgiParam();
 
 
         void parse_server(std::vector<std::string> config, int *line_count, bool is_location);

@@ -39,7 +39,9 @@ int isCgi(std::string path)
 	if (path.find(".py") != std::string::npos)
 		return 1;
 	if (path.find(".php") != std::string::npos)
-		return 1;
+		return 2;
+	if (path.find(".sh") != std::string::npos)
+		return 3;
 	else
 		return 0;
 }
@@ -60,6 +62,8 @@ std::string Response::execCgi(std::string path, int file_format)
 		format = "python";
 	if (file_format == 2)
 		format = "php";
+	if (file_format == 3)
+		format = "sh";
 	pid = fork();
 	if (pid == 0)
 	{

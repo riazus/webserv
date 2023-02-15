@@ -216,6 +216,16 @@ mapError &Server::getReturn()
 	return (this->ret);
 }
 
+void Server::setCgiParam(std::string cgi_param)
+{
+	this->cgi_param.push_back(cgi_param);
+}
+
+stringVector &Server::getCgiParam()
+{
+    return this->cgi_param;
+}
+
 void Server::is_valid()
 {
 	if (getPort() == 0)
@@ -256,11 +266,15 @@ void Server::is_valid()
 void Server::parse_server(std::vector<std::string> config, int *line_count, bool is_location)
 {
 	std::vector<std::string>::const_iterator it = config.begin() + *line_count;
-	if(is_location == true)
+	if (is_location == true && location.size() < 1)
 	{
 		(*line_count)++;
 		it++;
+	}
+	if(is_location == true)
+	{
 		std::vector<std::string> line = ft_split(config[*line_count], CHARTOSKIP);
+		// std::cout << "LINE:	" << *line_count << "	" << line[0] << " " << line[1] << std::endl;
 		if (line.size()!= 3)
 			config_error("expected a directory and '{' after location");
 		this->setPath(line[1]);
@@ -307,7 +321,7 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 							config_error("expected 2 arguments after location");
 				int tmp_count = *line_count;
 				Server location;
-				// std::cout << "LINE COUNT: " << *line_count << std::endl;
+				// std::cout << "LINE:	" << *line_count << "	" << line[0] << " " << line[1] << std::endl;
 				location.parse_server(config, line_count, 1);
 				this->setLocation(location);
 				it += *line_count - tmp_count - 1;
@@ -396,9 +410,17 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 		else if (line[0] == "allow_methods")
 		{
 			if (line.size() < 2)
-				config_error("expected min 1 argument after allow methods");
+				config_error("expected min 1 argument after allow_methods");
 			for(int i = 1; i < line.size(); i++){
 				this->setMethods(line[i]);
+			}
+		}
+		else if (line[0] == "cgi_param")
+		{
+			if (line.size() < 2)
+				config_error("expected min 1 argument after cgi_param");
+			for(int i = 1; i < line.size(); i++){
+				this->setCgiParam(line[i]);
 			}
 		}
 		else if (line[0] == "autoindex")
