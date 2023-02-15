@@ -30,7 +30,10 @@ class Server
         std::string                         path;
         std::string                         alias;
         pairString                          ret;
+        stringVector                        cgi_param;
         std::string                         locationName;
+
+
         bool                                extension;
 
         void                                checkForDefaultFields();
@@ -59,7 +62,9 @@ class Server
         void setIsExtension(bool);
         void setAlias(std::string alias);
         void setReturn(std::string code, std::string url);
+        void setCgiParam(std::string cgi_param);
         void setLocationName(std::string str);
+
 
 
         std::string getPath() const;
@@ -77,9 +82,11 @@ class Server
         in_addr_t getHostAddr();
         bool &getAutoindex();
         std::string &getAlias();
-        bool &getIsExtension();
         pairString &getReturn();
+        stringVector &getCgiParam();
         std::string getLocationName() const;
+        bool &getIsExtension();
+
 
 
         void parse_server(std::vector<std::string> config, int *line_count, bool is_location);

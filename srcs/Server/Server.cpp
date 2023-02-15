@@ -217,9 +217,24 @@ void Server::setLocationName(std::string str)
 	this->locationName = str;
 }
 
+std::string Server::getLocationName() const
+{
+	return (this->locationName);
+}
+
 pairString &Server::getReturn()
 {
 	return (this->ret);
+}
+
+void Server::setCgiParam(std::string cgi_param)
+{
+	this->cgi_param.push_back(cgi_param);
+}
+
+stringVector &Server::getCgiParam()
+{
+	return (this->cgi_param);
 }
 
 void Server::is_valid()
