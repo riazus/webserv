@@ -25,7 +25,8 @@ Server &Server::operator=(const Server &server)
 	this->location = server.location;
 	this->max_client_body_size = server.max_client_body_size;
 	this->autoindex = server.autoindex;
-	this->path = server.path;
+	//this->path = server.path;
+	this->locationPath = server.locationPath;
 	this->alias = server.alias;
 	this->ret = server.ret;
 	this->cgi_param = server.cgi_param;
@@ -82,7 +83,7 @@ void Server::setRoot(std::string root)
 	this->root = root;
 }
 
-std::string &Server::getRoot()
+std::string Server::getRoot() const
 {
 	return (this->root);
 }
@@ -188,14 +189,14 @@ std::string &Server::getAlias()
     return this->alias;
 }
 
-void Server::setPath(std::string path)
+void Server::setLocationPath(std::string locationPath)
 {
-	this->path = path;
+	this->locationPath = locationPath;
 }
 
-std::string Server::getPath() const
+std::string Server::getLocationPath() const
 {
-	return (this->path);
+	return (this->locationPath);
 }
 
 void Server::setIsExtension(bool val)
@@ -213,15 +214,15 @@ void Server::setReturn(std::string code, std::string url)
 	this->ret = std::make_pair(code, url);
 }
 
-void Server::setLocationName(std::string str)
-{
-	this->locationName = str;
-}
+// void Server::setLocationName(std::string str)
+// {
+// 	this->locationName = str;
+// }
 
-std::string Server::getLocationName() const
-{
-	return (this->locationName);
-}
+// std::string Server::getLocationName() const
+// {
+// 	return (this->locationName);
+// }
 
 pairString &Server::getReturn()
 {
@@ -290,7 +291,7 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 		if (line.size()!= 3)
 			config_error("expected a directory and '{' after location");
 			//std::cout << "SET LOCAT NAME: " <<  << std::endl;
-		this->setLocationName(line[1]);
+		this->setLocationPath(line[1]);
 		if (line[2] != "{")
 			config_error("missing '{'");
 		(*line_count)++;

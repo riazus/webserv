@@ -27,11 +27,10 @@ class Server
         std::vector<Server>                 location;
         long long                           max_client_body_size;
         bool                                autoindex;
-        std::string                         path;
+        std::string                         locationPath;
         std::string                         alias;
         pairString                          ret;
         stringVector                        cgi_param;
-        std::string                         locationName;
 
 
         bool                                extension;
@@ -58,20 +57,20 @@ class Server
         void setHostName(std::string name);
         void setIpAddress(std::string ip_adress);
         void setAutoindex(bool var);
-        void setPath(std::string path);
+        void setLocationPath(std::string path);
         void setIsExtension(bool);
         void setAlias(std::string alias);
         void setReturn(std::string code, std::string url);
         void setCgiParam(std::string cgi_param);
-        void setLocationName(std::string str);
+        //void setLocationName(std::string str);
 
 
 
-        std::string getPath() const;
+        std::string getLocationPath() const;
         std::string &getServerName();
         int &getPort();
         std::string &getIpAdress();
-        std::string &getRoot();
+        std::string getRoot() const;
         std::string &getIndex();
         stringVector &getMethods();
         std::vector<Server> &getLocations();
@@ -84,7 +83,7 @@ class Server
         std::string &getAlias();
         pairString &getReturn();
         stringVector &getCgiParam();
-        std::string getLocationName() const;
+        //std::string getLocationName() const;
         bool &getIsExtension();
 
 

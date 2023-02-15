@@ -107,9 +107,12 @@ void Response::getMethod()
 	if(file_format != 0)
 	{
 		std::ifstream tmp;
+		std::cout << "GET CONTENT BEFOR CGI: " << this->_responseBody.getContent() << std::endl;
 		tmp.open(this->_responseBody.getContent().c_str());
-		if (tmp)
+		std::cout << "TMP: " << tmp << std::endl;
+		if (tmp == 0)
 		{
+			
 			tmp.close();
 			_directives["Content-Length"] = execCgi(this->_responseBody.getContent(), file_format);
 		}

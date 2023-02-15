@@ -36,18 +36,23 @@ Server ParseMsg::FindLocation(Server &server, std::string &locationName)
 		return server;
 
 	for (std::vector<Server>::const_iterator i = locations.begin(); i != locations.end(); i++)
-		if (i->getLocationName()  != "*")
+		if (i->getLocationPath()  != "*")
 		{
 			for (std::string tmp = locationName; !tmp.empty(); tmp.resize(tmp.size() - 1))
-				if (tmp == i->getLocationName())
+			{
+				std::cout << i->getLocationPath() << " :LocationPath == TMP: " << tmp << std::endl;
+
+				if (tmp == i->getLocationPath())
 				{
+					std::cout << "LOCATION FOUND" << std::endl;
 					locationName = tmp;
 					return *i;
 				}
+			}
 		}
 		else
 		{
-			std::string suffix(i->getLocationName().substr(1));
+			std::string suffix(i->getLocationPath().substr(1));
 			if (locationName.size() > suffix.size() && !locationName.compare(locationName.size() - suffix.size(), suffix.size(), suffix))
 			{
 				Server ret(*i);
@@ -56,6 +61,7 @@ Server ParseMsg::FindLocation(Server &server, std::string &locationName)
 			}
 		}
 	//TODO fix it
+	std::cout << "LOCATION NOT FOUND" << std::endl;
 	return server;
 }
 
@@ -92,9 +98,15 @@ void ParseMsg::ParseCookies(ResponseBody& responseBody, Request& request)
 void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Server &server)
 {
 	std::string	locationName(request.getPath());
+	std::cout << "REQUEST PATH: " << locationName << std::endl;
 	Server location(FindLocation(server, locationName));
 	std::string	content;
+	std::vector<Server> locations(server.getLocations());
+	// for (std::vector<Server>::const_iterator i = locations.begin(); i != locations.end(); i++)
+	// {
 
+	// 	std::cout << "LOOP LOCATION NAME = " << i->getRoot() << std::endl;
+	// }
 	//parseCookies(responseBody, request);
 	responseBody.setCode(request.getCode());
 	responseBody.setRequest(request);
@@ -111,8 +123,13 @@ void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Serve
 	responseBody.setAutoIndex(location.getAutoindex());
 	responseBody.setIndex(location.getIndex());
 
+	std::cout << "PATH OF LOC: " << location.getLocationPath() << std::endl;
+
 	if (!location.getAlias().empty() && location.getIsExtension() == false)
+	{
+		std::cout << "YOY" << std::endl;
 		content = location.getRoot() + location.getAlias() + request.getPath().substr(locationName.size());
+	}
 	else if (!location.getAlias().empty() && location.getIsExtension())
 		content = location.getRoot() + location.getAlias() + locationName;
 	else
@@ -120,4 +137,5 @@ void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Serve
 	
 	content = CheckContentLocation(content);
 	responseBody.setContentLocation(content);
+	std::cout << "PATH OF CONTENT LOC: " << responseBody.getContentLocation() << std::endl;
 }
