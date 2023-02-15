@@ -28,6 +28,7 @@ Server &Server::operator=(const Server &server)
 	this->path = server.path;
 	this->alias = server.alias;
 	this->ret = server.ret;
+	this->locationName = server.locationName;
 
 	return (*this);
 };
@@ -206,24 +207,19 @@ bool &Server::getIsExtension()
     return this->extension;
 }
 
-void Server::setReturn(int num, std::string url)
+void Server::setReturn(std::string code, std::string url)
 {
-	this->ret[num] = url;
+	this->ret = std::make_pair(code, url);
 }
 
-mapError &Server::getReturn()
+void Server::setLocationName(std::string str)
+{
+	this->locationName = str;
+}
+
+pairString &Server::getReturn()
 {
 	return (this->ret);
-}
-
-void Server::setCgiParam(std::string cgi_param)
-{
-	this->cgi_param.push_back(cgi_param);
-}
-
-stringVector &Server::getCgiParam()
-{
-    return this->cgi_param;
 }
 
 void Server::is_valid()
@@ -274,10 +270,10 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 	if(is_location == true)
 	{
 		std::vector<std::string> line = ft_split(config[*line_count], CHARTOSKIP);
-		// std::cout << "LINE:	" << *line_count << "	" << line[0] << " " << line[1] << std::endl;
 		if (line.size()!= 3)
 			config_error("expected a directory and '{' after location");
-		this->setPath(line[1]);
+			//std::cout << "SET LOCAT NAME: " <<  << std::endl;
+		this->setLocationName(line[1]);
 		if (line[2] != "{")
 			config_error("missing '{'");
 		(*line_count)++;
@@ -443,7 +439,7 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 		{
 			if (line.size() != 3)
 				config_error("expected 2 arguments after return");
-			this->setReturn(atoi(line[1].c_str()), line[2]);
+			this->setReturn(line[1], line[2]);
 		}
 		it++;
 		(*line_count)++;

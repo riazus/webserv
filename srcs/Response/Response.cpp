@@ -105,7 +105,23 @@ void Response::getMethod()
 	std::cout << "GET CONTENT: " << this->_responseBody.getContent() << std::endl;
 	int file_format = isCgi(this->_responseBody.getContent());
 	if(file_format != 0)
-		_directives["Content-Length"] = execCgi(this->_responseBody.getContent(), file_format);
+	{
+		std::ifstream tmp;
+		tmp.open(this->_responseBody.getContent().c_str());
+		if (tmp)
+		{
+			tmp.close();
+			_directives["Content-Length"] = execCgi(this->_responseBody.getContent(), file_format);
+		}
+		else
+		{
+			tmp.close();
+			this->_code = 404;
+			this->_directives["Content-Type"] = "text/html";
+			this->_body = this->getErrorFileBody(404);
+			_directives["Content-Length"] = ft_itoa(_body.size());
+		}
+	}
 	else
 		_directives["Content-Length"] = readFile(this->_responseBody.getContent());
 	
@@ -237,16 +253,18 @@ void Response::initResponseProcess()
 		this->_directives["Set-Cookie"] = "user_id=" + this->UserId;
 	}
 
-	/*if (this->_responseBody.gettLocation().getReturn().first != "")
+	if (this->_responseBody.getLocation().getReturn().first != "")
 	{
-		if(_config.getRequest().getMethod() != "POST")
-			_code = std::atoi(_config.getLocation().getReturn().first.c_str());
+		std::cout << "LOL" << std::endl;
+		if(this->_responseBody.getRequest().getMethod() != "POST")
+			_code = std::atoi(this->_responseBody.getLocation().getReturn().first.c_str());
 		else
 			_code = 308;
-		_directives["Location"] = _config.getLocation().getReturn().second;
+		_directives["Location"] = this->_responseBody.getLocation().getReturn().second;
+		std::cout << "CODE: " << _code << std::endl;
 		createHeader();
 		return ;
-	}*/
+	}
 	if (tmp.find(this->_responseBody.getRequest().getMethod()) == tmp.end()) // this method doesn't exists
 		this->_code = 405;
 	else if (this->_responseBody.getClientBodyBufferSize() < this->_responseBody.getRequest().bodySize)

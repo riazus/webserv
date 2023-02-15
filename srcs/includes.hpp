@@ -60,6 +60,7 @@
 # define mapError           std::map<int,std::string>
 # define stringSet          std::set<std::string>
 # define methodMap			std::map<std::string, void (Response::*)(void)>
+# define pairString         std::pair<std::string,std::string>
 
 
 # define CHARTOSKIP "; \t"
