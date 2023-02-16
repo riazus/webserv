@@ -55,11 +55,12 @@ std::string Response::execCgi(std::string path, int file_format)
 	FILE	*tmpOut = tmpfile();
 	int		in = fileno(tmpIn);
 	int		out = fileno(tmpOut);
+	int		status;
 
 	lseek(in, 0, SEEK_SET);
 
 	if (file_format == 1)
-		format = "python";
+		format = "python3";
 	if (file_format == 2)
 		format = "php";
 	if (file_format == 3)
@@ -73,9 +74,16 @@ std::string Response::execCgi(std::string path, int file_format)
 		execlp(format.c_str(), format.c_str(), path.c_str(), (char*) NULL);
 		exit(0);
 	}
-	waitpid(pid, 0, 0);
+	waitpid(pid, &status, 0);
+	if (WEXITSTATUS(status) != 0)
+	{
+		this->_code = 500;
+		this->_directives["Content-Type"] = "text/html";
+		this->_body = this->getErrorFileBody(500);
+		_directives["Content-Length"] = ft_itoa(_body.size());
+		return ft_itoa(_body.size());
+	}
 	lseek(out, 0, SEEK_SET);
-
 	int ret = 1;
 	std::string buffer_str;
 	while (ret > 0)
