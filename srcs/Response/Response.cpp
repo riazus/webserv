@@ -203,12 +203,13 @@ void Response::createHeader()
 		this->_directives["Retry-After"] = "2";
 	if (_code == 401)
 		this->_directives["WWW-Authenticate"] = "Basic realm=\"Access requires authentification\" charset=\"UTF-8\"";
-	this->_header += "HTTP 1.1 " + ft_itoa(_code);
+	this->_header += "HTTP/1.1 " + ft_itoa(_code);
 	this->_header += " " + this->_status[_code] + "\r\n";
 	for (mapString::const_iterator i = this->_directives.begin(); i != this->_directives.end(); i++)
 		if (i->second != "")
 			this->_header+= i->first + ": " + i->second + "\r\n";
 	this->_response = this->_header + "\r\n" + this->_body;
+	std::cout << this->_header << " :  HEADER" << std::endl;
 	this->_isValid = true;
 }
 
