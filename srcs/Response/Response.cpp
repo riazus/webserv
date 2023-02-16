@@ -121,7 +121,7 @@ void Response::getMethod()
 	else
 		_directives["Content-Length"] = readFile(this->_responseBody.getContent());
 	
-	createHeader();
+	this->createHeader();
 }
 
 void Response::postMethod()
@@ -147,6 +147,7 @@ void Response::postMethod()
 		_code = 201;
 		_directives["Location"] = location;
 	}
+	this->createHeader();
 }
 
 void Response::deleteMethod()
