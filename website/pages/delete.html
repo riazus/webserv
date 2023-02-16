@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html>
+    <body>
+        <center>
+			<div class="contract-upload">
+				<label>
+					<input type="file" name="contract-file" class="contract-file">
+					<span>Загрузить</span>
+				</label>
+			</div>
+			<div class="contract-result">
+				<div class="delete-file"><img src="img/icons/cross.svg" alt=""></div>
+				<input type="text" id="contract-filename" class="contract-filename" disabled>
+			
+			</div>
+		<center>
+    </body>
+</html>
+<!-- 
+$(".contract-upload .contract-file").change(function(){
+    var filename = $(this).val().replace(/.*\\/, "");
+    $("#contract-filename").val(filename);
+  });
+
+  $(".contract-result .delete-file").click(function () {
+    $(".contract-file").val('');
+    $("#contract-filename").val('');
+  }); -->

@@ -5,7 +5,7 @@ import cgi, os
 form = cgi.FieldStorage()
 
 # Get filename here
-fileitem = form.getvalue("filename")
+fileitem = form.getvalue("filename")z
 
 # Test if the file was uploaded
 if fileitem.filename:
