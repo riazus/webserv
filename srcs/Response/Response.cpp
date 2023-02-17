@@ -203,7 +203,7 @@ void Response::createHeader()
 		this->_directives["Retry-After"] = "2";
 	if (_code == 401)
 		this->_directives["WWW-Authenticate"] = "Basic realm=\"Access requires authentification\" charset=\"UTF-8\"";
-	this->_header += "HTTP 1.1 " + ft_itoa(_code);
+	this->_header += "HTTP/1.1 " + ft_itoa(_code);
 	this->_header += " " + this->_status[_code] + "\r\n";
 	for (mapString::const_iterator i = this->_directives.begin(); i != this->_directives.end(); i++)
 		if (i->second != "")
@@ -255,7 +255,7 @@ void Response::initResponseProcess()
 	{
 		std::cout << this->_responseBody.getCookie("user_id") << std::endl;
 		this->UserId = gen_random(32);
-		this->_directives["Set-Cookie"] = "user_id=" + this->UserId;
+		//this->_directives["Set-Cookie"] = "user_id=" + this->UserId;
 	}
 
 	if (this->_responseBody.getLocation().getReturn().first != "")

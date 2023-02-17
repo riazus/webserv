@@ -64,14 +64,16 @@ void Request::ResetHeaders()
 
 void Request::ResetRequest()
 {
+	std::cout << "RESET REQUEST" << std::endl;
 	this->headerReady = false;
 	this->bodyReady = false;
 	this->bodySize = 0;
 	this->contentSize = 0;
 	this->requestLine.clear();
+	this->header.clear();
 	this->_server.setPort(0);
 	this->_server.setHostName("");
-	this->_server.setHostAddr(inet_addr("0")); //CONST CHAR !!!!!
+	this->_server.setHostAddr(inet_addr("0"));
 }
 
 int Request::getCode() const
