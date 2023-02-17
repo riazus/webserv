@@ -1,18 +1,26 @@
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
+  
 <head>
-    <link rel="stylesheet" href="style.css">
+    <meta http-equiv="Content-Type" 
+          content="text/html; charset=utf-8" />
 </head>
+  
 <body>
-
-<div class="sub_div">
-    <br>
-	<form enctype="multipart/form-data" class="text" action = "../../cgi-bin/upload.py" method="post" >
-        <p>File: <input type="file" name="filename" id="fileid">
-            <input type="submit" value="SEND" href="#"></p>
+    <form enctype="multipart/form-data" 
+          action="../../cgi-bin/upload.php" method="POST">
+        Choose a file to upload: 
+        <div class>
+            <input name="uploadedfile" id="myfile" type="file" />
+            <button type="submit" class="button">upload</button>
+        </div>
     </form>
-    <br>
-
-</div>
+    <h3>Download a file ( test.txt )
+        <a href="test.txt" download id="file">here </a>
+    </h3>
+    <script></script>
 </body>
+  
 </html>

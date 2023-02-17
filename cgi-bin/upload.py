@@ -8,7 +8,9 @@ form = cgi.FieldStorage()
 fileitem = form.getvalue("filename")
 
 # Test if the file was uploaded
-if fileitem.getvalue("filename"):
+if fileitem == None:
+   message = 'form.getvalue returned unexpected result'
+elif fileitem.getvalue("filename"):
    open(os.getcwd() + '/cgi-bin/tmp/' + os.path.basename(fileitem.filename), 'wb').write(fileitem.file.read())
    message = 'The file "' + os.path.basename(fileitem.filename) + '" was uploaded to ' + os.getcwd() + '/cgi-bin/tmp'
 else:
