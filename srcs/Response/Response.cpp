@@ -160,13 +160,21 @@ void Response::postMethod()
 
 void Response::deleteMethod()
 {
-	std::cout << "DELETE HERE " << std::endl;
-	// if (checkPath(this->_responseBody.getContentLocation()) == IS_A_FILE)
-	// {
-	// 	unlink(this->_responseBody.getContentLocation().c_str());
-	// 	this->_code = 200;
-	// }
-	// this->_code = 404;
+	std::string path(this->_responseBody.getContentLocation());
+	std::cout << "DELETABLE PATH: " << path << std::endl;
+	std::cout << "PATH VIA CONTENT: " << this->_responseBody.getContent() << std::endl;
+	if (checkPath(path) != IS_SOMETHING_ELSE)
+	{
+		if (checkWritePermission(path) && remove(path.c_str()) == 0)
+			this->_code = 204;
+		else
+			this->_code = 403;
+	}
+	else
+		this->_code = 404;
+	if (this->_code != 204)
+		this->_directives["Content-Length"] = readFile(this->_code);
+	createHeader();
 }
 
 void Response::resetResponse(ResponseBody &responseBody)
@@ -529,61 +537,3 @@ static int checkWritePermission(const std::string &path)
 			return (1);
 	return (0);
 }
-
-
-// std::string		Cgi::execute(void)
-// {
-// 	char		**CgiEnv = mapToTab();
-// 	int			saveStdin = dup(STDIN_FILENO);
-// 	int			saveStdout = dup(STDOUT_FILENO);
-// 	FILE		*tmpIn = tmpfile();
-// 	FILE		*tmpOut = tmpfile();
-// 	int			In = fileno(tmpIn);
-// 	int			Out = fileno(tmpOut);
-// 	std::string	body;
-// 	pid_t		pid;
-
-// 	write(In, _body.c_str(), std::atoi(_contentSize.c_str()));
-// 	lseek(In, 0, SEEK_SET);
-
-// 	if ((pid = fork()) == -1)
-// 		return ("Status: 500\r\n");
-// 	else if (pid == 0)
-// 	{
-// 		char * const * nll = NULL;
-
-// 		dup2(In, STDIN_FILENO);
-		// dup2(Out, STDOUT_FILENO);
-// 		execve(_cgiPass.c_str(), nll, CgiEnv);
-// 		write(STDOUT_FILENO, "Status: 500\r\n", 15);
-// 	}
-// 	else
-// 	{
-// 		char	buffer[BUFFER_SIZE + 1];
-
-// 		waitpid(0, NULL, 0);
-// 		lseek(Out, 0, SEEK_SET);
-
-// 		int ret = 1;
-// 		while (ret > 0)
-// 		{
-// 			ret = read(Out, buffer, BUFFER_SIZE);
-// 			buffer[ret] = '\0';
-// 			body += buffer;
-// 		}
-// 	}
-// 	dup2(saveStdin, STDIN_FILENO);
-// 	dup2(saveStdout, STDOUT_FILENO);
-// 	fclose(tmpIn);
-// 	fclose(tmpOut);
-// 	close(In);
-// 	close(Out);
-// 	close(saveStdin);
-// 	close(saveStdout);
-
-// 	if (pid == 0)
-// 		exit(0);
-// 	for (int i = 0;  CgiEnv[i]; i++)
-// 		delete CgiEnv[i];
-// 	delete [] CgiEnv;
-// }
