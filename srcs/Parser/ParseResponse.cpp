@@ -93,7 +93,31 @@ std::string ParseMsg::CheckContentLocation(std::string content)
 
 void ParseMsg::ParseCookies(ResponseBody& responseBody, Request& request)
 {
+	std::map<std::string, std::string>	cookiesToSet;
+	std::string							charSet(" ;");
+	std::string							cookies(request.getHeader("Cookie"));
 
+	cookies += " ";
+
+	size_t start = cookies.find_first_not_of(charSet, 0);
+	size_t end = 0;
+
+	while ((end = cookies.find_first_of(charSet, start)) != std::string::npos)
+	{
+		std::string	tmp = cookies.substr(start, end - start);
+
+		std::string token;
+		std::string value;
+
+		token.assign(tmp, 0, tmp.find_first_of('='));
+		value.assign(tmp, tmp.find_first_of('=') + 1, tmp.size());
+
+		cookiesToSet[token] = value;
+
+		if ((start = cookies.find_first_not_of(charSet, end)) == std::string::npos)
+			break ;
+	}
+	responseBody.setCookies(cookiesToSet);
 }
 
 void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Server &server)
@@ -108,7 +132,7 @@ void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Serve
 
 	// 	std::cout << "LOOP LOCATION NAME = " << i->getRoot() << std::endl;
 	// }
-	//parseCookies(responseBody, request);
+	ParseCookies(responseBody, request);
 	responseBody.setCode(request.getCode());
 	responseBody.setRequest(request);
 	responseBody.setServer(server);

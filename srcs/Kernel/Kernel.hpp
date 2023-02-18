@@ -40,12 +40,13 @@ class Kernel
         void    HandleEpollError(int eventPollFd);
         void    AcceptNewClient(int eventPollFd);
         bool    fdIsServer(int eventPollFd);
+        void    HandleClientTimeout();
+        bool    CheckTimeout(struct timeval last);
 
         //Handle read/write methods
         void    ClientWrite(int eventPollFd);
         void    ClientRead(int eventPollFd);
         bool    ReadClientRequest(int socketFd);
-        bool    WriteClientRequest(int socketFd);
         void    DeleteClient(int socketFd);
         void    getServerForClient(Client &client);
 

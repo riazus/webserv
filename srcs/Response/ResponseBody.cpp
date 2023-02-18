@@ -87,6 +87,11 @@ void ResponseBody::setCode(int code)
 	this->_code = code;
 }
 
+void ResponseBody::setCookies(mapString cookies)
+{
+	this->_cookies = cookies;
+}
+
 void ResponseBody::setContentLocation(std::string contentLocation)
 {
 	this->_contentLocation = contentLocation;
@@ -107,6 +112,11 @@ void ResponseBody::setAllowMethod(stringVector allow)
 void ResponseBody::setAutoIndex(bool autoindex)
 {
 	this->_autoIndex = autoindex;
+}
+
+mapString ResponseBody::getCookies(void) const
+{
+    return this->_cookies;
 }
 
 std::string ResponseBody::getCookie(std::string key) const

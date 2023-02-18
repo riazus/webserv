@@ -255,7 +255,7 @@ void Response::initResponseProcess()
 	{
 		std::cout << this->_responseBody.getCookie("user_id") << std::endl;
 		this->UserId = gen_random(32);
-		//this->_directives["Set-Cookie"] = "user_id=" + this->UserId;
+		this->_directives["Set-Cookie"] = "user_id=" + this->UserId;
 	}
 
 	if (this->_responseBody.getLocation().getReturn().first != "")

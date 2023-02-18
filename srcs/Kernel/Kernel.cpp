@@ -99,6 +99,7 @@ void displayServerInfo(Client &client, Response &response)
 
 	std::cout << "SERVER: " << buffer << " (" << get_time_diff(&client.lastRequest)+")" << " | " << firstLine+" ";
 	std::cout << client.getServer().getServerName()+" " << client.getServer().getPort() << std::endl;
+	std::cout << response.getResponse() << std::endl;
 }
 
 std::string	get_time_diff(struct timeval *last)
@@ -177,7 +178,7 @@ bool Kernel::ReadClientRequest(int clientSocket)
 	if (requestLen == -1)
 	{
 		this->DeleteClient(clientSocket);
-		//throw std::logic_error("Error: read Client's request failed");
+		throw std::logic_error("Error: read Client's request failed");
 		return false;
 	}
 	else if (requestLen == 0) //Closing connection request from clients
@@ -264,6 +265,39 @@ bool Kernel::fdIsServer(int eventPollFd)
 		if (*it == eventPollFd)
 			return true;
     return false;
+}
+
+void Kernel::HandleClientTimeout()
+{
+	for(mapClient::iterator it = this->_clients.begin(); it != this->_clients.end(); it++)
+	{
+		if (CheckTimeout((*it).second.lastRequest))
+		{
+			if ((*it).second.request.requestLine.empty() || (*it).second.hadResponse)
+			{
+				std::cout << "REMOVE CLIENT" << std::endl;
+				this->DeleteClient((*it).first);
+				return this->HandleClientTimeout();
+			}
+			else
+			{
+				(*it).second.request.setCode(408);
+				this->_event.events = EPOLLOUT;
+				this->_event.data.fd = (*it).first;
+				epoll_ctl(this->_epollFd, EPOLL_CTL_MOD, (*it).first, &this->_event);
+			}
+		}
+	}
+}
+
+bool Kernel::CheckTimeout(timeval last)
+{
+	struct timeval now;
+	gettimeofday(&now, NULL);
+
+	if ((now.tv_sec - last.tv_sec) >= CLIENT_TIMEOUT)
+		return true;
+	return false;
 }
 
 void Kernel::InitEpoll()
@@ -385,7 +419,7 @@ void Kernel::Run()
 		if (nfds == 0)
 		{
 			std::cout << "\r" << wait[(frames++ % 8)] << " Waiting for new connections " << std::flush;
-			sleep(1);
+			this->HandleClientTimeout();
 		}
 	}
 	this->CloseSockets();

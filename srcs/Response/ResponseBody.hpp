@@ -19,18 +19,18 @@ class ResponseBody
 		void				setLocationFile(std::string path);
 		void				setErrorMap(mapError map);
 		void				setClientBodyBufferSize(size_t size);
-		//void				setCgiParam(stringVector cgiParam);
-		//void				setCgiPass(std::string cgiPass);
+		void				setCgiParam(stringVector cgiParam);
+		void				setCgiPass(std::string cgiPass);
 		void				setAllowMethod(stringVector allow);
 		void				setLanguage(std::string lang);
 		void				setAutoIndex(bool Index);
 		void				setIndex(std::string index);
 		void				setCode(int code);
-		//void				setCookies(mapString cookies);
+		void				setCookies(mapString cookies);
 		void				setContentLocation(std::string content);
 		void				setContent(std::string content);
 
-		// mapString			getCookies(void) const;
+		mapString			getCookies(void) const;
 		std::string			getCookie(std::string key) const;
 		int					getCode() const;
 		Request				getRequest() const;
