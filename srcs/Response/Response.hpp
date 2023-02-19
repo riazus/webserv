@@ -4,6 +4,7 @@
 # include "../includes.hpp"
 # include "ResponseBody.hpp"
 # include "autoindex.hpp"
+# include "Cgi.hpp"
 
 class Response
 {
@@ -37,6 +38,8 @@ class Response
 	private:
 		std::string		getErrorFileBody(int code);
 		std::string		findType(std::string contentlocation);
+		void			parseCgiBody(std::string body);
+		
 		ResponseBody	_responseBody;
 		mapError		_status;
 		int				_code;

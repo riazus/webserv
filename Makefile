@@ -3,7 +3,7 @@ NAME	=	webserv
 CC			=	clang++
 INCLUDES	=	srcs/*.hpp 
 
-CPPFLAGS	=	-MD -g -std=c++98 -I$(INCLUDES)
+CPPFLAGS	=	-MD -g -fno-limit-debug-info -std=c++98 -I$(INCLUDES)
 RM			=	rm -rf
 
 SRCS		=	srcs/main.cpp \
@@ -13,6 +13,7 @@ SRCS		=	srcs/main.cpp \
 				srcs/Response/Response.cpp \
 				srcs/Response/ResponseBody.cpp \
 				srcs/Response/autoindex.cpp \
+				srcs/Response/Cgi.cpp \
 				srcs/Client/Client.cpp \
 				srcs/Config/Config.cpp \
 				srcs/Server/Server.cpp \

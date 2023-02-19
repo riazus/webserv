@@ -19,7 +19,6 @@ class ResponseBody
 		void				setLocationFile(std::string path);
 		void				setErrorMap(mapError map);
 		void				setClientBodyBufferSize(size_t size);
-		void				setCgiParam(stringVector cgiParam);
 		void				setCgiPass(std::string cgiPass);
 		void				setAllowMethod(stringVector allow);
 		void				setLanguage(std::string lang);
@@ -38,11 +37,10 @@ class ResponseBody
 		Server				getLocation() const;
 		std::string			getLocationPath(void) const;
 		std::string			getLocationFile(void) const;
-		// mapError			getErrorMap(void) const;
+		mapError			getErrorMap(void) const;
 		std::string			getErrorPath(int code) const;
 		size_t				getClientBodyBufferSize(void) const;
-		// stringVector		getCgiParam(void) const;
-		// std::string			getCgiPass(void) const;
+		std::string			getCgiPass(void) const;
 		stringSet			getAllowMethod() const;
 		stringVector		getAllow() const;
 		std::string			getLanguage() const;
@@ -59,7 +57,6 @@ class ResponseBody
 		std::string		_locationFile;
 		mapError		_errorPage;
 		size_t			_clientBodyBufferSize;
-		stringVector	_cgiParam;
 		std::string		_cgiPass;
 		stringSet		_allowMethod;
 		stringVector	_allow;

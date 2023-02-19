@@ -141,9 +141,21 @@ void Response::postMethod()
 	else
 		this->_responseBody.setContent(this->_responseBody.getContentLocation());
 	std::cout << "GET CONTENT: " << this->_responseBody.getContent() << std::endl;
-	int file_format = isCgi(this->_responseBody.getContent());
-	if (file_format != 0)
-		_directives["Content-Length"] = execCgi(this->_responseBody.getContent(), file_format);
+	// int file_format = isCgi(this->_responseBody.getContent());
+	// if (file_format != 0)
+	// 	_directives["Content-Length"] = execCgi(this->_responseBody.getContent(), file_format);
+	// else
+	// 	this->_code = 204;
+
+	if (!this->_responseBody.getCgiPass().empty())
+	{
+		Cgi cgi;
+		std::string tmpBody;
+		cgi.initCgiData(this->_responseBody);
+		cgi.setEnv();
+		tmpBody = cgi.execute();
+		parseCgiBody(tmpBody);
+	}
 	else
 		this->_code = 204;
 
@@ -151,7 +163,7 @@ void Response::postMethod()
 	{
 		std::string host = this->_responseBody.getServer().getIpAdress();
 		std::string port = ft_itoa(this->_responseBody.getServer().getPort());
-		std::string location = host + ":" + port + "/upload";
+		std::string location = host + ":" + port + "/cgi-bin/tmp";
 		_code = 201;
 		_directives["Location"] = location;
 	}
@@ -426,6 +438,32 @@ std::string	Response::findType(std::string contentlocation)
 	if (_typeMap.find(type) == _typeMap.end())
 		return "text/plain";
 	return _typeMap[type];
+}
+
+void Response::parseCgiBody(std::string body)
+{
+	size_t	start;
+	size_t	startBody = 0;
+	size_t sepSize = 0;
+
+	if((start = body.find("Status: ")) != std::string::npos)
+	{
+		this->_code = std::atoi(body.substr(start + 8, 3).c_str());
+		this->_directives["Content-Length"] = readFile(this->_code);
+	}
+	else if ((start = body.find("Content-type: ")) != std::string::npos)
+	{
+		if ((startBody = body.find("\r\n\r\n", start)) != std::string::npos)
+			sepSize = 4;
+		else if((startBody = body.find("\n\n", start)) != std::string::npos)
+			sepSize = 2;
+
+		std::string line = body.substr(start, startBody - start);
+
+		this->_body = body.substr(startBody + sepSize);
+		this->_directives["Content-Type"] = line.substr(14);
+		this->_directives["Content-Length"] = ft_itoa(this->_body.size());
+	}
 }
 
 std::string Response::getErrorFileBody(int code)

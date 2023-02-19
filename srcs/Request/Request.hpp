@@ -29,6 +29,8 @@ class Request
 		mapString		getHeaders() const;
 		Server			getServer()	const;
 		std::string		getPath() const;
+		std::string		getBody() const;
+		std::string		getQuery() const;
 
 		//SETTERS
 		void			setCode(int code);

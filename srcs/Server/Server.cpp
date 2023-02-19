@@ -25,12 +25,11 @@ Server &Server::operator=(const Server &server)
 	this->location = server.location;
 	this->max_client_body_size = server.max_client_body_size;
 	this->autoindex = server.autoindex;
-	//this->locationPath = server.locationPath;
 	this->locationName = server.locationName;
 	this->alias = server.alias;
 	this->ret = server.ret;
-	this->cgi_param = server.cgi_param;
 	this->extension = server.extension;
+	this->cgiPass = server.cgiPass;
 
 	return (*this);
 };
@@ -229,14 +228,14 @@ pairString &Server::getReturn()
 	return (this->ret);
 }
 
-void Server::setCgiParam(std::string cgi_param)
+void Server::setCgiPass(std::string pass)
 {
-	this->cgi_param.push_back(cgi_param);
+	this->cgiPass = pass;
 }
 
-stringVector &Server::getCgiParam()
+std::string &Server::getCgiPass()
 {
-	return (this->cgi_param);
+	return (this->cgiPass);
 }
 
 void Server::is_valid()
@@ -430,13 +429,11 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 				this->setMethods(line[i]);
 			}
 		}
-		else if (line[0] == "cgi_param")
+		else if (line[0] == "cgi_pass")
 		{
 			if (line.size() < 2)
 				config_error("expected min 1 argument after cgi_param");
-			for(int i = 1; i < line.size(); i++){
-				this->setCgiParam(line[i]);
-			}
+			this->setCgiPass(line[1]);
 		}
 		else if (line[0] == "autoindex")
 		{

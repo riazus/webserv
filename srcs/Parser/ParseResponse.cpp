@@ -40,11 +40,11 @@ Server ParseMsg::FindLocation(Server &server, std::string &locationName)
 		{
 			for (std::string tmp = locationName; !tmp.empty(); tmp.resize(tmp.size() - 1))
 			{
-				std::cout << i->getLocationName() << " :LocationName == TMP: " << tmp << std::endl;
+			//	std::cout << i->getLocationName() << " :LocationName == TMP: " << tmp << std::endl;
 
 				if (tmp == i->getLocationName())
 				{
-					std::cout << "LOCATION FOUND" << std::endl;
+					//std::cout << "LOCATION FOUND" << std::endl;
 					locationName = tmp;
 					return *i;
 				}
@@ -87,7 +87,7 @@ std::string ParseMsg::CheckContentLocation(std::string content)
 		}
 		i++;
 	}
-	std::cout << "AFTER CHECK: " << ret << std::endl;
+	//std::cout << "AFTER CHECK: " << ret << std::endl;
 	return (ret);
 }
 
@@ -127,11 +127,7 @@ void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Serve
 	Server location(FindLocation(server, locationName));
 	std::string	content;
 	std::vector<Server> locations(server.getLocations());
-	// for (std::vector<Server>::const_iterator i = locations.begin(); i != locations.end(); i++)
-	// {
-
-	// 	std::cout << "LOOP LOCATION NAME = " << i->getRoot() << std::endl;
-	// }
+	
 	ParseCookies(responseBody, request);
 	responseBody.setCode(request.getCode());
 	responseBody.setRequest(request);
@@ -141,8 +137,7 @@ void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Serve
 	responseBody.setLocation(location);
 	responseBody.setErrorMap(location.getErrorPage());
 	responseBody.setClientBodyBufferSize(location.getMaxClientBodySize());
-	//responseBody.setCgiParam(location.getCgiParam());
-	//responseBody.setCgiPass(location.getCgiPass());
+	responseBody.setCgiPass(location.getCgiPass());
 	responseBody.setAllowMethod(location.getMethods());
 	responseBody.setLanguage(setLanguage(request.getHeader("Accept-Language")));
 	responseBody.setAutoIndex(location.getAutoindex());
@@ -150,15 +145,15 @@ void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Serve
 
 	if (!location.getAlias().empty() && location.getIsExtension() == false)
 	{
-		std::cout << "YOY" << std::endl;
+		//std::cout << "YOY" << std::endl;
 		content = location.getRoot() + location.getAlias() + request.getPath().substr(locationName.size());
 	}
 	else if (!location.getAlias().empty() && location.getIsExtension())
 		content = location.getRoot() + location.getAlias() + locationName;
 	else
 		content = location.getRoot() + request.getPath();
-	std::cout << "BEFORE CHECK: " << content << std::endl;
+	//std::cout << "BEFORE CHECK: " << content << std::endl;
 	content = CheckContentLocation(content);
 	responseBody.setContentLocation(content);
-	std::cout << "PATH OF CONTENT LOC: " << responseBody.getContentLocation() << std::endl;
+	//std::cout << "PATH OF CONTENT LOC: " << responseBody.getContentLocation() << std::endl;
 }

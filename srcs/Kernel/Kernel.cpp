@@ -72,7 +72,7 @@ void Kernel::getServerForClient(Client &client)
 		}
 		if (foundAConf)
 			break ;
-		std::cout << "RIGHT SERVER NOT FOUND!!" << std::endl;
+		//std::cout << "RIGHT SERVER NOT FOUND!!" << std::endl;
 	}
 	client.setServer(rightServer);
 }
@@ -85,6 +85,7 @@ void displayClientInfo(Client &client)
 	
 	std::cout << "CLIENT: " << buffer <<" | "<< client.request.getMethod()+" " << client.request.getPath()+" ";
 	std::cout << client.getServer().getServerName()+" " << client.getServer().getPort() << std::endl;
+	//std::cout << client.request.requestLine << std::endl;
 }
 
 void displayServerInfo(Client &client, Response &response)
@@ -99,7 +100,7 @@ void displayServerInfo(Client &client, Response &response)
 
 	std::cout << "SERVER: " << buffer << " (" << get_time_diff(&client.lastRequest)+")" << " | " << firstLine+" ";
 	std::cout << client.getServer().getServerName()+" " << client.getServer().getPort() << std::endl;
-	std::cout << response.getResponse() << std::endl;
+	//std::cout << response.getResponse() << std::endl;
 }
 
 std::string	get_time_diff(struct timeval *last)
@@ -275,7 +276,7 @@ void Kernel::HandleClientTimeout()
 		{
 			if ((*it).second.request.requestLine.empty() || (*it).second.hadResponse)
 			{
-				std::cout << "REMOVE CLIENT" << std::endl;
+				//std::cout << "REMOVE CLIENT" << std::endl;
 				this->DeleteClient((*it).first);
 				return this->HandleClientTimeout();
 			}

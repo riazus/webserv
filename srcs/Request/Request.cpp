@@ -64,7 +64,6 @@ void Request::ResetHeaders()
 
 void Request::ResetRequest()
 {
-	std::cout << "RESET REQUEST" << std::endl;
 	this->headerReady = false;
 	this->bodyReady = false;
 	this->bodySize = 0;
@@ -114,6 +113,16 @@ std::string Request::getPath() const
 	return this->_path;
 }
 
+std::string Request::getBody() const
+{
+    return this->_body;
+}
+
+std::string Request::getQuery() const
+{
+    return this->_query;
+}
+
 void Request::setBody(std::string body)
 {
 	this->_body = body;
@@ -126,7 +135,13 @@ void Request::setMethod(std::string method)
 
 void Request::setPath(std::string path)
 {
-	this->_path = path;
+	size_t start;
+
+	if ((start = path.find_first_of("?")) == std::string::npos)
+		_path = path;
+	else
+		_path = path.substr(0, start);
+	_query = path.substr(start + 1);
 }
 
 void Request::setVersion(std::string version)

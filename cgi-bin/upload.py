@@ -5,12 +5,10 @@ import cgi, os
 form = cgi.FieldStorage()
 
 # Get filename here
-fileitem = form.getvalue("filename")
+fileitem = form['filename']
 
 # Test if the file was uploaded
-if fileitem == None:
-   message = 'form.getvalue returned unexpected result'
-elif fileitem.getvalue("filename"):
+if fileitem.filename:
    open(os.getcwd() + '/cgi-bin/tmp/' + os.path.basename(fileitem.filename), 'wb').write(fileitem.file.read())
    message = 'The file "' + os.path.basename(fileitem.filename) + '" was uploaded to ' + os.getcwd() + '/cgi-bin/tmp'
 else:
@@ -18,18 +16,5 @@ else:
 
 print('<'"!DOCTYPE html"'>')
 print('<'"html"'>')
-print('<'"head"'>')
-print('<'"/head"'>')
-print('<'"title"'>'"Current time"'<'"/title"'>')
-print('\t''<'"body bgcolor="'"'"#c0c0c0"'"''>')
-print('\t''\t''<'"div"'>')
-print('\t''\t''<'"center class="'"'"text"'"''>')
-print('\t''\t''<'"br"'>')
-print('\t''\t''<'"br"'>')
-print('\t''\t''<'"br"'>')
-print('\t''\t''<'"br"'>')
-print(message)
-print('\t''\t''<'"/center"'>')
-print('\t''\t''<'"/div"'>')
-print('\t''<'"/body"'>')
+print("<H1> " + message + " </H1>")
 print('<'"html"'>')

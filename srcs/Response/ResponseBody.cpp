@@ -16,7 +16,6 @@ ResponseBody &ResponseBody::operator=(ResponseBody const &rhs)
 	this->_allow = rhs._allow;
 	this->_allowMethod = rhs._allowMethod;
 	this->_autoIndex = rhs._autoIndex;
-	this->_cgiParam = rhs._cgiParam;
 	this->_cgiPass = rhs._cgiPass;
 	this->_clientBodyBufferSize = rhs._clientBodyBufferSize;
 	this->_code = rhs._code;
@@ -70,6 +69,11 @@ void ResponseBody::setErrorMap(mapError map)
 void ResponseBody::setClientBodyBufferSize(size_t size)
 {
 	this->_clientBodyBufferSize = size;
+}
+
+void ResponseBody::setCgiPass(std::string cgiPass)
+{
+	this->_cgiPass = cgiPass;
 }
 
 void ResponseBody::setLanguage(std::string lang)
@@ -167,6 +171,11 @@ std::string ResponseBody::getErrorPath(int code) const
 size_t ResponseBody::getClientBodyBufferSize(void) const
 {
     return this->_clientBodyBufferSize;
+}
+
+std::string ResponseBody::getCgiPass() const
+{
+	return this->_cgiPass;
 }
 
 stringSet ResponseBody::getAllowMethod() const

@@ -12,95 +12,88 @@ class Config;
 class Server
 {
 
-    private:
+	private:
 
-        std::string                         name;
-        int                                 port;
-        std::string                         ip_adress;
-        struct in_addr	                    host;
-        std::string                         hostName;
-        std::string                         root;
-        std::string                         index;
-        stringVector                        methods;
-        mapError                            error_page;
-        mapString                           cgi;
-        std::vector<Server>                 location;
-        long long                           max_client_body_size;
-        bool                                autoindex;
-        //std::string                         locationPath;
-        std::string                         locationName;
-        std::string                         alias;
-        pairString                          ret;
-        stringVector                        cgi_param;
+		std::string                         name;
+		int                                 port;
+		std::string                         ip_adress;
+		struct in_addr	                    host;
+		std::string                         hostName;
+		std::string                         root;
+		std::string                         index;
+		stringVector                        methods;
+		mapError                            error_page;
+		mapString                           cgi;
+		std::vector<Server>                 location;
+		long long                           max_client_body_size;
+		bool                                autoindex;
+		std::string                         locationName;
+		std::string                         alias;
+		pairString                          ret;
+		std::string                         cgiPass;
+		bool                                extension;
 
+		void                                checkForDefaultFields();
 
-        bool                                extension;
+	public:
 
-        void                                checkForDefaultFields();
+		Server();
+		Server(const Server &Server);
+		Server& operator=(const Server &Server);
+		bool operator==(const Server &rhs);
 
-    public:
-
-        Server();
-        Server(const Server &Server);
-        Server& operator=(const Server &Server);
-        bool operator==(const Server &rhs);
-
-        void setServerName(std::string name);
-        void setPort(int port);
-        void setRoot(std::string root);
-        void setIndex(std::string index);
-        void setMethods(std::string methods);
-        void setLocation(Server location);
-        void setErrorPage(int num, std::string page);
-        void setCgi(std::string name, std::string path);
-        void setMaxClientBodySize(long long size);
-        void setHostAddr(in_addr_t addr);
-        void setHostName(std::string name);
-        void setIpAddress(std::string ip_adress);
-        void setAutoindex(bool var);
-        //void setLocationPath(std::string path);
-        void setIsExtension(bool);
-        void setAlias(std::string alias);
-        void setReturn(std::string code, std::string url);
-        void setCgiParam(std::string cgi_param);
-        void setLocationName(std::string str);
+		void 	setServerName(std::string name);
+		void 	setPort(int port);
+		void 	setRoot(std::string root);
+		void 	setIndex(std::string index);
+		void 	setMethods(std::string methods);
+		void 	setLocation(Server location);
+		void 	setErrorPage(int num, std::string page);
+		void 	setCgi(std::string name, std::string path);
+		void 	setMaxClientBodySize(long long size);
+		void 	setHostAddr(in_addr_t addr);
+		void 	setHostName(std::string name);
+		void 	setIpAddress(std::string ip_adress);
+		void 	setAutoindex(bool var);
+		void 	setIsExtension(bool);
+		void 	setAlias(std::string alias);
+		void 	setReturn(std::string code, std::string url);
+		void	setLocationName(std::string str);
+		void	setCgiPass(std::string pass);
 
 
-
-        //std::string getLocationPath() const;
-        std::string &getServerName();
-        int &getPort();
-        std::string &getIpAdress();
-        std::string getRoot() const;
-        std::string &getIndex();
-        stringVector &getMethods();
-        std::vector<Server> &getLocations();
-        mapError &getErrorPage();
-        std::map<std::string, std::string> &getCgi();
-        long long &getMaxClientBodySize();
-        std::string &getHostName();
-        in_addr_t getHostAddr();
-        bool &getAutoindex();
-        std::string &getAlias();
-        pairString &getReturn();
-        stringVector &getCgiParam();
-        std::string getLocationName() const;
-        bool &getIsExtension();
+		std::string         &getServerName();
+		int                 &getPort();
+		std::string         &getIpAdress();
+		std::string 		getRoot() const;
+		std::string 		&getIndex();
+		stringVector 		&getMethods();
+		std::vector<Server> &getLocations();
+		mapError 			&getErrorPage();
+		mapString 			&getCgi();
+		long long 			&getMaxClientBodySize();
+		std::string 		&getHostName();
+		in_addr_t 			getHostAddr();
+		bool 				&getAutoindex();
+		std::string 		&getAlias();
+		pairString 			&getReturn();
+		std::string 		getLocationName() const;
+		bool 				&getIsExtension();
+		std::string 		&getCgiPass();
 
 
+		void parse_server(std::vector<std::string> config, int *line_count, bool is_location);
+		void server_error(std::string error);
+		void is_valid();
 
-        void parse_server(std::vector<std::string> config, int *line_count, bool is_location);
-        void server_error(std::string error);
-        void is_valid();
+		~Server();
 
-        ~Server();
+		class InvalidServerException : public std::exception
+		{
+		public:
 
-        class InvalidServerException : public std::exception
-    	{
-	    public:
-
-		    virtual const char* what() const throw();
-	    };
+			virtual const char* what() const throw();
+		};
 };
 
 #endif
