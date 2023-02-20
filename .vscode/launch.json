@@ -1,8 +1,9 @@
 {
     "configurations": [
+
         {
             "name": "(gdb) Launch",
-            "type": "cppdbg",
+            "type": "lldb",
             "request": "launch",
             "program": "${workspaceFolder}/webserv",
             "args": [],
@@ -10,7 +11,6 @@
             "cwd": "/mnt/nfs/homes/jannabel/projects/webserv",
             "environment": [],
             "externalConsole": false,
-            "MIMode": "gdb",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",

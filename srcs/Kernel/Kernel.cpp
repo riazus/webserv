@@ -201,7 +201,7 @@ bool Kernel::ReadClientRequest(int clientSocket)
 	{
 		this->_parserMsg.ParseHeader(this->_clients[clientSocket].request);
 		this->_clients[clientSocket].request.headerReady = true;
-		if (std::atoi(this->_clients[clientSocket].request.getHeader("Content-Lenght").c_str()) == 0)
+		if (std::atoi(this->_clients[clientSocket].request.getHeader("Content-Length").c_str()) == 0)
 		{
 			this->_clients[clientSocket].request.bodyReady = true;
 			return true;
@@ -254,7 +254,8 @@ void Kernel::AcceptNewClient(int eventPollFd)
 
 	this->_event.data.fd = new_socket;
 	this->_event.events = EPOLLIN;
-	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, new_socket, &this->_event);
+	if (epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, new_socket, &this->_event) == -1)
+		throw std::logic_error("Error: epoll_ctl() failed");
 
 	newClient.SetSocket(new_socket);
 	this->_clients[new_socket] = newClient;
@@ -276,7 +277,7 @@ void Kernel::HandleClientTimeout()
 		{
 			if ((*it).second.request.requestLine.empty() || (*it).second.hadResponse)
 			{
-				//std::cout << "REMOVE CLIENT" << std::endl;
+				std::cout << "REMOVE CLIENT" << std::endl;
 				this->DeleteClient((*it).first);
 				return this->HandleClientTimeout();
 			}
