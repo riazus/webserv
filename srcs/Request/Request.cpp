@@ -1,6 +1,6 @@
 #include "Request.hpp"
 
-Request::Request(void): bodySize(0), contentSize(0), requestLine(""), bodyReady(false), headerReady(false), _code(200), _method(""), _version(""), _body(""), _port(8080), _path(""), _query("")
+Request::Request(void): bodySize(0), contentSize(0), requestLine(""), bodyReady(false), headerReady(false), _code(200), _method(""), _version(""), _body(""), _path(""), _query("")
 {
 }
 
@@ -18,7 +18,6 @@ Request &Request::operator=(Request const &rhs)
 	this->_body = rhs._body;
 	this->_version = rhs._version;
 	this->_method = rhs._method;
-	this->_port = rhs._port;
 	this->_path = rhs._path;
 	this->_query = rhs._query;
 	this->_server = rhs._server;
@@ -35,7 +34,6 @@ void Request::ResetHeaders()
 	_method = "";
 	_code = 200;
 	_body = "";
-	_port = 8080;
 	_path = "";
 	_query = "";
 	_headers.clear();

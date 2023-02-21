@@ -14,7 +14,7 @@ else
 }
 
 // UPLOAD
-$uploaddir = __DIR__ . '/upload/';
+$uploaddir = __DIR__ . '/tmp/';
 $uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
 $tmp_name = $_FILES['userfile']['tmp_name'];
 echo $tmp_name;

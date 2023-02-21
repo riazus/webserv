@@ -190,7 +190,7 @@ bool Kernel::ReadClientRequest(int clientSocket)
 	else
 	{
 		//TODO check for len after a lot of manipulation
-		this->_clients[clientSocket].request.bodySize += requestLen;
+		this->_clients[clientSocket].request.contentSize += requestLen;
 		if (this->_clients[clientSocket].request.requestLine.empty())
 			gettimeofday(&this->_clients[clientSocket].lastRequest, NULL);
 		this->_clients[clientSocket].request.requestLine.append(buffer, requestLen);
@@ -213,7 +213,6 @@ bool Kernel::ReadClientRequest(int clientSocket)
 		std::string header = this->_clients[clientSocket].request.requestLine.substr(0, this->_clients[clientSocket].request.requestLine.find("\r\n\r\n") + 4);
 		if ((this->_clients[clientSocket].request.contentSize - header.size()) == (unsigned long)std::atol(_clients[clientSocket].request.getHeader("Content-Length").c_str()))
 		{
-			std::cout << "CONTENT SIZE = " << this->_clients[clientSocket].request.contentSize - header.size() << " CONTENT LENGTH " << std::atoi(_clients[clientSocket].request.getHeader("Content-Length").c_str()) << '\n';
 			this->_parserMsg.ParseBody(_clients[clientSocket].request);
 			_clients[clientSocket].request.bodyReady = true;
 		}

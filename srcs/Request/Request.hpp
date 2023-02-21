@@ -50,7 +50,6 @@ class Request
 		std::string		_body;
 		std::string 	_version;
 		std::string 	_method;
-		int				_port;
 		std::string 	_path;
 		std::string 	_query;
 		Server			_server;
