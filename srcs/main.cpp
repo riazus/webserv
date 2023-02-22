@@ -4,9 +4,14 @@
 
 int main(int argc, char **argv)
 {
-    // Engine::Validate(argc, argv);
-    Engine::Execute(argc, argv);
-    // Engine::Exit();
+    if (argc == 2)
+    {
+        // Engine::Validate(argc, argv);
+        Engine::Execute(argv[1]);
+        // Engine::Exit();
+    }
+    else
+        std::cout << "Usage: ./webserv configs/<config name> " << std::endl;
 
     return (EXIT_SUCCESS);
 }

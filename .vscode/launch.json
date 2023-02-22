@@ -2,13 +2,13 @@
     "configurations": [
 
         {
-            "name": "(gdb) Launch",
+            "name": "lldb",
             "type": "lldb",
             "request": "launch",
             "program": "${workspaceFolder}/webserv",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "/mnt/nfs/homes/jannabel/projects/webserv",
+            "cwd": "/home/rusmanov/projects/webserv",
             "environment": [],
             "externalConsole": false,
             "setupCommands": [

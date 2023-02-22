@@ -34,23 +34,17 @@ void Engine::Validate(int argc, char **argv)
 }
 
 //Main executable method
-void Engine::Execute(int argc, char **argv)
+void Engine::Execute(std::string configName)
 {
     Config config;
     Kernel kernel;
     signal(SIGINT, signal_handler);
     try
     {
-        //In this place need parse all things from config
-
-        //for example Parser *parser = new Parser();
-        //parser->Parse();
-        config.Parsing("./configs/test_1server.conf");
+        config.Parsing(configName);
         config.Parsing(DEFAULT);
-        //config.getFullInfo();
         kernel.SetConfig(config);
         kernel.Run();
-
     }
     catch(const std::exception& e)
     {
