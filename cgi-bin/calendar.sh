@@ -1,11 +1,17 @@
 #!/bin/bash
 
-echo -e 'HTTP/1.1 200 OK'
-echo -e 'Content-Type: text/html\r\n\r\n'
+echo '<!DOCTYPE html>'
+echo '<html>'
 
-echo '<h3>'
+# echo '<head>'
+# echo '</head>'
+echo '<body bgcolor="#c0c0c0"'
+echo '<center>'
+
+echo '<br>'
+
+
 echo 'Calendar:'
-echo '</h3>'
 
 
 echo ''
@@ -27,4 +33,9 @@ echo 'Days have passed since the beginning of the year: '
 echo '</h4>'
 echo '<pre>'
 date +%j
+echo '</center>'
 echo '</pre>'
+
+echo '</body>'
+echo '</html>'
+
