@@ -112,22 +112,21 @@ void Response::getMethod()
 		this->_responseBody.setContent(this->_responseBody.getContentLocation());
 	std::cout << "GET CONTENT: " << this->_responseBody.getContent() << std::endl;
 	std::cout << "GET CONTENT BEFOR CGI: " << this->_responseBody.getContent() << std::endl;
-	if (!this->_responseBody.getCgiPass().empty())
+	int file_format = isCgi(this->_responseBody.getContent());
+	if(file_format != 0)
 	{
-		Cgi cgi;
-		std::string tmpBody;
-		cgi.initCgiData(this->_responseBody);
-		cgi.setEnv();
-		tmpBody = cgi.execute();
-		parseCgiBody(tmpBody);
+		std::cout << "GET CONTENT BEFOR CGI: " << this->_responseBody.getContent() << std::endl;
+		struct stat buffer; 
+		if (stat (this->_responseBody.getContent().c_str(), &buffer) == 0)
+			_directives["Content-Length"] = execCgi(this->_responseBody.getContent(), file_format);
+		else
+		{
+			this->_code = 404;
+			this->_directives["Content-Type"] = "text/html";
+			this->_body = this->getErrorFileBody(404);
+			_directives["Content-Length"] = ft_itoa(_body.size());
+		}
 	}
-	// else
-	// {
-	// 	this->_code = 404;
-	// 	this->_directives["Content-Type"] = "text/html";
-	// 	this->_body = this->getErrorFileBody(404);
-	// 	_directives["Content-Length"] = ft_itoa(_body.size());
-	// }
 	else
 		_directives["Content-Length"] = readFile(this->_responseBody.getContent());
 	
