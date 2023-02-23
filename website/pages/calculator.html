@@ -1,24 +1,23 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <link rel="stylesheet" href="style.css">
-</head>
-	<title>Site</title>
-	<body bgcolor="#c0c0c0">
-        
-		<div>
-            <br>
-            <center>
-				<h2> Smart calculator: </h2> <br />
-				<form action = "../calc/" method = "get">
-					Number 1: <input type = "text" name = "f_num">  <br />
-					<br>
-					Oparator : <input type = "text" name = "oper">  <br />
-					<br>
-					Number 2: <input type = "text" name = "s_num" /> <br> <br>
-					<input type = "submit" value = "Submit" /> <br />
-				</form>
-            </center>
-		</div>
-	</body>
+  <head>
+    <meta charset="UTF-8">
+    <title>Math Operators</title>
+  </head>
+  <body>
+    <form action="../../cgi-bin/calculator.php" method="post">
+      <label for="num1">First Number:</label>
+      <input type="number" id="num1" name="num1" required><br><br>
+      <label for="num2">Second Number:</label>
+      <input type="number" id="num2" name="num2" required><br><br>
+      <label for="operator">Operator:</label>
+      <select id="operator" name="operator">
+        <option value="add">+</option>
+        <option value="subtract">-</option>
+        <option value="multiply">*</option>
+        <option value="divide">/</option>
+      </select><br><br>
+      <button type="submit" name="submit">Calculate</button>
+    </form>
+  </body>
 </html>
