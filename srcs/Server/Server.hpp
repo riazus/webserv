@@ -82,7 +82,7 @@ class Server
 		std::string 		&getCgiPass();
 
 
-		void parse_server(std::vector<std::string> config, int *line_count, bool is_location);
+		void parse_server(std::vector<std::string> config, int *line_count, int locLevel);
 		void server_error(std::string error);
 		void is_valid();
 

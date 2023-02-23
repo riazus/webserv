@@ -275,15 +275,17 @@ void Server::is_valid()
 }
 
 
-void Server::parse_server(std::vector<std::string> config, int *line_count, bool is_location)
+void Server::parse_server(std::vector<std::string> config, int *line_count, int locLevel)
 {
+	if (locLevel > 2)
+		config_error("overflow location levels");
 	std::vector<std::string>::const_iterator it = config.begin() + *line_count;
-	if (is_location == true && location.size() < 1)
+	if (locLevel == 1 && location.size() < 1)
 	{
 		(*line_count)++;
 		it++;
 	}
-	if(is_location == true)
+	if(locLevel == 1 || locLevel == 2)
 	{
 		std::vector<std::string> line = ft_split(config[*line_count], CHARTOSKIP);
 		// std::cout << "LINE:	" << *line_count << "	" << line[0] << " " << line[1] << std::endl;
@@ -326,24 +328,25 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 			break;
 		else if (line[0] == "location")
 		{
-			// if (is_location == true)
-			// 	config_error("invalid attribute123");
-			// else
-			// {
+			// if (locLevel == 0 || locLevel == 1)
+			// 	config_error("invalid attribute <location>");
+			//else
+			//{
 				if (line.size() != 3)
 							config_error("expected 2 arguments after location");
 				int tmp_count = *line_count;
 				Server location;
 				// std::cout << "LINE:	" << *line_count << "	" << line[0] << " " << line[1] << std::endl;
-				location.parse_server(config, line_count, 1);
+				location.parse_server(config, line_count, locLevel + 1);
 				this->setLocation(location);
 				it += *line_count - tmp_count - 1;
-				(*line_count)--;
-			// }
+				if (locLevel < 1)
+					(*line_count)--;
+			//}
 		}
 		else if (line[0] == "server_name")
 		{
-			if (is_location == true)
+			if (locLevel != 0)
 				config_error("invalid attribute");
 			else 
 			{
@@ -360,7 +363,7 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 		}
 		else if (line[0] == "listen")
 		{
-			if (is_location == true)
+			if (locLevel != 0)
 				config_error("invalid attribute");
 			else
 			{
@@ -390,17 +393,17 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 				this->setPort(atoi(port.c_str()));
 			}
 		}
-		else if (line[0] == "cgi")
-		{
-			if (is_location == true)
-				config_error("invalid attribute");
-			else
-			{
-				if (line.size() != 3)
-					config_error("expected 2 arguments after cgi");
-				this->setCgi(line[1], line[2]);
-			}
-		}
+		// else if (line[0] == "cgi")
+		// {
+		// 	if (locLevel == true)
+		// 		config_error("invalid attribute");
+		// 	else
+		// 	{
+		// 		if (line.size() != 3)
+		// 			config_error("expected 2 arguments after cgi");
+		// 		this->setCgi(line[1], line[2]);
+		// 	}
+		// }
 		else if (line[0] == "root")
 		{
 			if (line.size() != 2)
@@ -445,7 +448,7 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 		}
 		else if (line[0] == "alias")
 		{
-			if (is_location == false)
+			if (locLevel == 0)
 				config_error("invalid attribute");
 			if (line.size() != 2)
 				config_error("expected 1 argument after alias");
