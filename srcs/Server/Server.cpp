@@ -287,7 +287,7 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 	{
 		std::vector<std::string> line = ft_split(config[*line_count], CHARTOSKIP);
 		// std::cout << "LINE:	" << *line_count << "	" << line[0] << " " << line[1] << std::endl;
-		if (line.size()!= 3)
+		if (line.size() != 3)
 			config_error("expected a directory and '{' after location");
 			//std::cout << "SET LOCAT NAME: " <<  << std::endl;
 		this->setLocationName(line[1]);
@@ -326,10 +326,10 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 			break;
 		else if (line[0] == "location")
 		{
-			if (is_location == true)
-				config_error("invalid attribute123");
-			else
-			{
+			// if (is_location == true)
+			// 	config_error("invalid attribute123");
+			// else
+			// {
 				if (line.size() != 3)
 							config_error("expected 2 arguments after location");
 				int tmp_count = *line_count;
@@ -339,7 +339,7 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, bool
 				this->setLocation(location);
 				it += *line_count - tmp_count - 1;
 				(*line_count)--;
-			}
+			// }
 		}
 		else if (line[0] == "server_name")
 		{

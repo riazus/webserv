@@ -25,6 +25,18 @@
     }
 
     // Display the result
+    echo "<!DOCTYPE html>";
+    echo "<html>";
+    echo "<body bgcolor=";
+    echo '"';
+    echo "#c0c0c0";
+    echo '"';
+    echo ">";
+    echo "<center>";
+    echo "<br><br><br><br><br>";
     echo "<h2>Result: $result</h2>";
+    echo "</center>";
+    echo "</body>";
+    echo "</html>";
   }
 ?>
