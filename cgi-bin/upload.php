@@ -1,31 +1,29 @@
 <?php
-
+echo '<head>';
+echo '</head>';
+echo '<body bgcolor="#c0c0c0" class="text"';
+echo '<br>';
 if($_SERVER['REQUEST_METHOD'] == 'POST')
 {
 	echo 'Request was a POST';
 }
-if (!empty($_POST))
-{
-	echo 'Bonjour ' . $_POST["text1"] . htmlspecialchars($_POST["text2"]) . "!\n";
-}
-else
-{
-	echo "\$_POST is empty\n";
-}
-
-// UPLOAD
+echo '<br>';
 $uploaddir = __DIR__ . '/tmp/';
 $uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
 $tmp_name = $_FILES['userfile']['tmp_name'];
-echo $tmp_name;
 echo '<pre>';
 if (move_uploaded_file($tmp_name, $uploadfile)) {
-	echo "File upload successfully\n";
+	echo "FILE UPLOAD SUCCESFULY\n\n";
 } else {
 	echo "Couldn't upload the file.\n";
 }
 echo 'Debug infos :';
+echo '<br>';
+echo '<div>';
+
 print_r($_FILES);
+echo '</div>';
 
 
+echo '</body>';
 ?>
