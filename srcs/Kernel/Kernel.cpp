@@ -86,7 +86,7 @@ void displayClientInfo(Client &client)
 	struct tm *tm = gmtime(&client.lastRequest.tv_sec);
 	strftime(buffer, 100, "%F - %T", tm);
 	
-	std::cout << "CLIENT: " << buffer <<" | "<< client.request.getMethod()+" " << client.request.getPath()+" ";
+	std::cout << std::endl << "CLIENT: " << buffer <<" | "<< client.request.getMethod()+" " << client.request.getPath()+" ";
 	std::cout << client.request.getDomainName()+" " << client.getServer().getPort() << std::endl;
 	//std::cout << client.request.requestLine << std::endl;
 }

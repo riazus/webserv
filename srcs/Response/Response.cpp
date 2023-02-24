@@ -97,14 +97,12 @@ std::string Response::execCgi(std::string path, int file_format)
 	close(in);
 	close(out);
 	this->_body = buffer_str;
-	// std::cout << "BODY: " << this->_body <<"----------------------------------------------<" << std::endl;
 	return (ft_itoa(_body.size()));
 }
 
 
 void Response::getMethod()
 {
-	std::cout << "GET HERE " << std::endl;
 	if(checkPath(this->_responseBody.getContentLocation()) == IS_A_DIRECTORY &&
 		this->_responseBody.getContentLocation() == (this->_responseBody.getLocation().getRoot() + this->_responseBody.getLocation().getAlias()))
 	{
@@ -114,12 +112,9 @@ void Response::getMethod()
 	}
 	else
 		this->_responseBody.setContent(this->_responseBody.getContentLocation());
-	std::cout << "GET CONTENT: " << this->_responseBody.getContent() << std::endl;
-	std::cout << "GET CONTENT BEFOR CGI: " << this->_responseBody.getContent() << std::endl;
 	int file_format = isCgi(this->_responseBody.getContent());
 	if(file_format != 0)
 	{
-		std::cout << "GET CONTENT BEFOR CGI: " << this->_responseBody.getContent() << std::endl;
 		struct stat buffer; 
 		if (stat (this->_responseBody.getContent().c_str(), &buffer) == 0)
 			_directives["Content-Length"] = execCgi(this->_responseBody.getContent(), file_format);
@@ -145,13 +140,6 @@ void Response::postMethod()
 		this->_responseBody.setContent(this->_responseBody.getContentLocation() + "/" + this->_responseBody.getIndex());
 	else
 		this->_responseBody.setContent(this->_responseBody.getContentLocation());
-	std::cout << "GET CONTENT: " << this->_responseBody.getContent() << std::endl;
-	// int file_format = isCgi(this->_responseBody.getContent());
-	// if (file_format != 0)
-	// 	_directives["Content-Length"] = execCgi(this->_responseBody.getContent(), file_format);
-	// else
-	// 	this->_code = 204;
-
 	if (!this->_responseBody.getCgiPass().empty())
 	{
 		Cgi cgi;
@@ -178,8 +166,6 @@ void Response::postMethod()
 void Response::deleteMethod()
 {
 	std::string path(this->_responseBody.getContentLocation());
-	std::cout << "DELETABLE PATH: " << path << std::endl;
-	std::cout << "PATH VIA CONTENT: " << this->_responseBody.getContent() << std::endl;
 	if (checkPath(path) != IS_SOMETHING_ELSE)
 	{
 		if (checkWritePermission(path) && remove(path.c_str()) == 0)

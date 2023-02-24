@@ -60,8 +60,7 @@ Server ParseMsg::FindLocation(Server &server, std::string &locationName)
 				return ret;
 			}
 		}
-	//TODO fix it
-	std::cout << "LOCATION NOT FOUND" << std::endl;
+
 	return server;
 }
 
@@ -123,7 +122,6 @@ void ParseMsg::ParseCookies(ResponseBody& responseBody, Request& request)
 void ParseMsg::ParseResponse(ResponseBody &responseBody, Request &request, Server &server)
 {
 	std::string	locationName(request.getPath());
-	std::cout << "REQUEST PATH: " << locationName << std::endl;
 	Server location(FindLocation(server, locationName));
 	std::string	content;
 	std::vector<Server> locations(server.getLocations());
