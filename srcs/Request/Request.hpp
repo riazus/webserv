@@ -31,6 +31,7 @@ class Request
 		std::string		getPath() const;
 		std::string		getBody() const;
 		std::string		getQuery() const;
+		std::string		getDomainName() const;
 
 		//SETTERS
 		void			setCode(int code);
@@ -42,6 +43,7 @@ class Request
 		void 			setEnvForCgi(std::string token, std::string value);
 		void			setNetwork(std::string ip);
 		void			setServer(Server server);
+		void			setDomainName(std::string name);
 
 	private:
 		int				_code;
@@ -53,6 +55,7 @@ class Request
 		std::string 	_path;
 		std::string 	_query;
 		Server			_server;
+		std::string		_domainName;
 		
 };
 

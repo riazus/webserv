@@ -92,6 +92,10 @@ std::string Response::execCgi(std::string path, int file_format)
 		buffer[ret] = '\0';
 		buffer_str += buffer;
 	}
+	fclose(tmpIn);
+	fclose(tmpOut);
+	close(in);
+	close(out);
 	this->_body = buffer_str;
 	// std::cout << "BODY: " << this->_body <<"----------------------------------------------<" << std::endl;
 	return (ft_itoa(_body.size()));

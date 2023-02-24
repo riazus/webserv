@@ -53,30 +53,15 @@ void Config::Parsing(std::string filename)
 		}
 		line_count++;
 	}
-	std::vector<Server>tmp = servers;
-	std::vector<Server>::iterator end = tmp.end();
-	int i = 0;
-	for(std::vector<Server>::iterator it = tmp.begin(); it != end; it++)
-	{
-		i = 0;
-		for(std::vector<Server>::iterator tmp_it = tmp.begin(); tmp_it != end; tmp_it++)
-		{
-			if ((tmp_it)->getPort() == (it)->getPort())
-				i++;
-		}
-		if (i > 1)
-			config_error("same port specified twice");
-	}
-	//getFullInfo();
 }
 
 void Config::getFullInfo()
 {
-	std::cout << "--------------------CONFIG FILE INFO--------------------" << std::endl;
+	/*std::cout << "--------------------CONFIG FILE INFO--------------------" << std::endl;
 	for (int i=0; i < servers.size(); i++)
 	{
 		std::cout << "===================Server " << i << "===================" << std::endl << std::endl;
-		std::cout << "server_name:	" << servers[i].getServerName() << std::endl;
+		//std::cout << "server_name:	" << servers[i].getServerName() << std::endl;
 		std::cout << "port:	" << servers[i].getPort() << std::endl;
 		std::cout << "ip_adress:	" << servers[i].getIpAdress() << std::endl;
 		std::cout << "root:	" << servers[i].getRoot() << std::endl;
@@ -108,7 +93,7 @@ void Config::getFullInfo()
 			std::cout << "autoindex:	" << (loc)->getAutoindex() << std::endl;
 		}
 		std::cout << std::endl;
-	}
+	}*/
 }
 
 serverVector Config::getServers()

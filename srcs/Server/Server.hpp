@@ -14,7 +14,7 @@ class Server
 
 	private:
 
-		std::string                         name;
+		stringVector                        names;
 		int                                 port;
 		std::string                         ip_adress;
 		struct in_addr	                    host;
@@ -62,7 +62,7 @@ class Server
 		void	setCgiPass(std::string pass);
 
 
-		std::string         &getServerName();
+		stringVector        &getServerName();
 		int                 &getPort();
 		std::string         &getIpAdress();
 		std::string 		getRoot() const;

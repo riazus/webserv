@@ -54,12 +54,15 @@ void Kernel::getServerForClient(Client &client)
 	{
 		if (!(client.request.getServer().getHostName().empty()))
 		{
-			std::string serverName = it->getServerName();
-			if (client.request.getServer().getHostName() == serverName && it->getPort() == client.request.getServer().getPort())
+			stringVector serverNames = it->getServerName();
+			for(int i = 0; i < serverNames.size(); i++)
 			{
-				foundAConf = true;
-				rightServer = *it;
-				break ;
+				if (client.request.getServer().getHostName() == serverNames[i] && it->getPort() == client.request.getServer().getPort())
+				{
+					foundAConf = true;
+					rightServer = *it;
+					break ;
+				}
 			}
 		}
 		else
@@ -84,7 +87,7 @@ void displayClientInfo(Client &client)
 	strftime(buffer, 100, "%F - %T", tm);
 	
 	std::cout << "CLIENT: " << buffer <<" | "<< client.request.getMethod()+" " << client.request.getPath()+" ";
-	std::cout << client.getServer().getServerName()+" " << client.getServer().getPort() << std::endl;
+	std::cout << client.request.getDomainName()+" " << client.getServer().getPort() << std::endl;
 	//std::cout << client.request.requestLine << std::endl;
 }
 
@@ -99,7 +102,7 @@ void displayServerInfo(Client &client, Response &response)
 	strftime(buffer, 100, "%F - %T", tm);
 
 	std::cout << "SERVER: " << buffer << " (" << get_time_diff(&client.lastRequest)+")" << " | " << firstLine+" ";
-	std::cout << client.getServer().getServerName()+" " << client.getServer().getPort() << std::endl;
+	std::cout << client.request.getDomainName()+" " << client.getServer().getPort() << std::endl;
 	//std::cout << response.getResponse() << std::endl;
 }
 

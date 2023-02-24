@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-Server::Server() : name(""), port(8080), ip_adress(""), hostName(""), root(""), index(""), max_client_body_size(0)
+Server::Server() : port(0), ip_adress(""), hostName(""), root(""), index(""), max_client_body_size(0)
 {
 }
 
@@ -12,7 +12,7 @@ Server::Server(const Server &server)
 Server &Server::operator=(const Server &server)
 {
 
-	this->name = server.name;
+	this->names = server.names;
 	this->port = server.port;
 	this->ip_adress = server.ip_adress;
 	this->host = server.host;
@@ -44,12 +44,12 @@ bool Server::operator==(const Server & rhs)
 
 void Server::setServerName(std::string name)
 {
-	this->name = name;
+	this->names.push_back(name);
 }
 
-std::string &Server::getServerName()
+stringVector &Server::getServerName()
 {
-	return (this->name);
+	return (this->names);
 }
 
 void Server::setPort(int port)
@@ -240,7 +240,7 @@ std::string &Server::getCgiPass()
 
 void Server::is_valid()
 {
-	if (getPort() == 0)
+	/*if (getPort() == 0)
 		server_error("port is not set");
 	if (getServerName() == "")
 	{
@@ -265,7 +265,7 @@ void Server::is_valid()
 		}
 		close(fd);
 	}
-	/*std::list<Location *> locations = getLocation();
+	std::list<Location *> locations = getLocation();
 	if (!locations.size())
 		server_error("location is not set");
 	for (std::list<Location*>::iterator it = locations.begin(); it != locations.end(); it++)
@@ -352,7 +352,10 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, int 
 			{
 				if (line.size() != 2)
 					config_error("expected 1 argument after server_name");
-				this->setServerName(line[1]);
+				for(int i = 1; i < line.size(); i++)
+				{
+					this->setServerName(line[1]);
+				}
 			}
 		}
 		else if (line[0] == "error_page")

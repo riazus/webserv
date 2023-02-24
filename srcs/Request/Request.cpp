@@ -121,6 +121,11 @@ std::string Request::getQuery() const
     return this->_query;
 }
 
+std::string	Request::getDomainName() const
+{
+	return this->_domainName;
+}
+
 void Request::setBody(std::string body)
 {
 	this->_body = body;
@@ -178,5 +183,6 @@ void Request::setNetwork(std::string ip)
 		this->_server.setHostName(host.c_str());
 	else
 		this->_server.setHostAddr(inet_addr(host.c_str()));
+	this->_domainName = host;
 	this->_server.setPort(std::atoi(ip.substr(++colons).c_str()));
 }

@@ -6,7 +6,7 @@
             "type": "lldb",
             "request": "launch",
             "program": "${workspaceFolder}/webserv",
-            "args": ["configs/webserv.conf"],
+            "args": ["configs/1server.conf"],
             "cwd": "/mnt/nfs/homes/jannabel/projects/webserv",
         }
     ],
