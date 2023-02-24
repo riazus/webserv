@@ -7,7 +7,6 @@ CPPFLAGS	=	-MD -g -fno-limit-debug-info -std=c++98 -I$(INCLUDES)
 RM			=	rm -rf
 
 SRCS		=	srcs/main.cpp \
-				srcs/Kernel/Engine.cpp \
 				srcs/Kernel/Kernel.cpp \
 				srcs/Request/Request.cpp \
 				srcs/Response/Response.cpp \
