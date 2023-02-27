@@ -15,13 +15,19 @@ echo '<pre>';
 if (move_uploaded_file($tmp_name, $uploadfile)) {
 	echo "FILE UPLOAD SUCCESFULY\n\n";
 } else {
-	echo "Couldn't upload the file.\n";
+	echo "Oops, try again....\n";
 }
 echo 'Debug infos :';
 echo '<br>';
 echo '<div>';
 
 print_r($_FILES);
+
+echo '<a href="';
+$pos = strpos($uploadfile, "/cgi-bin");
+$readystr = substr($uploadfile, $pos);
+echo $readystr;
+echo '" download>Download file back</a>';
 echo '</div>';
 
 
