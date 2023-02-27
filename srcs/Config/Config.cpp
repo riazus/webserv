@@ -53,6 +53,20 @@ void Config::Parsing(std::string filename)
 		}
 		line_count++;
 	}
+	std::vector<Server>tmp = servers;
+	std::vector<Server>::iterator end = tmp.end();
+	int i = 0;
+	for(std::vector<Server>::iterator it = tmp.begin(); it != end; it++)
+	{
+		i = 0;
+		for(std::vector<Server>::iterator tmp_it = tmp.begin(); tmp_it != end; tmp_it++)
+		{
+			if ((tmp_it)->getPort() == (it)->getPort())
+				i++;
+		}
+		if (i > 1)
+			config_error("same port specified twice");
+	}
 }
 
 void Config::getFullInfo()
