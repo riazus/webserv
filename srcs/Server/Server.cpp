@@ -188,16 +188,6 @@ std::string &Server::getAlias()
     return this->alias;
 }
 
-// void Server::setLocationPath(std::string locationPath)
-// {
-// 	this->locationPath = locationPath;
-// }
-
-// std::string Server::getLocationPath() const
-// {
-// 	return (this->locationPath);
-// }
-
 void Server::setIsExtension(bool val)
 {
 	this->extension = val;
@@ -238,41 +228,6 @@ std::string &Server::getCgiPass()
 	return (this->cgiPass);
 }
 
-void Server::is_valid()
-{
-	/*if (getPort() == 0)
-		server_error("port is not set");
-	if (getServerName() == "")
-	{
-		std::cout << "Serv_name: " << getServerName() << std::endl;
-		server_error("server name is not set");
-	}
-	if (getRoot() == "")
-		server_error("root is not set");
-	if (getIndex() == "")
-		server_error("index is not set");
-
-	int fd;
-	std::string error;
-	std::map<int, std::string> error_pages = getErrorPage();
-	for (std::map<int, std::string>::iterator page = error_pages.begin(); page != error_pages.end(); page++)
-	{
-		fd = ::open((getRoot() + page->second).c_str(), O_RDONLY);
-		if (fd <= 0)
-		{
-			error = "error_page " + getRoot() + page->second + " is unavailable";
-			server_error(error);
-		}
-		close(fd);
-	}
-	std::list<Location *> locations = getLocation();
-	if (!locations.size())
-		server_error("location is not set");
-	for (std::list<Location*>::iterator it = locations.begin(); it != locations.end(); it++)
-	{
-		(*it)->is_valid();
-	}*/
-}
 
 
 void Server::parse_server(std::vector<std::string> config, int *line_count, int locLevel)
@@ -304,7 +259,6 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, int 
 
 		if (line[1] != "{")
 			config_error("expected '{' after server");
-		//Server server;
 		if (it == config.end())
 			config_error("");
 		it++;
@@ -328,10 +282,6 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, int 
 			break;
 		else if (line[0] == "location")
 		{
-			// if (locLevel == 0 || locLevel == 1)
-			// 	config_error("invalid attribute <location>");
-			//else
-			//{
 				if (line.size() != 3)
 							config_error("expected 2 arguments after location");
 				int tmp_count = *line_count;
@@ -342,7 +292,6 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, int 
 				it += *line_count - tmp_count - 1;
 				if (locLevel < 1)
 					(*line_count)--;
-			//}
 		}
 		else if (line[0] == "server_name")
 		{
@@ -396,17 +345,6 @@ void Server::parse_server(std::vector<std::string> config, int *line_count, int 
 				this->setPort(atoi(port.c_str()));
 			}
 		}
-		// else if (line[0] == "cgi")
-		// {
-		// 	if (locLevel == true)
-		// 		config_error("invalid attribute");
-		// 	else
-		// 	{
-		// 		if (line.size() != 3)
-		// 			config_error("expected 2 arguments after cgi");
-		// 		this->setCgi(line[1], line[2]);
-		// 	}
-		// }
 		else if (line[0] == "root")
 		{
 			if (line.size() != 2)

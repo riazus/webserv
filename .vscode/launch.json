@@ -7,7 +7,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/webserv",
             "args": ["configs/1server.conf"],
-            "cwd": "/mnt/nfs/homes/jannabel/projects/webserv",
+            "cwd": "/mnt/nfs/homes/exerath/Desktop/webserv",
         }
     ],
     "version": "2.0.0"
