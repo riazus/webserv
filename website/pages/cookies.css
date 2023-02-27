@@ -1,5 +1,5 @@
 body{
-    background: #67BE4B;
+    background: #c0c0c0;
 }
 #container{
     width:400px;
@@ -32,7 +32,7 @@ input[type=text], input[type=password] {
 
 /* Set a style for all buttons */
 input[type=submit] {
-    background-color: #53af57;
+    background-color: #555;
     color: white;
     padding: 14px 20px;
     margin: 8px 0;
@@ -42,6 +42,11 @@ input[type=submit] {
 }
 input[type=submit]:hover {
     background-color: white;
-    color: #53af57;
-    border: 1px solid #53af57;
+    color: #c0c0c0;
+    border: 1px solid #c0c0c0;
+}
+
+.text{
+    font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+    color: #555;
 }
