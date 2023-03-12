@@ -1,19 +1,6 @@
 
 #include "ParseMsg.hpp"
 
-/*ParseMsg::ParseMsg(ParseMsg const & src)
-{
-
-}
-ParseMsg &ParseMsg::operator=(const ParseMsg &rhs)
-{
-	return *this;
-}
-ParseMsg::~ParseMsg(void)
-{
-
-}*/
-
 std::string	ParseMsg::setLanguage(std::string acceptLanguage)
 {
 	if (acceptLanguage == "*")

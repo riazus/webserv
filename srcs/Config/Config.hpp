@@ -20,7 +20,6 @@ class Config
 		Config &operator=(const Config &rhs);
 
 		void Parsing(std::string filename);
-		void getFullInfo();
 		serverVector getServers();
 
 		~Config(void);

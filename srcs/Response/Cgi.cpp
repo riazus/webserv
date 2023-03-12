@@ -172,7 +172,7 @@ std::string		Cgi::execute(void)
 		exit(0);
 	for (int i = 0;  CgiEnv[i]; i++)
 		delete CgiEnv[i];
-	std::cout << "BODY: " << body <<"----------------------------------------------<" << std::endl;
+	// std::cout << "BODY: " << body <<"----------------------------------------------<" << std::endl;
 	delete [] CgiEnv;
 	return body;
 }
