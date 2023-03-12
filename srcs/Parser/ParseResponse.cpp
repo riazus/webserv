@@ -1,4 +1,3 @@
-
 #include "ParseMsg.hpp"
 
 std::string	ParseMsg::setLanguage(std::string acceptLanguage)
